@@ -1,7 +1,7 @@
 {
-  "name": "aurelia-modal",
+  "name": "aurelia-dialog",
   "version": "0.1.0",
-  "description": "A modal dialog plugin for Aurelia.",
+  "description": "A dialog plugin for Aurelia.",
   "keywords": [
     "aurelia",
     "plugin",
@@ -9,14 +9,14 @@
   ],
   "homepage": "http://aurelia.io",
   "bugs": {
-    "url": "https://github.com/aurelia/modal/issues"
+    "url": "https://github.com/aurelia/dialog/issues"
   },
   "license": "MIT",
   "author": "Rob Eisenberg <rob@bluespire.com> (http://robeisenberg.com/)",
   "main": "dist/commonjs/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/aurelia/modal"
+    "url": "https://github.com/aurelia/dialog"
   },
   "jspm": {
     "main": "index",
