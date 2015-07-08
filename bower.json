@@ -1,7 +1,7 @@
 {
-  "name": "aurelia-modal",
+  "name": "aurelia-dialog",
   "version": "0.1.0",
-  "description": "A modal dialog plugin for Aurelia.",
+  "description": "A dialog plugin for Aurelia.",
   "keywords": [
     "aurelia",
     "plugin",
@@ -14,7 +14,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/aurelia/modal"
+    "url": "https://github.com/aurelia/dialog"
   },
   "dependencies": {
     "core-js": "zloirock/core-js"
