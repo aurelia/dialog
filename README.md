@@ -9,7 +9,6 @@ This library is part of the [Aurelia](http://www.aurelia.io/) platform and conta
 
 ##Installation
 
-[Examples](https://github.com/behzad888/au-dialog)
 
 ## Dependencies
 
