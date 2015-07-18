@@ -24,8 +24,19 @@
     "directories": {
       "lib": "dist/amd"
     },
-    "dependencies": { },
-    "devDependencies": { }
+    "dependencies": {
+      "aurelia-dependency-injection": "github:aurelia/dependency-injection@^0.9.0",
+      "aurelia-framework": "github:aurelia/framework@^0.13.3",
+      "aurelia-metadata": "github:aurelia/metadata@^0.7.0",
+      "aurelia-templating": "github:aurelia/templating@^0.13.5"
+    },
+    "devDependencies": {
+      "babel": "npm:babel-core@^5.0.12",
+      "babel-runtime": "npm:babel-runtime@^5.0.12",
+      "core-js": "npm:core-js@^0.8.1",
+      "traceur": "github:jmcriffey/bower-traceur@0.0.87",
+      "traceur-runtime": "github:jmcriffey/bower-traceur-runtime@0.0.87"
+    }
   },
   "devDependencies": {
     "aurelia-tools": "^0.1.6",
