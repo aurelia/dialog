@@ -1,8 +1,10 @@
 import {customAttribute} from 'aurelia-templating';
-let Element = new HtmlElement();
+import {inject} from 'aurelia-framework';
+
+let Element = document.createElement('dialog');
 @customAttribute('attach-focus')
+@inject(Element)
 export class AttachFocus {
-  static inject = [Element];
 
   constructor(element){
     this.element = element;

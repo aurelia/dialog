@@ -11,7 +11,8 @@ System.config({
   "paths": {
     "*": "*.js",
     "github:*": "jspm_packages/github/*.js",
-    "npm:*": "jspm_packages/npm/*.js"
+    "npm:*": "jspm_packages/npm/*.js",
+    "dialog/*": "dist/commonjs/*.js"
   }
 });
 
@@ -21,9 +22,9 @@ System.config({
     "aurelia-framework": "github:aurelia/framework@0.13.3",
     "aurelia-metadata": "github:aurelia/metadata@0.7.0",
     "aurelia-templating": "github:aurelia/templating@0.13.5",
-    "babel": "npm:babel-core@5.7.2",
+    "babel": "npm:babel-core@5.7.4",
     "babel-runtime": "npm:babel-runtime@5.7.0",
-    "core-js": "npm:core-js@0.8.4",
+    "core-js": "npm:core-js@0.9.18",
     "github:aurelia/binding@0.8.2": {
       "aurelia-dependency-injection": "github:aurelia/dependency-injection@0.9.0",
       "aurelia-metadata": "github:aurelia/metadata@0.7.0",
@@ -70,9 +71,6 @@ System.config({
       "process": "npm:process@0.10.1"
     },
     "npm:babel-runtime@5.7.0": {
-      "process": "github:jspm/nodelibs-process@0.1.1"
-    },
-    "npm:core-js@0.8.4": {
       "process": "github:jspm/nodelibs-process@0.1.1"
     },
     "npm:core-js@0.9.18": {
