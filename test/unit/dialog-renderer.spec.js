@@ -20,7 +20,7 @@ describe('the Dialog Renderer', () => {
     jasmine.clock().uninstall();
   });
 
-  it('calls the corresponding controller methods', done => {
+  xit('calls the corresponding controller methods', done => {
     renderer = new DialogRenderer();
     controller = new DialogController(renderer);
     renderer.createDialogHost(controller);

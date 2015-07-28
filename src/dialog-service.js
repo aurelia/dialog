@@ -55,8 +55,6 @@ export class DialogService {
                 return this.renderer.showDialog(controller);
               });
             });
-          }else{
-            return Promise.reject();
           }
         });
       });

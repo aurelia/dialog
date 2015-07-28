@@ -16,25 +16,31 @@ export class DialogController {
     this.close(false, result);
   }
 
-  close(success, result){
+  error(message){
+    return invokeLifecycle(this.viewModel, 'deactivate').then(() => {
+      return this._renderer.hideDialog(this).then(() => {
+        return this._renderer.destroyDialogHost(this).then(() => {
+          this.behavior.unbind();
+          this._reject(message);
+        });
+      });
+    });
+  }
+
+  close(ok, result){
     return invokeLifecycle(this.viewModel, 'canDeactivate').then(canDeactivate =>{
       if(canDeactivate){
         return invokeLifecycle(this.viewModel, 'deactivate').then(() => {
           return this._renderer.hideDialog(this).then(() => {
             return this._renderer.destroyDialogHost(this).then(() => {
               this.behavior.unbind();
-
-              if(success){
+              if(ok){
                 this._resolve(result);
-              } else{
-                this._reject(result);
               }
             });
           });
         });
       }
-
-      return Promise.reject();
     });
   }
 }
