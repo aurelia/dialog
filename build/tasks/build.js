@@ -77,7 +77,8 @@ gulp.task('minifyCSS', function () {
 gulp.task('build', function(callback) {
   return runSequence(
     'clean',
-    ['build-commonjs', 'build-amd', 'build-system','build-html', 'build-css', 'minifyCSS'],
+    ['build-commonjs', 'build-amd', 'build-system','build-html'],
+    'build-css', 'minifyCSS',
     callback
   );
 });
