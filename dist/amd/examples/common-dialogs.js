@@ -8,12 +8,6 @@ define(['exports', './prompt', '../dialog-service'], function (exports, _prompt,
   function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
   var CommonDialogs = (function () {
-    _createClass(CommonDialogs, null, [{
-      key: 'inject',
-      value: [_dialogService.DialogService],
-      enumerable: true
-    }]);
-
     function CommonDialogs(dialogService) {
       _classCallCheck(this, CommonDialogs);
 
@@ -23,6 +17,12 @@ define(['exports', './prompt', '../dialog-service'], function (exports, _prompt,
     CommonDialogs.prototype.prompt = function prompt(question) {
       return this.dialogService.open({ viewModel: _prompt.Prompt, model: question });
     };
+
+    _createClass(CommonDialogs, null, [{
+      key: 'inject',
+      value: [_dialogService.DialogService],
+      enumerable: true
+    }]);
 
     return CommonDialogs;
   })();

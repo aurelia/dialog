@@ -9,12 +9,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var _dialogController = require('../dialog-controller');
 
 var Prompt = (function () {
-  _createClass(Prompt, null, [{
-    key: 'inject',
-    value: [_dialogController.DialogController],
-    enumerable: true
-  }]);
-
   function Prompt(controller) {
     _classCallCheck(this, Prompt);
 
@@ -27,6 +21,12 @@ var Prompt = (function () {
   Prompt.prototype.activate = function activate(question) {
     this.question = question;
   };
+
+  _createClass(Prompt, null, [{
+    key: 'inject',
+    value: [_dialogController.DialogController],
+    enumerable: true
+  }]);
 
   return Prompt;
 })();

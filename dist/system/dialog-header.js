@@ -15,12 +15,6 @@ System.register(['aurelia-templating', './dialog-controller'], function (_export
     }],
     execute: function () {
       DialogHeader = (function () {
-        _createClass(DialogHeader, null, [{
-          key: 'inject',
-          value: [DialogController],
-          enumerable: true
-        }]);
-
         function DialogHeader(controller) {
           _classCallCheck(this, _DialogHeader);
 
@@ -28,6 +22,13 @@ System.register(['aurelia-templating', './dialog-controller'], function (_export
         }
 
         var _DialogHeader = DialogHeader;
+
+        _createClass(_DialogHeader, null, [{
+          key: 'inject',
+          value: [DialogController],
+          enumerable: true
+        }]);
+
         DialogHeader = customElement('dialog-header')(DialogHeader) || DialogHeader;
         return DialogHeader;
       })();
