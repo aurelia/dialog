@@ -1,0 +1,9 @@
+<template>
+  <button type="button" class="dialog-close" aria-label="Close" if.bind="!controller.settings.lock" click.trigger="controller.cancel()">
+    <span aria-hidden="true">&times;</span>
+  </button>
+
+  <div class="dialog-header-content">
+    <content></content>
+  </div>
+</template>

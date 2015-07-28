@@ -1,0 +1,16 @@
+<template>
+  <dialog>
+    <dialog-header>${question}</dialog-header>
+
+    <dialog-body>
+      <form submit.trigger="controller.ok(answer)">
+        <input type="text" value.bind="answer" style="width: 100%; line-height: 16px; font-size: 16px" attach-focus>
+      </form>
+    </dialog-body>
+
+    <dialog-footer>
+      <button click.trigger="controller.cancel()">Cancel</button>
+      <button click.trigger="controller.ok(answer)">Ok</button>
+    </dialog-footer>
+  </dialog>
+</template>
