@@ -13,12 +13,6 @@ System.register(['../dialog-controller'], function (_export) {
     }],
     execute: function () {
       Prompt = (function () {
-        _createClass(Prompt, null, [{
-          key: 'inject',
-          value: [DialogController],
-          enumerable: true
-        }]);
-
         function Prompt(controller) {
           _classCallCheck(this, Prompt);
 
@@ -31,6 +25,12 @@ System.register(['../dialog-controller'], function (_export) {
         Prompt.prototype.activate = function activate(question) {
           this.question = question;
         };
+
+        _createClass(Prompt, null, [{
+          key: 'inject',
+          value: [DialogController],
+          enumerable: true
+        }]);
 
         return Prompt;
       })();

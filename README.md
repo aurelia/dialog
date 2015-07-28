@@ -70,3 +70,76 @@ To run the unit tests, first ensure that you have followed the steps above in or
 	```shell
 	karma start
 	```
+
+## Using the plugin
+
+There are a few ways you can take advantage of the Aurelia dialog.
+
+1. You can use the dialog service to open a prompt -
+
+  ```javascript
+  import {DialogService, Prompt} from 'aurelia/modal';
+  export class Welcome {
+    submit(){
+      this.dialogService.open({ viewModel: Prompt, model: 'Good or Bad?'}).then(() => {
+        console.log('good');
+      }).catch(() => {
+        console.log('bad');
+      });
+    }
+  }
+  ```
+
+  This will open a prompt that `resolve`s if the user clicks ok.  If the user clicks out, clicks cancel, or clicks the 'x' in the top right it will `reject` the promise.
+
+2. You can create your own view / view-model and use the dialog service to call it from your app's view-model -
+
+  ```javascript
+  import {EditPerson} from './edit-person';
+  import {DialogService} from 'aurelia/modal';
+  export class Welcome {
+    person = { firstName: 'Wade', middleName: 'Owen', lastName: 'Watts' };
+    submit(){
+      this.dialogService.open({ viewModel: EditPerson, model: this.person}).then(() => {
+        console.log('edited');
+      }).catch(() => {
+        console.log('didnt edit');
+      });
+    }
+  }
+  ```
+
+  This will open a dialog and control it the same way as the prompt.  The important thing to keep in mind is you need to follow the same method of utilizing a `DialogController` in your `EditPerson` view-model as well as accepting the model in your activate method -
+
+  ```javascript
+  import {DialogController} from 'aurelia/modal';
+
+  export class EditPerson {
+    static inject = [DialogController];
+    person = { firstName: '' };
+    constructor(controller){
+      this.controller = controller;
+    }
+    activate(person){
+      this.person = person;
+    }
+  }
+  ```
+
+  and the corresponding view -
+
+  ```html
+  <template>
+    <dialog>
+      <dialog-body>
+        <h2>Edit first name</h2>
+        <input value.bind="person.firstName" />
+      </dialog-body>
+
+      <dialog-footer>
+        <button click.trigger="controller.cancel()">Cancel</button>
+        <button click.trigger="controller.ok(person)">Ok</button>
+      </dialog-footer>
+    </dialog>
+  </template>
+  ```

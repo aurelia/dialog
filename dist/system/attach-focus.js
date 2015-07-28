@@ -1,19 +1,17 @@
-System.register(['aurelia-templating', 'aurelia-framework'], function (_export) {
+System.register(['aurelia-templating'], function (_export) {
   'use strict';
 
-  var customAttribute, inject, Element, AttachFocus;
+  var customAttribute, AttachFocus;
+
+  var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
   function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
   return {
     setters: [function (_aureliaTemplating) {
       customAttribute = _aureliaTemplating.customAttribute;
-    }, function (_aureliaFramework) {
-      inject = _aureliaFramework.inject;
     }],
     execute: function () {
-      Element = document.createElement('dialog');
-
       AttachFocus = (function () {
         function AttachFocus(element) {
           _classCallCheck(this, _AttachFocus);
@@ -21,12 +19,18 @@ System.register(['aurelia-templating', 'aurelia-framework'], function (_export) 
           this.element = element;
         }
 
-        AttachFocus.prototype.attached = function attached() {
+        var _AttachFocus = AttachFocus;
+
+        _AttachFocus.prototype.attached = function attached() {
           this.element.focus();
         };
 
-        var _AttachFocus = AttachFocus;
-        AttachFocus = inject(Element)(AttachFocus) || AttachFocus;
+        _createClass(_AttachFocus, null, [{
+          key: 'inject',
+          value: [Element],
+          enumerable: true
+        }]);
+
         AttachFocus = customAttribute('attach-focus')(AttachFocus) || AttachFocus;
         return AttachFocus;
       })();

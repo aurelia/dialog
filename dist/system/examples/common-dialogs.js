@@ -15,12 +15,6 @@ System.register(['./prompt', '../dialog-service'], function (_export) {
     }],
     execute: function () {
       CommonDialogs = (function () {
-        _createClass(CommonDialogs, null, [{
-          key: 'inject',
-          value: [DialogService],
-          enumerable: true
-        }]);
-
         function CommonDialogs(dialogService) {
           _classCallCheck(this, CommonDialogs);
 
@@ -30,6 +24,12 @@ System.register(['./prompt', '../dialog-service'], function (_export) {
         CommonDialogs.prototype.prompt = function prompt(question) {
           return this.dialogService.open({ viewModel: Prompt, model: question });
         };
+
+        _createClass(CommonDialogs, null, [{
+          key: 'inject',
+          value: [DialogService],
+          enumerable: true
+        }]);
 
         return CommonDialogs;
       })();

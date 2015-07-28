@@ -23,12 +23,6 @@ System.register(['aurelia-metadata', 'aurelia-dependency-injection', 'aurelia-te
     }],
     execute: function () {
       DialogService = (function () {
-        _createClass(DialogService, null, [{
-          key: 'inject',
-          value: [Container, CompositionEngine, DialogRenderer],
-          enumerable: true
-        }]);
-
         function DialogService(container, compositionEngine, renderer) {
           _classCallCheck(this, DialogService);
 
@@ -55,6 +49,7 @@ System.register(['aurelia-metadata', 'aurelia-dependency-injection', 'aurelia-te
           settings = Object.assign({}, this.renderer.defaultSettings, settings);
 
           return new Promise(function (resolve, reject) {
+            console.log('creating');
             var childContainer = _this.container.createChild(),
                 controller = new DialogController(_this.renderer, settings, resolve, reject),
                 instruction = {
@@ -63,6 +58,7 @@ System.register(['aurelia-metadata', 'aurelia-dependency-injection', 'aurelia-te
               childContainer: childContainer,
               model: settings.model
             };
+            console.log(controller);
 
             childContainer.registerInstance(DialogController, controller);
 
@@ -87,6 +83,12 @@ System.register(['aurelia-metadata', 'aurelia-dependency-injection', 'aurelia-te
             });
           });
         };
+
+        _createClass(DialogService, null, [{
+          key: 'inject',
+          value: [Container, CompositionEngine, DialogRenderer],
+          enumerable: true
+        }]);
 
         return DialogService;
       })();
