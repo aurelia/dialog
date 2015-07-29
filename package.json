@@ -29,8 +29,7 @@
       "aurelia-dependency-injection": "github:aurelia/dependency-injection@^0.9.0",
       "aurelia-framework": "github:aurelia/framework@^0.13.3",
       "aurelia-metadata": "github:aurelia/metadata@^0.7.0",
-      "aurelia-templating": "github:aurelia/templating@^0.13.5",
-      "aurelia/modal": "github:aurelia/dialog@master"
+      "aurelia-templating": "github:aurelia/templating@^0.13.5"
     },
     "devDependencies": {
       "babel": "npm:babel-core@^5.1.13",
