@@ -143,3 +143,21 @@ There are a few ways you can take advantage of the Aurelia dialog.
     </dialog>
   </template>
   ```
+###Settings
+The settings available for the dialog are set on the dialog controller on a per-dialog basis.
+- `lock` makes the dialog modal, and removes the close button from the top-right hand corner. (defaults to true)
+- `centerHorizontalOnly` means that the dialog will be centered horizontally, and the vertical alignment is left up to you. (defaults to false)
+
+```javascript
+export class Prompt {
+  static inject = [DialogController];
+
+  constructor(controller){
+    this.controller = controller;
+    this.answer = null;
+
+    controller.settings.lock = false;
+    controller.settings.centerHorizontalOnly = true;
+  }
+}
+```
