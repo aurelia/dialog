@@ -73,7 +73,11 @@ gulp.task('minifyCSS', function () {
      .pipe(minifyCSS({ keepBreaks: false }))
      .pipe(gulp.dest(paths.output+"commonjs"));
 
-    return es.concat(amdCSS,sysCSS,commonCSS);
+     var es6CSS = gulp.src(paths.style)
+     .pipe(minifyCSS({ keepBreaks: false }))
+     .pipe(gulp.dest(paths.output+"es6"));
+
+    return es.concat(amdCSS,sysCSS,commonCSS,es6CSS);
 });
 
 gulp.task('build-html-system', function () {
@@ -90,8 +94,8 @@ gulp.task('build-system', ['build-html-system'], function () {
 gulp.task('build', function(callback) {
   return runSequence(
     'clean',
-    ['build-commonjs', 'build-amd', 'build-system','build-html'],
-    'build-css', 'minifyCSS',
+    ['build-commonjs', 'build-amd', 'build-system', 'build-es6', 'build-css'],
+    'minifyCSS',
     callback
   );
 });
