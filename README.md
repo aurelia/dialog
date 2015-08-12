@@ -78,7 +78,7 @@ There are a few ways you can take advantage of the Aurelia dialog.
 1. You can use the dialog service to open a prompt -
 
   ```javascript
-  import {DialogService, Prompt} from 'aurelia/modal';
+  import {DialogService, Prompt} from 'aurelia-dialog';
   export class Welcome {
     submit(){
       this.dialogService.open({ viewModel: Prompt, model: 'Good or Bad?'}).then(() => {
