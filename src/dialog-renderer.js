@@ -32,7 +32,7 @@ export class DialogRenderer {
   constructor(){
     this.dialogControllers = [];
 
-    document.addEventListener('keypress', e => {
+    document.addEventListener('keyup', e => {
       if (e.keyCode === 27){
         var top = this.dialogControllers[this.dialogControllers.length-1];
         if(top && top.settings.lock !== true){
