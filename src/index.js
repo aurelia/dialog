@@ -1,5 +1,5 @@
-export function configure(aurelia) {
-  aurelia.globalizeResources(
+export function configure(config) {
+  config.globalResources(
     './dialog',
     './dialog-header',
     './dialog-body',
