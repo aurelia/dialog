@@ -96,7 +96,7 @@ There are a few ways you can take advantage of the Aurelia dialog.
 
   ```javascript
   import {EditPerson} from './edit-person';
-  import {DialogService} from 'aurelia/modal';
+  import {DialogService} from 'aurelia-dialog';
   export class Welcome {
     person = { firstName: 'Wade', middleName: 'Owen', lastName: 'Watts' };
     submit(){
@@ -112,7 +112,7 @@ There are a few ways you can take advantage of the Aurelia dialog.
   This will open a dialog and control it the same way as the prompt.  The important thing to keep in mind is you need to follow the same method of utilizing a `DialogController` in your `EditPerson` view-model as well as accepting the model in your activate method -
 
   ```javascript
-  import {DialogController} from 'aurelia/modal';
+  import {DialogController} from 'aurelia-dialog';
 
   export class EditPerson {
     static inject = [DialogController];
