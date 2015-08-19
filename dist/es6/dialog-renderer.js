@@ -25,8 +25,22 @@ function getNextZIndex(){
 
 export class DialogRenderer {
   defaultSettings = {
-    lock: true
+    lock: true,
+    centerHorizontalOnly: false,
   };
+
+  constructor(){
+    this.dialogControllers = [];
+
+    document.addEventListener('keyup', e => {
+      if (e.keyCode === 27){
+        var top = this.dialogControllers[this.dialogControllers.length-1];
+        if(top && top.settings.lock !== true){
+          top.cancel();
+        }
+      }
+    });
+  }
 
   createDialogHost(controller){
     var settings = controller.settings,
@@ -43,15 +57,11 @@ export class DialogRenderer {
     controller.slot = new ViewSlot(modalContainer, true);
     controller.slot.add(controller.view);
 
-    controller.showDialog = function(){
+    controller.showDialog = () => {
+      this.dialogControllers.push(controller);
+
       controller.slot.attached();
       controller.centerDialog();
-
-      document.onkeypress = function(e) {
-        if (e.keyCode === 27 && settings.lock !== true) {
-          controller.cancel();
-        }
-      };
 
       modalOverlay.onclick = () => {
         if (!settings.lock) {
@@ -75,6 +85,11 @@ export class DialogRenderer {
     };
 
     controller.hideDialog = () => {
+      let i = this.dialogControllers.indexOf(controller);
+      if(i !== -1) {
+        this.dialogControllers.splice(i, 1);
+      }
+
       return new Promise((resolve, reject) => {
         modalContainer.addEventListener(transitionEvent, onTransitionEnd);
 
@@ -98,11 +113,11 @@ export class DialogRenderer {
     controller.centerDialog = () => {
       var child = modalContainer.children[0];
 
-      if(!settings.centerHorizontalOnly){
-        child.style.marginLeft = -(child.offsetWidth/2) + 'px';
-      }
+      child.style.marginLeft = -(child.offsetWidth/2) + 'px';
 
-      child.style.marginTop = -(child.offsetHeight/2) + 'px';
+      if(!settings.centerHorizontalOnly){
+        child.style.marginTop = -(child.offsetHeight/2) + 'px';
+      }
     };
 
     return Promise.resolve();

@@ -12,37 +12,7 @@ define(['exports', 'aurelia-templating', './dialog-controller'], function (expor
   var DialogFooter = (function () {
     var _instanceInitializers = {};
 
-    function DialogFooter(controller) {
-      _classCallCheck(this, _DialogFooter);
-
-      _defineDecoratedPropertyDescriptor(this, 'buttons', _instanceInitializers);
-
-      _defineDecoratedPropertyDescriptor(this, 'useDefaultButtons', _instanceInitializers);
-
-      this.controller = controller;
-    }
-
-    var _DialogFooter = DialogFooter;
-
-    _DialogFooter.prototype.close = function close(buttonValue) {
-      if (DialogFooter.isCancelButton(buttonValue)) {
-        this.controller.cancel(buttonValue);
-      } else {
-        this.controller.ok(buttonValue);
-      }
-    };
-
-    _DialogFooter.prototype.useDefaultButtonsChanged = function useDefaultButtonsChanged(newValue) {
-      if (newValue) {
-        this.buttons = ['Cancel', 'Ok'];
-      }
-    };
-
-    _DialogFooter.isCancelButton = function isCancelButton(value) {
-      return value === 'Cancel';
-    };
-
-    _createDecoratedClass(_DialogFooter, [{
+    _createDecoratedClass(DialogFooter, [{
       key: 'buttons',
       decorators: [_aureliaTemplating.bindable],
       initializer: function initializer() {
@@ -62,6 +32,35 @@ define(['exports', 'aurelia-templating', './dialog-controller'], function (expor
       enumerable: true
     }], _instanceInitializers);
 
+    function DialogFooter(controller) {
+      _classCallCheck(this, _DialogFooter);
+
+      _defineDecoratedPropertyDescriptor(this, 'buttons', _instanceInitializers);
+
+      _defineDecoratedPropertyDescriptor(this, 'useDefaultButtons', _instanceInitializers);
+
+      this.controller = controller;
+    }
+
+    DialogFooter.prototype.close = function close(buttonValue) {
+      if (DialogFooter.isCancelButton(buttonValue)) {
+        this.controller.cancel(buttonValue);
+      } else {
+        this.controller.ok(buttonValue);
+      }
+    };
+
+    DialogFooter.prototype.useDefaultButtonsChanged = function useDefaultButtonsChanged(newValue) {
+      if (newValue) {
+        this.buttons = ['Cancel', 'Ok'];
+      }
+    };
+
+    DialogFooter.isCancelButton = function isCancelButton(value) {
+      return value === 'Cancel';
+    };
+
+    var _DialogFooter = DialogFooter;
     DialogFooter = _aureliaTemplating.customElement('dialog-footer')(DialogFooter) || DialogFooter;
     return DialogFooter;
   })();

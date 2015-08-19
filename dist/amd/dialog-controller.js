@@ -23,27 +23,35 @@ define(['exports', './lifecycle'], function (exports, _lifecycle) {
       this.close(false, result);
     };
 
-    DialogController.prototype.close = function close(success, result) {
+    DialogController.prototype.error = function error(message) {
       var _this = this;
+
+      return _lifecycle.invokeLifecycle(this.viewModel, 'deactivate').then(function () {
+        return _this._renderer.hideDialog(_this).then(function () {
+          return _this._renderer.destroyDialogHost(_this).then(function () {
+            _this.behavior.unbind();
+            _this._reject(message);
+          });
+        });
+      });
+    };
+
+    DialogController.prototype.close = function close(ok, result) {
+      var _this2 = this;
 
       return _lifecycle.invokeLifecycle(this.viewModel, 'canDeactivate').then(function (canDeactivate) {
         if (canDeactivate) {
-          return _lifecycle.invokeLifecycle(_this.viewModel, 'deactivate').then(function () {
-            return _this._renderer.hideDialog(_this).then(function () {
-              return _this._renderer.destroyDialogHost(_this).then(function () {
-                _this.behavior.unbind();
-
-                if (success) {
-                  _this._resolve(result);
-                } else {
-                  _this._reject(result);
+          return _lifecycle.invokeLifecycle(_this2.viewModel, 'deactivate').then(function () {
+            return _this2._renderer.hideDialog(_this2).then(function () {
+              return _this2._renderer.destroyDialogHost(_this2).then(function () {
+                _this2.behavior.unbind();
+                if (ok) {
+                  _this2._resolve(result);
                 }
               });
             });
           });
         }
-
-        return Promise.reject();
       });
     };
 

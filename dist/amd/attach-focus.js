@@ -8,24 +8,23 @@ define(['exports', 'aurelia-templating'], function (exports, _aureliaTemplating)
   function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
   var AttachFocus = (function () {
+    _createClass(AttachFocus, null, [{
+      key: 'inject',
+      value: [Element],
+      enumerable: true
+    }]);
+
     function AttachFocus(element) {
       _classCallCheck(this, _AttachFocus);
 
       this.element = element;
     }
 
-    var _AttachFocus = AttachFocus;
-
-    _AttachFocus.prototype.attached = function attached() {
+    AttachFocus.prototype.attached = function attached() {
       this.element.focus();
     };
 
-    _createClass(_AttachFocus, null, [{
-      key: 'inject',
-      value: [Element],
-      enumerable: true
-    }]);
-
+    var _AttachFocus = AttachFocus;
     AttachFocus = _aureliaTemplating.customAttribute('attach-focus')(AttachFocus) || AttachFocus;
     return AttachFocus;
   })();

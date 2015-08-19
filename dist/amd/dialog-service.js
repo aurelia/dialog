@@ -8,6 +8,12 @@ define(['exports', 'aurelia-metadata', 'aurelia-dependency-injection', 'aurelia-
   function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
   var DialogService = (function () {
+    _createClass(DialogService, null, [{
+      key: 'inject',
+      value: [_aureliaDependencyInjection.Container, _aureliaTemplating.CompositionEngine, _dialogRenderer.DialogRenderer],
+      enumerable: true
+    }]);
+
     function DialogService(container, compositionEngine, renderer) {
       _classCallCheck(this, DialogService);
 
@@ -34,7 +40,6 @@ define(['exports', 'aurelia-metadata', 'aurelia-dependency-injection', 'aurelia-
       settings = Object.assign({}, this.renderer.defaultSettings, settings);
 
       return new Promise(function (resolve, reject) {
-        console.log('creating');
         var childContainer = _this.container.createChild(),
             controller = new _dialogController.DialogController(_this.renderer, settings, resolve, reject),
             instruction = {
@@ -43,7 +48,6 @@ define(['exports', 'aurelia-metadata', 'aurelia-dependency-injection', 'aurelia-
           childContainer: childContainer,
           model: settings.model
         };
-        console.log(controller);
 
         childContainer.registerInstance(_dialogController.DialogController, controller);
 
@@ -61,19 +65,11 @@ define(['exports', 'aurelia-metadata', 'aurelia-dependency-injection', 'aurelia-
                   return _this.renderer.showDialog(controller);
                 });
               });
-            } else {
-              return Promise.reject();
             }
           });
         });
       });
     };
-
-    _createClass(DialogService, null, [{
-      key: 'inject',
-      value: [_aureliaDependencyInjection.Container, _aureliaTemplating.CompositionEngine, _dialogRenderer.DialogRenderer],
-      enumerable: true
-    }]);
 
     return DialogService;
   })();

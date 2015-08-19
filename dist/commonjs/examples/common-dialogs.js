@@ -11,6 +11,12 @@ var _prompt = require('./prompt');
 var _dialogService = require('../dialog-service');
 
 var CommonDialogs = (function () {
+  _createClass(CommonDialogs, null, [{
+    key: 'inject',
+    value: [_dialogService.DialogService],
+    enumerable: true
+  }]);
+
   function CommonDialogs(dialogService) {
     _classCallCheck(this, CommonDialogs);
 
@@ -20,12 +26,6 @@ var CommonDialogs = (function () {
   CommonDialogs.prototype.prompt = function prompt(question) {
     return this.dialogService.open({ viewModel: _prompt.Prompt, model: question });
   };
-
-  _createClass(CommonDialogs, null, [{
-    key: 'inject',
-    value: [_dialogService.DialogService],
-    enumerable: true
-  }]);
 
   return CommonDialogs;
 })();

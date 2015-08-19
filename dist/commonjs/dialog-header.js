@@ -11,6 +11,12 @@ var _aureliaTemplating = require('aurelia-templating');
 var _dialogController = require('./dialog-controller');
 
 var DialogHeader = (function () {
+  _createClass(DialogHeader, null, [{
+    key: 'inject',
+    value: [_dialogController.DialogController],
+    enumerable: true
+  }]);
+
   function DialogHeader(controller) {
     _classCallCheck(this, _DialogHeader);
 
@@ -18,13 +24,6 @@ var DialogHeader = (function () {
   }
 
   var _DialogHeader = DialogHeader;
-
-  _createClass(_DialogHeader, null, [{
-    key: 'inject',
-    value: [_dialogController.DialogController],
-    enumerable: true
-  }]);
-
   DialogHeader = _aureliaTemplating.customElement('dialog-header')(DialogHeader) || DialogHeader;
   return DialogHeader;
 })();

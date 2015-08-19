@@ -3,8 +3,8 @@ System.register(['./dialog-service', './dialog-controller', './examples/prompt']
 
   _export('configure', configure);
 
-  function configure(aurelia) {
-    aurelia.globalizeResources('./dialog', './dialog-header', './dialog-body', './dialog-footer', './attach-focus', './examples/prompt');
+  function configure(config) {
+    config.globalResources('./dialog', './dialog-header', './dialog-body', './dialog-footer', './attach-focus', './examples/prompt');
   }
 
   return {

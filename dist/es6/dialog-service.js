@@ -30,7 +30,6 @@ export class DialogService {
     settings =  Object.assign({}, this.renderer.defaultSettings, settings);
 
     return new Promise((resolve, reject) => {
-      console.log('creating');
       var childContainer = this.container.createChild(),
           controller = new DialogController(this.renderer, settings, resolve, reject),
           instruction = {
@@ -39,7 +38,6 @@ export class DialogService {
             childContainer:childContainer,
             model:settings.model
           };
-	  console.log(controller);
 
       childContainer.registerInstance(DialogController, controller);
 
@@ -57,8 +55,6 @@ export class DialogService {
                 return this.renderer.showDialog(controller);
               });
             });
-          }else{
-            return Promise.reject();
           }
         });
       });

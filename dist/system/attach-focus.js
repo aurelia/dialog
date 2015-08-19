@@ -13,24 +13,23 @@ System.register(['aurelia-templating'], function (_export) {
     }],
     execute: function () {
       AttachFocus = (function () {
+        _createClass(AttachFocus, null, [{
+          key: 'inject',
+          value: [Element],
+          enumerable: true
+        }]);
+
         function AttachFocus(element) {
           _classCallCheck(this, _AttachFocus);
 
           this.element = element;
         }
 
-        var _AttachFocus = AttachFocus;
-
-        _AttachFocus.prototype.attached = function attached() {
+        AttachFocus.prototype.attached = function attached() {
           this.element.focus();
         };
 
-        _createClass(_AttachFocus, null, [{
-          key: 'inject',
-          value: [Element],
-          enumerable: true
-        }]);
-
+        var _AttachFocus = AttachFocus;
         AttachFocus = customAttribute('attach-focus')(AttachFocus) || AttachFocus;
         return AttachFocus;
       })();

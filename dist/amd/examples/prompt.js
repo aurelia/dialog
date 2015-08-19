@@ -8,6 +8,12 @@ define(['exports', '../dialog-controller'], function (exports, _dialogController
   function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
   var Prompt = (function () {
+    _createClass(Prompt, null, [{
+      key: 'inject',
+      value: [_dialogController.DialogController],
+      enumerable: true
+    }]);
+
     function Prompt(controller) {
       _classCallCheck(this, Prompt);
 
@@ -20,12 +26,6 @@ define(['exports', '../dialog-controller'], function (exports, _dialogController
     Prompt.prototype.activate = function activate(question) {
       this.question = question;
     };
-
-    _createClass(Prompt, null, [{
-      key: 'inject',
-      value: [_dialogController.DialogController],
-      enumerable: true
-    }]);
 
     return Prompt;
   })();

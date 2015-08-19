@@ -19,6 +19,12 @@ var _dialogRenderer = require('./dialog-renderer');
 var _lifecycle = require('./lifecycle');
 
 var DialogService = (function () {
+  _createClass(DialogService, null, [{
+    key: 'inject',
+    value: [_aureliaDependencyInjection.Container, _aureliaTemplating.CompositionEngine, _dialogRenderer.DialogRenderer],
+    enumerable: true
+  }]);
+
   function DialogService(container, compositionEngine, renderer) {
     _classCallCheck(this, DialogService);
 
@@ -45,7 +51,6 @@ var DialogService = (function () {
     settings = Object.assign({}, this.renderer.defaultSettings, settings);
 
     return new Promise(function (resolve, reject) {
-      console.log('creating');
       var childContainer = _this.container.createChild(),
           controller = new _dialogController.DialogController(_this.renderer, settings, resolve, reject),
           instruction = {
@@ -54,7 +59,6 @@ var DialogService = (function () {
         childContainer: childContainer,
         model: settings.model
       };
-      console.log(controller);
 
       childContainer.registerInstance(_dialogController.DialogController, controller);
 
@@ -72,19 +76,11 @@ var DialogService = (function () {
                 return _this.renderer.showDialog(controller);
               });
             });
-          } else {
-            return Promise.reject();
           }
         });
       });
     });
   };
-
-  _createClass(DialogService, null, [{
-    key: 'inject',
-    value: [_aureliaDependencyInjection.Container, _aureliaTemplating.CompositionEngine, _dialogRenderer.DialogRenderer],
-    enumerable: true
-  }]);
 
   return DialogService;
 })();

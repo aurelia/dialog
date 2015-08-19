@@ -8,6 +8,12 @@ define(['exports', 'aurelia-templating', './dialog-controller'], function (expor
   function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
   var DialogHeader = (function () {
+    _createClass(DialogHeader, null, [{
+      key: 'inject',
+      value: [_dialogController.DialogController],
+      enumerable: true
+    }]);
+
     function DialogHeader(controller) {
       _classCallCheck(this, _DialogHeader);
 
@@ -15,13 +21,6 @@ define(['exports', 'aurelia-templating', './dialog-controller'], function (expor
     }
 
     var _DialogHeader = DialogHeader;
-
-    _createClass(_DialogHeader, null, [{
-      key: 'inject',
-      value: [_dialogController.DialogController],
-      enumerable: true
-    }]);
-
     DialogHeader = _aureliaTemplating.customElement('dialog-header')(DialogHeader) || DialogHeader;
     return DialogHeader;
   })();
