@@ -5,7 +5,7 @@ import {DialogController} from './dialog-controller';
 export class DialogHeader {
   static inject = [DialogController];
 
-  constructor(controller){
+  constructor(controller) {
     this.controller = controller;
   }
 }
