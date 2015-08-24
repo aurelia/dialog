@@ -29,34 +29,34 @@ define(['exports', 'aurelia-metadata', 'aurelia-dependency-injection', 'aurelia-
 
       if (typeof instruction.viewModel === 'string') {
         return this.compositionEngine.createViewModel(instruction);
-      } else {
-        return Promise.resolve(instruction);
       }
+
+      return Promise.resolve(instruction);
     };
 
     DialogService.prototype.open = function open(settings) {
       var _this = this;
 
-      settings = Object.assign({}, this.renderer.defaultSettings, settings);
+      var _settings = Object.assign({}, this.renderer.defaultSettings, settings);
 
       return new Promise(function (resolve, reject) {
-        var childContainer = _this.container.createChild(),
-            controller = new _dialogController.DialogController(_this.renderer, settings, resolve, reject),
-            instruction = {
-          viewModel: settings.viewModel,
+        var childContainer = _this.container.createChild();
+        var controller = new _dialogController.DialogController(_this.renderer, _settings, resolve, reject);
+        var instruction = {
+          viewModel: _settings.viewModel,
           container: _this.container,
           childContainer: childContainer,
-          model: settings.model
+          model: _settings.model
         };
 
         childContainer.registerInstance(_dialogController.DialogController, controller);
 
-        return _this._getViewModel(instruction).then(function (instruction) {
-          controller.viewModel = instruction.viewModel;
+        return _this._getViewModel(instruction).then(function (returnedInstruction) {
+          controller.viewModel = returnedInstruction.viewModel;
 
-          return _lifecycle.invokeLifecycle(instruction.viewModel, 'canActivate', settings.model).then(function (canActivate) {
+          return _lifecycle.invokeLifecycle(returnedInstruction.viewModel, 'canActivate', _settings.model).then(function (canActivate) {
             if (canActivate) {
-              return _this.compositionEngine.createBehavior(instruction).then(function (behavior) {
+              return _this.compositionEngine.createBehavior(returnedInstruction).then(function (behavior) {
                 controller.behavior = behavior;
                 controller.view = behavior.view;
                 behavior.view.bind(behavior.executionContext);

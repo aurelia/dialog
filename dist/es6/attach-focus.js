@@ -4,11 +4,11 @@ import {customAttribute} from 'aurelia-templating';
 export class AttachFocus {
   static inject = [Element];
 
-  constructor(element){
+  constructor(element) {
     this.element = element;
   }
 
-  attached(){
+  attached() {
     this.element.focus();
   }
 }

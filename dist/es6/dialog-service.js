@@ -8,45 +8,45 @@ import {invokeLifecycle} from './lifecycle';
 export class DialogService {
   static inject = [Container, CompositionEngine, DialogRenderer];
 
-  constructor(container, compositionEngine, renderer){
+  constructor(container, compositionEngine, renderer) {
     this.container = container;
     this.compositionEngine = compositionEngine;
     this.renderer = renderer;
   }
 
-  _getViewModel(instruction){
-    if(typeof instruction.viewModel === 'function'){
+  _getViewModel(instruction) {
+    if (typeof instruction.viewModel === 'function') {
       instruction.viewModel = Origin.get(instruction.viewModel).moduleId;
     }
 
-    if(typeof instruction.viewModel === 'string'){
+    if (typeof instruction.viewModel === 'string') {
       return this.compositionEngine.createViewModel(instruction);
-    }else{
-      return Promise.resolve(instruction);
     }
+
+    return Promise.resolve(instruction);
   }
 
-  open(settings){
-    settings =  Object.assign({}, this.renderer.defaultSettings, settings);
+  open(settings) {
+    let _settings =  Object.assign({}, this.renderer.defaultSettings, settings);
 
     return new Promise((resolve, reject) => {
-      var childContainer = this.container.createChild(),
-          controller = new DialogController(this.renderer, settings, resolve, reject),
-          instruction = {
-            viewModel:settings.viewModel,
-            container:this.container,
-            childContainer:childContainer,
-            model:settings.model
-          };
+      let childContainer = this.container.createChild();
+      let controller = new DialogController(this.renderer, _settings, resolve, reject);
+      let instruction = {
+        viewModel: _settings.viewModel,
+        container: this.container,
+        childContainer: childContainer,
+        model: _settings.model
+      };
 
       childContainer.registerInstance(DialogController, controller);
 
-      return this._getViewModel(instruction).then(instruction => {
-        controller.viewModel = instruction.viewModel;
+      return this._getViewModel(instruction).then(returnedInstruction => {
+        controller.viewModel = returnedInstruction.viewModel;
 
-        return invokeLifecycle(instruction.viewModel, 'canActivate', settings.model).then(canActivate => {
-          if(canActivate){
-            return this.compositionEngine.createBehavior(instruction).then(behavior => {
+        return invokeLifecycle(returnedInstruction.viewModel, 'canActivate', _settings.model).then(canActivate => {
+          if (canActivate) {
+            return this.compositionEngine.createBehavior(returnedInstruction).then(behavior => {
               controller.behavior = behavior;
               controller.view = behavior.view;
               behavior.view.bind(behavior.executionContext);

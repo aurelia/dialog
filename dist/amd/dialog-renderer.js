@@ -1,20 +1,20 @@
-define(["exports", "aurelia-templating"], function (exports, _aureliaTemplating) {
-  "use strict";
+define(['exports', 'aurelia-templating'], function (exports, _aureliaTemplating) {
+  'use strict';
 
   exports.__esModule = true;
 
-  function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+  function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
   var currentZIndex = 1000;
   var transitionEvent = (function () {
-    var t,
-        el = document.createElement("fakeelement");
+    var t = undefined;
+    var el = document.createElement('fakeelement');
 
     var transitions = {
-      "transition": "transitionend",
-      "OTransition": "oTransitionEnd",
-      "MozTransition": "transitionend",
-      "WebkitTransition": "webkitTransitionEnd"
+      'transition': 'transitionend',
+      'OTransition': 'oTransitionEnd',
+      'MozTransition': 'transitionend',
+      'WebkitTransition': 'webkitTransitionEnd'
     };
 
     for (t in transitions) {
@@ -43,9 +43,9 @@ define(["exports", "aurelia-templating"], function (exports, _aureliaTemplating)
 
       document.addEventListener('keyup', function (e) {
         if (e.keyCode === 27) {
-          var top = _this.dialogControllers[_this.dialogControllers.length - 1];
-          if (top && top.settings.lock !== true) {
-            top.cancel();
+          var _top = _this.dialogControllers[_this.dialogControllers.length - 1];
+          if (_top && _top.settings.lock !== true) {
+            _top.cancel();
           }
         }
       });
@@ -54,10 +54,9 @@ define(["exports", "aurelia-templating"], function (exports, _aureliaTemplating)
     DialogRenderer.prototype.createDialogHost = function createDialogHost(controller) {
       var _this2 = this;
 
-      var settings = controller.settings,
-          emptyParameters = {},
-          modalOverlay = document.createElement('dialog-overlay'),
-          modalContainer = document.createElement('dialog-container');
+      var settings = controller.settings;
+      var modalOverlay = document.createElement('dialog-overlay');
+      var modalContainer = document.createElement('dialog-container');
 
       modalOverlay.style.zIndex = getNextZIndex();
       modalContainer.style.zIndex = getNextZIndex();
@@ -82,13 +81,13 @@ define(["exports", "aurelia-templating"], function (exports, _aureliaTemplating)
           }
         };
 
-        return new Promise(function (resolve, reject) {
+        return new Promise(function (resolve) {
           modalContainer.addEventListener(transitionEvent, onTransitionEnd);
 
-          function onTransitionEnd(event) {
+          function onTransitionEnd() {
             modalContainer.removeEventListener(transitionEvent, onTransitionEnd);
             resolve();
-          };
+          }
 
           modalOverlay.classList.add('active');
           modalContainer.classList.add('active');
@@ -101,13 +100,13 @@ define(["exports", "aurelia-templating"], function (exports, _aureliaTemplating)
           _this2.dialogControllers.splice(i, 1);
         }
 
-        return new Promise(function (resolve, reject) {
+        return new Promise(function (resolve) {
           modalContainer.addEventListener(transitionEvent, onTransitionEnd);
 
-          function onTransitionEnd(event) {
+          function onTransitionEnd() {
             modalContainer.removeEventListener(transitionEvent, onTransitionEnd);
             resolve();
-          };
+          }
 
           modalOverlay.classList.remove('active');
           modalContainer.classList.remove('active');
