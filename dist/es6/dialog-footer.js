@@ -8,25 +8,25 @@ export class DialogFooter {
   @bindable buttons = [];
   @bindable useDefaultButtons = false;
 
-  constructor(controller){
+  constructor(controller) {
     this.controller = controller;
   }
 
-  close(buttonValue){
-    if(DialogFooter.isCancelButton(buttonValue)){
+  close(buttonValue) {
+    if (DialogFooter.isCancelButton(buttonValue)) {
       this.controller.cancel(buttonValue);
-    }else{
+    } else {
       this.controller.ok(buttonValue);
     }
   }
 
-  useDefaultButtonsChanged(newValue){
-    if(newValue){
+  useDefaultButtonsChanged(newValue) {
+    if (newValue) {
       this.buttons = ['Cancel', 'Ok'];
     }
   }
 
-  static isCancelButton(value){
+  static isCancelButton(value) {
     return value === 'Cancel';
   }
 }

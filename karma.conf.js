@@ -41,8 +41,7 @@ module.exports = function(config) {
         loose: "all",
         optional: [
           "es7.decorators",
-	  "es7.classProperties"
-
+	        "es7.classProperties"
         ]
       }
     },
