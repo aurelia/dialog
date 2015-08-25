@@ -22,7 +22,6 @@ describe('the Dialog Service', () => {
     let model = new TestModel();
     let settings = { viewModel: TestElement, model: model };
     let result = dialogService.open(settings);
-    expect(dialogService.model).toEqual(model);
     result.then(resp => {
       spyOn(resp.renderer, 'showDialog');
       expect(resp.renderer.showDialog).toHaveBeenCalled();

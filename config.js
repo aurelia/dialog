@@ -1,5 +1,4 @@
 System.config({
-  baseURL: "/",
   defaultJSExtensions: true,
   transpiler: "babel",
   babelOptions: {
@@ -22,7 +21,7 @@ System.config({
     "aurelia-templating": "github:aurelia/templating@0.14.4",
     "babel": "npm:babel-core@5.8.22",
     "babel-runtime": "npm:babel-runtime@5.8.20",
-    "core-js": "npm:core-js@1.1.0",
+    "core-js": "npm:core-js@1.1.1",
     "github:aurelia/binding@0.8.6": {
       "aurelia-dependency-injection": "github:aurelia/dependency-injection@0.9.2",
       "aurelia-metadata": "github:aurelia/metadata@0.7.3",
@@ -77,7 +76,7 @@ System.config({
       "process": "github:jspm/nodelibs-process@0.1.1",
       "systemjs-json": "github:systemjs/plugin-json@0.1.0"
     },
-    "npm:core-js@1.1.0": {
+    "npm:core-js@1.1.1": {
       "fs": "github:jspm/nodelibs-fs@0.1.2",
       "process": "github:jspm/nodelibs-process@0.1.1",
       "systemjs-json": "github:systemjs/plugin-json@0.1.0"
