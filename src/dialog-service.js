@@ -49,7 +49,7 @@ export class DialogService {
             return this.compositionEngine.createBehavior(returnedInstruction).then(behavior => {
               controller.behavior = behavior;
               controller.view = behavior.view;
-              behavior.view.bind(behavior.executionContext);
+              behavior.view.bind(behavior.bindingContext);
 
               return this.renderer.createDialogHost(controller).then(() => {
                 return this.renderer.showDialog(controller);
