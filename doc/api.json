@@ -1,1 +1,29 @@
-{"classes":[],"methods":[],"properties":[],"events":[]}
+{
+  "id": 2,
+  "name": "\"core-js\"",
+  "kind": 2,
+  "kindString": "Module",
+  "flags": {},
+  "children": [
+    {
+      "id": 3,
+      "name": "coreJs",
+      "kind": 32,
+      "kindString": "Variable",
+      "flags": {},
+      "type": {
+        "type": "instrinct",
+        "name": "any"
+      }
+    }
+  ],
+  "groups": [
+    {
+      "title": "Variables",
+      "kind": 32,
+      "children": [
+        3
+      ]
+    }
+  ]
+}
