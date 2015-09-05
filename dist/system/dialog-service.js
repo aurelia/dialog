@@ -74,7 +74,7 @@ System.register(['aurelia-metadata', 'aurelia-dependency-injection', 'aurelia-te
                   return _this.compositionEngine.createBehavior(returnedInstruction).then(function (behavior) {
                     controller.behavior = behavior;
                     controller.view = behavior.view;
-                    behavior.view.bind(behavior.executionContext);
+                    behavior.view.bind(behavior.bindingContext);
 
                     return _this.renderer.createDialogHost(controller).then(function () {
                       return _this.renderer.showDialog(controller);
