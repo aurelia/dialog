@@ -80,6 +80,10 @@ There are a few ways you can take advantage of the Aurelia dialog.
   ```javascript
   import {DialogService, Prompt} from 'aurelia-dialog';
   export class Welcome {
+    static inject = [DialogService];
+    constructor(dialogService) {
+      this.dialogService = dialogService;
+    }
     submit(){
       this.dialogService.open({ viewModel: Prompt, model: 'Good or Bad?'}).then(() => {
         console.log('good');
@@ -98,6 +102,10 @@ There are a few ways you can take advantage of the Aurelia dialog.
   import {EditPerson} from './edit-person';
   import {DialogService} from 'aurelia-dialog';
   export class Welcome {
+    static inject = [DialogService];
+    constructor(dialogService) {
+      this.dialogService = dialogService;
+    }
     person = { firstName: 'Wade', middleName: 'Owen', lastName: 'Watts' };
     submit(){
       this.dialogService.open({ viewModel: EditPerson, model: this.person}).then(() => {
