@@ -1,3 +1,11 @@
+### 0.2.1 (2015-09-07)
+
+
+#### Bug Fixes
+
+* **dialog:** Update link to `require` ([3caf3a7d](https://github.com/aurelia/dialog/commit/3caf3a7de0435754bd6707ad2e790efafd84b7dc))
+
+
 ## 0.2.0 (2015-09-05)
 
 
