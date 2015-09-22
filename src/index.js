@@ -13,5 +13,6 @@ export function configure(config) {
     './attach-focus'
   );
 }
+
 export * from './dialog-service';
 export * from './dialog-controller';
