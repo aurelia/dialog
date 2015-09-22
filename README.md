@@ -111,16 +111,21 @@ There are a few ways you can take advantage of the Aurelia dialog.
       this.dialogService = dialogService;
     }
     submit(){
-      this.dialogService.open({ viewModel: Prompt, model: 'Good or Bad?'}).then(() => {
-        console.log('good');
-      }).catch(() => {
-        console.log('bad');
+      this.dialogService.open({ viewModel: Prompt, model: 'Good or Bad?'}).then(response => {
+        if (!response.wasCancelled) {
+          console.log('good');
+        } else {
+          console.log('bad');
+        }
+        console.log(response.output);
       });
     }
   }
   ```
 
-  This will open a prompt that `resolve`s if the user clicks ok.  If the user clicks out, clicks cancel, or clicks the 'x' in the top right it will `reject` the promise.
+  This will open a prompt and return a promise that `resolve`s when closed.  If the user clicks out, clicks cancel, or clicks the 'x' in the top right it will still `resolve` the promise but will have a property on the response `wasCancelled` to allow the developer to handle cancelled dialogs.
+
+  There is also an `output` property that gets returned with the outcome of the user action if one was taken.
 
 2. You can create your own view / view-model and use the dialog service to call it from your app's view-model -
 
@@ -134,10 +139,13 @@ There are a few ways you can take advantage of the Aurelia dialog.
     }
     person = { firstName: 'Wade', middleName: 'Owen', lastName: 'Watts' };
     submit(){
-      this.dialogService.open({ viewModel: EditPerson, model: this.person}).then(() => {
-        console.log('edited');
-      }).catch(() => {
-        console.log('didnt edit');
+      this.dialogService.open({ viewModel: EditPerson, model: this.person}).then(response => {
+        if (!response.wasCancelled) {
+          console.log('good');
+        } else {
+          console.log('bad');
+        }
+        console.log(response.output);
       });
     }
   }

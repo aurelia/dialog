@@ -28,19 +28,27 @@ export class DialogController {
   }
 
   close(ok, result) {
+    let returnResult = new DialogResult(!ok, result);
     return invokeLifecycle(this.viewModel, 'canDeactivate').then(canDeactivate => {
       if (canDeactivate) {
         return invokeLifecycle(this.viewModel, 'deactivate').then(() => {
           return this._renderer.hideDialog(this).then(() => {
             return this._renderer.destroyDialogHost(this).then(() => {
               this.behavior.unbind();
-              if (ok) {
-                this._resolve(result);
-              }
+              this._resolve(returnResult);
             });
           });
         });
       }
     });
+  }
+}
+
+class DialogResult {
+  wasCancelled = false;
+  output;
+  constructor(cancelled, result) {
+    this.wasCancelled = cancelled;
+    this.output = result;
   }
 }
