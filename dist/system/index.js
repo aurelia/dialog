@@ -1,24 +1,30 @@
-System.register(['./dialog-service', './dialog-controller', './examples/prompt'], function (_export) {
+System.register(['./dialog', './dialog-header', './dialog-body', './dialog-footer', './attach-focus', './dialog-service', './dialog-controller'], function (_export) {
   'use strict';
 
   _export('configure', configure);
 
   function configure(config) {
-    config.globalResources('./dialog', './dialog-header', './dialog-body', './dialog-footer', './attach-focus', './examples/prompt');
+    config.globalResources('./dialog', './dialog-header', './dialog-body', './dialog-footer', './attach-focus');
   }
 
   return {
-    setters: [function (_dialogService) {
+    setters: [function (_dialog) {
+      _export('Dialog', _dialog.Dialog);
+    }, function (_dialogHeader) {
+      _export('DialogHeader', _dialogHeader.DialogHeader);
+    }, function (_dialogBody) {
+      _export('DialogBody', _dialogBody.DialogBody);
+    }, function (_dialogFooter) {
+      _export('DialogFooter', _dialogFooter.DialogFooter);
+    }, function (_attachFocus) {
+      _export('AttachFocus', _attachFocus.AttachFocus);
+    }, function (_dialogService) {
       for (var _key in _dialogService) {
         if (_key !== 'default') _export(_key, _dialogService[_key]);
       }
     }, function (_dialogController) {
       for (var _key2 in _dialogController) {
         if (_key2 !== 'default') _export(_key2, _dialogController[_key2]);
-      }
-    }, function (_examplesPrompt) {
-      for (var _key3 in _examplesPrompt) {
-        if (_key3 !== 'default') _export(_key3, _examplesPrompt[_key3]);
       }
     }],
     execute: function () {}

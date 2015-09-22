@@ -1,7 +1,7 @@
 System.register(['./lifecycle'], function (_export) {
   'use strict';
 
-  var invokeLifecycle, DialogController;
+  var invokeLifecycle, DialogController, DialogResult;
 
   function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
@@ -44,15 +44,14 @@ System.register(['./lifecycle'], function (_export) {
         DialogController.prototype.close = function close(ok, result) {
           var _this2 = this;
 
+          var returnResult = new DialogResult(!ok, result);
           return invokeLifecycle(this.viewModel, 'canDeactivate').then(function (canDeactivate) {
             if (canDeactivate) {
               return invokeLifecycle(_this2.viewModel, 'deactivate').then(function () {
                 return _this2._renderer.hideDialog(_this2).then(function () {
                   return _this2._renderer.destroyDialogHost(_this2).then(function () {
                     _this2.behavior.unbind();
-                    if (ok) {
-                      _this2._resolve(result);
-                    }
+                    _this2._resolve(returnResult);
                   });
                 });
               });
@@ -64,6 +63,15 @@ System.register(['./lifecycle'], function (_export) {
       })();
 
       _export('DialogController', DialogController);
+
+      DialogResult = function DialogResult(cancelled, result) {
+        _classCallCheck(this, DialogResult);
+
+        this.wasCancelled = false;
+
+        this.wasCancelled = cancelled;
+        this.output = result;
+      };
     }
   };
 });
