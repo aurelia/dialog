@@ -46,6 +46,7 @@ export class DialogRenderer {
     let settings = controller.settings;
     let modalOverlay = document.createElement('dialog-overlay');
     let modalContainer = document.createElement('dialog-container');
+    let body = document.body;
 
     modalOverlay.style.zIndex = getNextZIndex();
     modalContainer.style.zIndex = getNextZIndex();
@@ -80,6 +81,7 @@ export class DialogRenderer {
 
         modalOverlay.classList.add('active');
         modalContainer.classList.add('active');
+        body.classList.add('dialog-open');
       });
     };
 
@@ -99,6 +101,7 @@ export class DialogRenderer {
 
         modalOverlay.classList.remove('active');
         modalContainer.classList.remove('active');
+        body.classList.remove('dialog-open');
       });
     };
 
@@ -112,10 +115,13 @@ export class DialogRenderer {
     controller.centerDialog = () => {
       let child = modalContainer.children[0];
 
-      child.style.marginLeft = -(child.offsetWidth / 2) + 'px';
+      let vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+      child.style.marginLeft = Math.max((vw - child.offsetWidth) / 2, 0) + 'px';
 
       if (!settings.centerHorizontalOnly) {
-        child.style.marginTop = -(child.offsetHeight / 2) + 'px';
+        let vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+        // Left at least 30px from the top
+        child.style.marginTop = Math.max((vh - child.offsetHeight) / 2, 30) + 'px';
       }
     };
 
