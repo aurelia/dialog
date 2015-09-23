@@ -14,10 +14,19 @@ dialog-overlay {
 dialog-container {
   display: block;
   position: fixed;
-  transition:opacity .2s linear;
-  top: 50%;
-  left: 50%;
+  transition: opacity .2s linear;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   opacity: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  -webkit-overflow-scrolling: touch;
+  // Prevent Chrome on Windows from adding a focus outline. For details, see
+  // https://github.com/twbs/bootstrap/pull/10951
+  outline: 0;
 
   &.active {
     opacity: 1;
@@ -25,6 +34,7 @@ dialog-container {
 }
 
 dialog {
+  position: relative;
   display: block;
   min-width: 300px;
   box-shadow: 0 5px 15px rgba(0,0,0,.5);
@@ -97,4 +107,8 @@ dialog {
       }
     }
   }
+}
+
+.dialog-open {
+  overflow: hidden;
 }
