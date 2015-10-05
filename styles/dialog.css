@@ -13,27 +13,46 @@ dialog-container {
   display: block;
   position: fixed;
   transition: opacity .2s linear;
-  top: 50%;
-  left: 50%;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   opacity: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  outline: 0;
 }
 dialog-container.active {
   opacity: 1;
 }
-dialog {
+ai-dialog {
+  position: relative;
   display: block;
   min-width: 300px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
   border: 1px solid rgba(0, 0, 0, 0.2);
   border-radius: 5px;
   padding: 0;
+  width: -moz-fit-content;
+  width: -webkit-fit-content;
+  width: fit-content;
+  height: -moz-fit-content;
+  height: -webkit-fit-content;
+  height: fit-content;
+  margin: auto;
+  border-image-source: initial;
+  border-image-slice: initial;
+  border-image-width: initial;
+  border-image-outset: initial;
+  border-image-repeat: initial;
 }
-dialog > dialog-header {
+ai-dialog > ai-dialog-header {
   display: block;
   padding: 16px;
   border-bottom: 1px solid #e5e5e5;
 }
-dialog > dialog-header > button {
+ai-dialog > ai-dialog-header > button {
   float: right;
   border: none;
   background: none;
@@ -44,20 +63,20 @@ dialog > dialog-header > button {
   padding: 0;
   cursor: pointer;
 }
-dialog > dialog-header > button:focus {
+ai-dialog > ai-dialog-header > button:focus {
   outline: 0;
 }
-dialog > dialog-body {
+ai-dialog > ai-dialog-body {
   display: block;
   padding: 16px;
 }
-dialog > dialog-footer {
+ai-dialog > ai-dialog-footer {
   display: block;
   padding: 6px;
   border-top: 1px solid #e5e5e5;
   text-align: right;
 }
-dialog > dialog-footer button {
+ai-dialog > ai-dialog-footer button {
   color: #333;
   background-color: #fff;
   padding: 6px 12px;
@@ -77,11 +96,14 @@ dialog > dialog-footer button {
   border-radius: 4px;
   margin: 5px 0 5px 5px;
 }
-dialog > dialog-footer button:hover {
+ai-dialog > ai-dialog-footer button:hover {
   color: #333;
   background-color: #e6e6e6;
   border-color: #adadad;
 }
-dialog > dialog-footer button:focus {
+ai-dialog > ai-dialog-footer button:focus {
   outline: 0;
+}
+.dialog-open {
+  overflow: hidden;
 }

@@ -1,8 +1,8 @@
 import {customElement, bindable} from 'aurelia-templating';
 import {DialogController} from './dialog-controller';
 
-@customElement('dialog-footer')
-export class DialogFooter {
+@customElement('ai-dialog-footer')
+export class AiDialogFooter {
   static inject = [DialogController];
 
   @bindable buttons = [];

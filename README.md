@@ -172,7 +172,7 @@ There are a few ways you can take advantage of the Aurelia dialog.
 
   ```html
   <template>
-    <dialog>
+    <ai-dialog>
       <dialog-body>
         <h2>Edit first name</h2>
         <input value.bind="person.firstName" />

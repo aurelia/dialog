@@ -1,8 +1,8 @@
 import {customElement} from 'aurelia-templating';
 import {DialogController} from './dialog-controller';
 
-@customElement('dialog-header')
-export class DialogHeader {
+@customElement('ai-dialog-header')
+export class AiDialogHeader {
   static inject = [DialogController];
 
   constructor(controller) {
