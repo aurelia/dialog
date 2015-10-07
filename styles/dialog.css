@@ -1,4 +1,4 @@
-dialog-overlay {
+ai-dialog-overlay {
   bottom: 0;
   left: 0;
   position: fixed;
@@ -6,10 +6,10 @@ dialog-overlay {
   right: 0;
   opacity: 0;
 }
-dialog-overlay.active {
+ai-dialog-overlay.active {
   opacity: 1;
 }
-dialog-container {
+ai-dialog-container {
   display: block;
   position: fixed;
   transition: opacity .2s linear;
@@ -23,7 +23,7 @@ dialog-container {
   -webkit-overflow-scrolling: touch;
   outline: 0;
 }
-dialog-container.active {
+ai-dialog-container.active {
   opacity: 1;
 }
 ai-dialog {
@@ -104,6 +104,6 @@ ai-dialog > ai-dialog-footer button:hover {
 ai-dialog > ai-dialog-footer button:focus {
   outline: 0;
 }
-.dialog-open {
+.ai-dialog-open {
   overflow: hidden;
 }

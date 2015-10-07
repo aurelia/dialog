@@ -142,7 +142,7 @@ There are a few ways you can take advantage of the Aurelia dialog.
     submit(){
       this.dialogService.open({ viewModel: EditPerson, model: this.person}).then(response => {
         if (!response.wasCancelled) {
-          console.log('good');
+          console.log('good - ', response.output);
         } else {
           console.log('bad');
         }
@@ -174,16 +174,16 @@ There are a few ways you can take advantage of the Aurelia dialog.
   ```html
   <template>
     <ai-dialog>
-      <dialog-body>
+      <ai-dialog-body>
         <h2>Edit first name</h2>
         <input value.bind="person.firstName" />
-      </dialog-body>
+      </ai-dialog-body>
 
-      <dialog-footer>
+      <ai-dialog-footer>
         <button click.trigger="controller.cancel()">Cancel</button>
         <button click.trigger="controller.ok(person)">Ok</button>
-      </dialog-footer>
-    </dialog>
+      </ai-dialog-footer>
+    </ai-dialog>
   </template>
   ```
 ###Settings

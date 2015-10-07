@@ -8,9 +8,10 @@ export class App {
     this.dialogService = dialogService;
   }
   submit(){
-    this.dialogService.open({ viewModel: EditPerson, model: 'Good or Bad?'}).then((result) => {
+    this.dialogService.open({ viewModel: EditPerson, model: { firstName: 'Owen' }}).then((result) => {
       if (!result.wasCancelled) {
         console.log('good');
+        console.log(result.output);
       } else {
         console.log('bad');
       }

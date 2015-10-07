@@ -44,8 +44,8 @@ export class DialogRenderer {
 
   createDialogHost(controller) {
     let settings = controller.settings;
-    let modalOverlay = document.createElement('dialog-overlay');
-    let modalContainer = document.createElement('dialog-container');
+    let modalOverlay = document.createElement('ai-dialog-overlay');
+    let modalContainer = document.createElement('ai-dialog-container');
     let body = document.body;
 
     modalOverlay.style.zIndex = getNextZIndex();
@@ -81,7 +81,7 @@ export class DialogRenderer {
 
         modalOverlay.classList.add('active');
         modalContainer.classList.add('active');
-        body.classList.add('dialog-open');
+        body.classList.add('ai-dialog-open');
       });
     };
 
@@ -101,7 +101,7 @@ export class DialogRenderer {
 
         modalOverlay.classList.remove('active');
         modalContainer.classList.remove('active');
-        body.classList.remove('dialog-open');
+        body.classList.remove('ai-dialog-open');
       });
     };
 
