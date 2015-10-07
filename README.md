@@ -104,7 +104,8 @@ There are a few ways you can take advantage of the Aurelia dialog.
 1. You can use the dialog service to open a prompt -
 
   ```javascript
-  import {DialogService, Prompt} from 'aurelia-dialog';
+  import {DialogService} from 'aurelia-dialog';
+  import {Prompt} from './prompt';
   export class Welcome {
     static inject = [DialogService];
     constructor(dialogService) {
