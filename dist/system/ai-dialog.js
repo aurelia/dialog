@@ -1,7 +1,7 @@
 System.register(['aurelia-templating'], function (_export) {
   'use strict';
 
-  var customElement, DialogBody;
+  var customElement, AiDialog;
 
   function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
@@ -10,17 +10,17 @@ System.register(['aurelia-templating'], function (_export) {
       customElement = _aureliaTemplating.customElement;
     }],
     execute: function () {
-      DialogBody = (function () {
-        function DialogBody() {
-          _classCallCheck(this, _DialogBody);
+      AiDialog = (function () {
+        function AiDialog() {
+          _classCallCheck(this, _AiDialog);
         }
 
-        var _DialogBody = DialogBody;
-        DialogBody = customElement('dialog-body')(DialogBody) || DialogBody;
-        return DialogBody;
+        var _AiDialog = AiDialog;
+        AiDialog = customElement('ai-dialog')(AiDialog) || AiDialog;
+        return AiDialog;
       })();
 
-      _export('DialogBody', DialogBody);
+      _export('AiDialog', AiDialog);
     }
   };
 });

@@ -7,28 +7,28 @@ function _interopExportWildcard(obj, defaults) { var newObj = defaults({}, obj);
 
 function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
 
-var _dialog = require('./dialog');
+var _aiDialog = require('./ai-dialog');
 
-exports.Dialog = _dialog.Dialog;
+exports.AiDialog = _aiDialog.AiDialog;
 
-var _dialogHeader = require('./dialog-header');
+var _aiDialogHeader = require('./ai-dialog-header');
 
-exports.DialogHeader = _dialogHeader.DialogHeader;
+exports.AiDialogHeader = _aiDialogHeader.AiDialogHeader;
 
-var _dialogBody = require('./dialog-body');
+var _aiDialogBody = require('./ai-dialog-body');
 
-exports.DialogBody = _dialogBody.DialogBody;
+exports.AiDialogBody = _aiDialogBody.AiDialogBody;
 
-var _dialogFooter = require('./dialog-footer');
+var _aiDialogFooter = require('./ai-dialog-footer');
 
-exports.DialogFooter = _dialogFooter.DialogFooter;
+exports.AiDialogFooter = _aiDialogFooter.AiDialogFooter;
 
 var _attachFocus = require('./attach-focus');
 
 exports.AttachFocus = _attachFocus.AttachFocus;
 
 function configure(config) {
-  config.globalResources('./dialog', './dialog-header', './dialog-body', './dialog-footer', './attach-focus');
+  config.globalResources('./ai-dialog', './ai-dialog-header', './ai-dialog-body', './ai-dialog-footer', './attach-focus');
 }
 
 var _dialogService = require('./dialog-service');

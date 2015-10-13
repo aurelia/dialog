@@ -1,7 +1,6 @@
 import {DialogRenderer} from '../../src/dialog-renderer';
 import {DialogController} from '../../src/dialog-controller';
 import {Container} from 'aurelia-dependency-injection';
-import {BehaviorInstance} from 'aurelia-templating';
 
 let element = document.createElement('div');
 

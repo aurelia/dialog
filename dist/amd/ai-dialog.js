@@ -5,15 +5,15 @@ define(['exports', 'aurelia-templating'], function (exports, _aureliaTemplating)
 
   function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-  var Dialog = (function () {
-    function Dialog() {
-      _classCallCheck(this, _Dialog);
+  var AiDialog = (function () {
+    function AiDialog() {
+      _classCallCheck(this, _AiDialog);
     }
 
-    var _Dialog = Dialog;
-    Dialog = _aureliaTemplating.customElement('dialog')(Dialog) || Dialog;
-    return Dialog;
+    var _AiDialog = AiDialog;
+    AiDialog = _aureliaTemplating.customElement('ai-dialog')(AiDialog) || AiDialog;
+    return AiDialog;
   })();
 
-  exports.Dialog = Dialog;
+  exports.AiDialog = AiDialog;
 });

@@ -1,15 +1,15 @@
-export {Dialog} from './dialog';
-export {DialogHeader} from './dialog-header';
-export {DialogBody} from './dialog-body';
-export {DialogFooter} from './dialog-footer';
+export {AiDialog} from './ai-dialog';
+export {AiDialogHeader} from './ai-dialog-header';
+export {AiDialogBody} from './ai-dialog-body';
+export {AiDialogFooter} from './ai-dialog-footer';
 export {AttachFocus} from './attach-focus';
 
 export function configure(config) {
   config.globalResources(
-    './dialog',
-    './dialog-header',
-    './dialog-body',
-    './dialog-footer',
+    './ai-dialog',
+    './ai-dialog-header',
+    './ai-dialog-body',
+    './ai-dialog-footer',
     './attach-focus'
   );
 }

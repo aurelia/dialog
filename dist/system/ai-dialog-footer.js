@@ -1,7 +1,7 @@
 System.register(['aurelia-templating', './dialog-controller'], function (_export) {
   'use strict';
 
-  var customElement, bindable, DialogController, DialogFooter;
+  var customElement, bindable, DialogController, AiDialogFooter;
 
   var _createDecoratedClass = (function () { function defineProperties(target, descriptors, initializers) { for (var i = 0; i < descriptors.length; i++) { var descriptor = descriptors[i]; var decorators = descriptor.decorators; var key = descriptor.key; delete descriptor.key; delete descriptor.decorators; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor || descriptor.initializer) descriptor.writable = true; if (decorators) { for (var f = 0; f < decorators.length; f++) { var decorator = decorators[f]; if (typeof decorator === 'function') { descriptor = decorator(target, key, descriptor) || descriptor; } else { throw new TypeError('The decorator for method ' + descriptor.key + ' is of the invalid type ' + typeof decorator); } } if (descriptor.initializer !== undefined) { initializers[key] = descriptor; continue; } } Object.defineProperty(target, key, descriptor); } } return function (Constructor, protoProps, staticProps, protoInitializers, staticInitializers) { if (protoProps) defineProperties(Constructor.prototype, protoProps, protoInitializers); if (staticProps) defineProperties(Constructor, staticProps, staticInitializers); return Constructor; }; })();
 
@@ -17,10 +17,10 @@ System.register(['aurelia-templating', './dialog-controller'], function (_export
       DialogController = _dialogController.DialogController;
     }],
     execute: function () {
-      DialogFooter = (function () {
+      AiDialogFooter = (function () {
         var _instanceInitializers = {};
 
-        _createDecoratedClass(DialogFooter, [{
+        _createDecoratedClass(AiDialogFooter, [{
           key: 'buttons',
           decorators: [bindable],
           initializer: function initializer() {
@@ -40,8 +40,8 @@ System.register(['aurelia-templating', './dialog-controller'], function (_export
           enumerable: true
         }], _instanceInitializers);
 
-        function DialogFooter(controller) {
-          _classCallCheck(this, _DialogFooter);
+        function AiDialogFooter(controller) {
+          _classCallCheck(this, _AiDialogFooter);
 
           _defineDecoratedPropertyDescriptor(this, 'buttons', _instanceInitializers);
 
@@ -50,7 +50,7 @@ System.register(['aurelia-templating', './dialog-controller'], function (_export
           this.controller = controller;
         }
 
-        DialogFooter.prototype.close = function close(buttonValue) {
+        AiDialogFooter.prototype.close = function close(buttonValue) {
           if (DialogFooter.isCancelButton(buttonValue)) {
             this.controller.cancel(buttonValue);
           } else {
@@ -58,22 +58,22 @@ System.register(['aurelia-templating', './dialog-controller'], function (_export
           }
         };
 
-        DialogFooter.prototype.useDefaultButtonsChanged = function useDefaultButtonsChanged(newValue) {
+        AiDialogFooter.prototype.useDefaultButtonsChanged = function useDefaultButtonsChanged(newValue) {
           if (newValue) {
             this.buttons = ['Cancel', 'Ok'];
           }
         };
 
-        DialogFooter.isCancelButton = function isCancelButton(value) {
+        AiDialogFooter.isCancelButton = function isCancelButton(value) {
           return value === 'Cancel';
         };
 
-        var _DialogFooter = DialogFooter;
-        DialogFooter = customElement('dialog-footer')(DialogFooter) || DialogFooter;
-        return DialogFooter;
+        var _AiDialogFooter = AiDialogFooter;
+        AiDialogFooter = customElement('ai-dialog-footer')(AiDialogFooter) || AiDialogFooter;
+        return AiDialogFooter;
       })();
 
-      _export('DialogFooter', DialogFooter);
+      _export('AiDialogFooter', AiDialogFooter);
     }
   };
 });

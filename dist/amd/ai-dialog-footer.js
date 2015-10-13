@@ -9,10 +9,10 @@ define(['exports', 'aurelia-templating', './dialog-controller'], function (expor
 
   function _defineDecoratedPropertyDescriptor(target, key, descriptors) { var _descriptor = descriptors[key]; if (!_descriptor) return; var descriptor = {}; for (var _key in _descriptor) descriptor[_key] = _descriptor[_key]; descriptor.value = descriptor.initializer ? descriptor.initializer.call(target) : undefined; Object.defineProperty(target, key, descriptor); }
 
-  var DialogFooter = (function () {
+  var AiDialogFooter = (function () {
     var _instanceInitializers = {};
 
-    _createDecoratedClass(DialogFooter, [{
+    _createDecoratedClass(AiDialogFooter, [{
       key: 'buttons',
       decorators: [_aureliaTemplating.bindable],
       initializer: function initializer() {
@@ -32,8 +32,8 @@ define(['exports', 'aurelia-templating', './dialog-controller'], function (expor
       enumerable: true
     }], _instanceInitializers);
 
-    function DialogFooter(controller) {
-      _classCallCheck(this, _DialogFooter);
+    function AiDialogFooter(controller) {
+      _classCallCheck(this, _AiDialogFooter);
 
       _defineDecoratedPropertyDescriptor(this, 'buttons', _instanceInitializers);
 
@@ -42,7 +42,7 @@ define(['exports', 'aurelia-templating', './dialog-controller'], function (expor
       this.controller = controller;
     }
 
-    DialogFooter.prototype.close = function close(buttonValue) {
+    AiDialogFooter.prototype.close = function close(buttonValue) {
       if (DialogFooter.isCancelButton(buttonValue)) {
         this.controller.cancel(buttonValue);
       } else {
@@ -50,20 +50,20 @@ define(['exports', 'aurelia-templating', './dialog-controller'], function (expor
       }
     };
 
-    DialogFooter.prototype.useDefaultButtonsChanged = function useDefaultButtonsChanged(newValue) {
+    AiDialogFooter.prototype.useDefaultButtonsChanged = function useDefaultButtonsChanged(newValue) {
       if (newValue) {
         this.buttons = ['Cancel', 'Ok'];
       }
     };
 
-    DialogFooter.isCancelButton = function isCancelButton(value) {
+    AiDialogFooter.isCancelButton = function isCancelButton(value) {
       return value === 'Cancel';
     };
 
-    var _DialogFooter = DialogFooter;
-    DialogFooter = _aureliaTemplating.customElement('dialog-footer')(DialogFooter) || DialogFooter;
-    return DialogFooter;
+    var _AiDialogFooter = AiDialogFooter;
+    AiDialogFooter = _aureliaTemplating.customElement('ai-dialog-footer')(AiDialogFooter) || AiDialogFooter;
+    return AiDialogFooter;
   })();
 
-  exports.DialogFooter = DialogFooter;
+  exports.AiDialogFooter = AiDialogFooter;
 });

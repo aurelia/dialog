@@ -1,21 +1,21 @@
-System.register(['./dialog', './dialog-header', './dialog-body', './dialog-footer', './attach-focus', './dialog-service', './dialog-controller'], function (_export) {
+System.register(['./ai-dialog', './ai-dialog-header', './ai-dialog-body', './ai-dialog-footer', './attach-focus', './dialog-service', './dialog-controller'], function (_export) {
   'use strict';
 
   _export('configure', configure);
 
   function configure(config) {
-    config.globalResources('./dialog', './dialog-header', './dialog-body', './dialog-footer', './attach-focus');
+    config.globalResources('./ai-dialog', './ai-dialog-header', './ai-dialog-body', './ai-dialog-footer', './attach-focus');
   }
 
   return {
-    setters: [function (_dialog) {
-      _export('Dialog', _dialog.Dialog);
-    }, function (_dialogHeader) {
-      _export('DialogHeader', _dialogHeader.DialogHeader);
-    }, function (_dialogBody) {
-      _export('DialogBody', _dialogBody.DialogBody);
-    }, function (_dialogFooter) {
-      _export('DialogFooter', _dialogFooter.DialogFooter);
+    setters: [function (_aiDialog) {
+      _export('AiDialog', _aiDialog.AiDialog);
+    }, function (_aiDialogHeader) {
+      _export('AiDialogHeader', _aiDialogHeader.AiDialogHeader);
+    }, function (_aiDialogBody) {
+      _export('AiDialogBody', _aiDialogBody.AiDialogBody);
+    }, function (_aiDialogFooter) {
+      _export('AiDialogFooter', _aiDialogFooter.AiDialogFooter);
     }, function (_attachFocus) {
       _export('AttachFocus', _attachFocus.AttachFocus);
     }, function (_dialogService) {

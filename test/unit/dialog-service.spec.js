@@ -1,5 +1,4 @@
 import {DialogService} from '../../src/dialog-service';
-import {BehaviorInstance} from 'aurelia-templating';
 import {Container} from 'aurelia-dependency-injection';
 import {CompositionEngine} from 'aurelia-templating';
 import {DialogRenderer} from '../../src/dialog-renderer';

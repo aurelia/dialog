@@ -56,8 +56,9 @@ var DialogRenderer = (function () {
     var _this2 = this;
 
     var settings = controller.settings;
-    var modalOverlay = document.createElement('dialog-overlay');
-    var modalContainer = document.createElement('dialog-container');
+    var modalOverlay = document.createElement('ai-dialog-overlay');
+    var modalContainer = document.createElement('ai-dialog-container');
+    var body = document.body;
 
     modalOverlay.style.zIndex = getNextZIndex();
     modalContainer.style.zIndex = getNextZIndex();
@@ -92,6 +93,7 @@ var DialogRenderer = (function () {
 
         modalOverlay.classList.add('active');
         modalContainer.classList.add('active');
+        body.classList.add('ai-dialog-open');
       });
     };
 
@@ -111,6 +113,7 @@ var DialogRenderer = (function () {
 
         modalOverlay.classList.remove('active');
         modalContainer.classList.remove('active');
+        body.classList.remove('ai-dialog-open');
       });
     };
 
@@ -124,10 +127,13 @@ var DialogRenderer = (function () {
     controller.centerDialog = function () {
       var child = modalContainer.children[0];
 
-      child.style.marginLeft = -(child.offsetWidth / 2) + 'px';
+      var vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+      child.style.marginLeft = Math.max((vw - child.offsetWidth) / 2, 0) + 'px';
 
       if (!settings.centerHorizontalOnly) {
-        child.style.marginTop = -(child.offsetHeight / 2) + 'px';
+        var vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+
+        child.style.marginTop = Math.max((vh - child.offsetHeight) / 2, 30) + 'px';
       }
     };
 

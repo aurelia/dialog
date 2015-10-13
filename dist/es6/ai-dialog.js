@@ -1,6 +1,6 @@
 import {customElement} from 'aurelia-templating';
 
-@customElement('dialog')
-export class Dialog {
+@customElement('ai-dialog')
+export class AiDialog {
 
 }

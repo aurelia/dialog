@@ -59,7 +59,7 @@ define(['exports', 'aurelia-metadata', 'aurelia-dependency-injection', 'aurelia-
               return _this.compositionEngine.createBehavior(returnedInstruction).then(function (behavior) {
                 controller.behavior = behavior;
                 controller.view = behavior.view;
-                behavior.view.bind(behavior.bindingContext);
+                behavior.view.bind(behavior.model);
 
                 return _this.renderer.createDialogHost(controller).then(function () {
                   return _this.renderer.showDialog(controller);

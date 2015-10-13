@@ -6,14 +6,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var _aureliaTemplating = require('aurelia-templating');
 
-var Dialog = (function () {
-  function Dialog() {
-    _classCallCheck(this, _Dialog);
+var AiDialog = (function () {
+  function AiDialog() {
+    _classCallCheck(this, _AiDialog);
   }
 
-  var _Dialog = Dialog;
-  Dialog = _aureliaTemplating.customElement('dialog')(Dialog) || Dialog;
-  return Dialog;
+  var _AiDialog = AiDialog;
+  AiDialog = _aureliaTemplating.customElement('ai-dialog')(AiDialog) || AiDialog;
+  return AiDialog;
 })();
 
-exports.Dialog = Dialog;
+exports.AiDialog = AiDialog;

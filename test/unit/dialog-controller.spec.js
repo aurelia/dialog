@@ -1,6 +1,5 @@
 import {DialogController} from '../../src/dialog-controller';
 import {Container} from 'aurelia-dependency-injection';
-import {BehaviorInstance} from 'aurelia-templating';
 
 describe('the Dialog Controller', () => {
   let dialogController,
