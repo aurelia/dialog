@@ -71,7 +71,7 @@ System.register(['aurelia-metadata', 'aurelia-dependency-injection', 'aurelia-te
 
               return invokeLifecycle(returnedInstruction.viewModel, 'canActivate', _settings.model).then(function (canActivate) {
                 if (canActivate) {
-                  return _this.compositionEngine.createBehavior(returnedInstruction).then(function (behavior) {
+                  return _this.compositionEngine.createController(returnedInstruction).then(function (behavior) {
                     controller.behavior = behavior;
                     controller.view = behavior.view;
                     behavior.view.bind(behavior.model);

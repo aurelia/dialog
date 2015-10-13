@@ -46,7 +46,7 @@ export class DialogService {
 
         return invokeLifecycle(returnedInstruction.viewModel, 'canActivate', _settings.model).then(canActivate => {
           if (canActivate) {
-            return this.compositionEngine.createBehavior(returnedInstruction).then(behavior => {
+            return this.compositionEngine.createController(returnedInstruction).then(behavior => {
               controller.behavior = behavior;
               controller.view = behavior.view;
               behavior.view.bind(behavior.model);

@@ -1,11 +1,11 @@
 {
   "jspm": {
     "dependencies": {
-      "aurelia-bootstrapper": "github:aurelia/bootstrapper@^0.17.0",
-      "aurelia-dependency-injection": "github:aurelia/dependency-injection@^0.10.1",
-      "aurelia-framework": "github:aurelia/framework@^0.16.0",
-      "aurelia-metadata": "github:aurelia/metadata@^0.8.0",
-      "aurelia-templating": "github:aurelia/templating@^0.15.3",
+      "aurelia-bootstrapper": "github:aurelia/bootstrapper@^0.18.0",
+      "aurelia-dependency-injection": "github:aurelia/dependency-injection@^0.11.0",
+      "aurelia-framework": "github:aurelia/framework@^0.17.0",
+      "aurelia-metadata": "github:aurelia/metadata@^0.9.0",
+      "aurelia-templating": "github:aurelia/templating@^0.16.0",
       "font-awesome": "npm:font-awesome@^4.4.0",
       "text": "github:systemjs/plugin-text@^0.0.2",
       "twbs/bootstrap": "github:twbs/bootstrap@3.3.5"
