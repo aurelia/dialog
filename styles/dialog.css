@@ -96,7 +96,11 @@ ai-dialog > ai-dialog-footer button {
   border-radius: 4px;
   margin: 5px 0 5px 5px;
 }
-ai-dialog > ai-dialog-footer button:hover {
+ai-dialog > ai-dialog-footer button:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+ai-dialog > ai-dialog-footer button:hover:enabled {
   color: #333;
   background-color: #e6e6e6;
   border-color: #adadad;

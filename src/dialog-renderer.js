@@ -23,15 +23,15 @@ function getNextZIndex() {
   return ++currentZIndex;
 }
 
-export class DialogRenderer {
-  defaultSettings = {
-    lock: true,
-    centerHorizontalOnly: false
-  };
+export let globalSettings = {
+  lock: true,
+  centerHorizontalOnly: false
+};
 
+export class DialogRenderer {
+  defaultSettings = globalSettings;
   constructor() {
     this.dialogControllers = [];
-
     document.addEventListener('keyup', e => {
       if (e.keyCode === 27) {
         let top = this.dialogControllers[this.dialogControllers.length - 1];
