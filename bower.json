@@ -17,9 +17,9 @@
     "url": "https://github.com/aurelia/dialog"
   },
   "dependencies": {
-    "aurelia-dependency-injection": "^0.10.0",
-    "aurelia-framework": "^0.16.0",
-    "aurelia-metadata": "^0.8.0",
-    "aurelia-templating": "^0.15.0"
+    "aurelia-dependency-injection": "^0.11.0",
+    "aurelia-framework": "^0.17.0",
+    "aurelia-metadata": "^0.9.0",
+    "aurelia-templating": "^0.16.0"
   }
 }
