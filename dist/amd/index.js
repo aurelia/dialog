@@ -1,4 +1,4 @@
-define(['exports', './ai-dialog', './ai-dialog-header', './ai-dialog-body', './ai-dialog-footer', './attach-focus', './dialog-service', './dialog-controller'], function (exports, _aiDialog, _aiDialogHeader, _aiDialogBody, _aiDialogFooter, _attachFocus, _dialogService, _dialogController) {
+define(['exports', './dialog-renderer', './ai-dialog', './ai-dialog-header', './ai-dialog-body', './ai-dialog-footer', './attach-focus', './dialog-service', './dialog-controller'], function (exports, _dialogRenderer, _aiDialog, _aiDialogHeader, _aiDialogBody, _aiDialogFooter, _attachFocus, _dialogService, _dialogController) {
   'use strict';
 
   exports.__esModule = true;
@@ -14,8 +14,11 @@ define(['exports', './ai-dialog', './ai-dialog-header', './ai-dialog-body', './a
   exports.AiDialogFooter = _aiDialogFooter.AiDialogFooter;
   exports.AttachFocus = _attachFocus.AttachFocus;
 
-  function configure(config) {
+  function configure(config, callback) {
     config.globalResources('./ai-dialog', './ai-dialog-header', './ai-dialog-body', './ai-dialog-footer', './attach-focus');
+    if (typeof callback === 'function') {
+      callback(_dialogRenderer.globalSettings);
+    }
   }
 
   _defaults(exports, _interopExportWildcard(_dialogService, _defaults));

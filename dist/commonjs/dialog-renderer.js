@@ -29,19 +29,22 @@ function getNextZIndex() {
   return ++currentZIndex;
 }
 
+var globalSettings = {
+  lock: true,
+  centerHorizontalOnly: false
+};
+
+exports.globalSettings = globalSettings;
+
 var DialogRenderer = (function () {
   function DialogRenderer() {
     var _this = this;
 
     _classCallCheck(this, DialogRenderer);
 
-    this.defaultSettings = {
-      lock: true,
-      centerHorizontalOnly: false
-    };
+    this.defaultSettings = globalSettings;
 
     this.dialogControllers = [];
-
     document.addEventListener('keyup', function (e) {
       if (e.keyCode === 27) {
         var _top = _this.dialogControllers[_this.dialogControllers.length - 1];

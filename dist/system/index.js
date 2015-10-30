@@ -1,14 +1,21 @@
-System.register(['./ai-dialog', './ai-dialog-header', './ai-dialog-body', './ai-dialog-footer', './attach-focus', './dialog-service', './dialog-controller'], function (_export) {
+System.register(['./dialog-renderer', './ai-dialog', './ai-dialog-header', './ai-dialog-body', './ai-dialog-footer', './attach-focus', './dialog-service', './dialog-controller'], function (_export) {
   'use strict';
+
+  var globalSettings;
 
   _export('configure', configure);
 
-  function configure(config) {
+  function configure(config, callback) {
     config.globalResources('./ai-dialog', './ai-dialog-header', './ai-dialog-body', './ai-dialog-footer', './attach-focus');
+    if (typeof callback === 'function') {
+      callback(globalSettings);
+    }
   }
 
   return {
-    setters: [function (_aiDialog) {
+    setters: [function (_dialogRenderer) {
+      globalSettings = _dialogRenderer.globalSettings;
+    }, function (_aiDialog) {
       _export('AiDialog', _aiDialog.AiDialog);
     }, function (_aiDialogHeader) {
       _export('AiDialogHeader', _aiDialogHeader.AiDialogHeader);

@@ -1,7 +1,7 @@
 System.register(['aurelia-templating'], function (_export) {
   'use strict';
 
-  var ViewSlot, currentZIndex, transitionEvent, DialogRenderer;
+  var ViewSlot, currentZIndex, transitionEvent, globalSettings, DialogRenderer;
 
   function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
@@ -34,19 +34,22 @@ System.register(['aurelia-templating'], function (_export) {
         }
       })();
 
+      globalSettings = {
+        lock: true,
+        centerHorizontalOnly: false
+      };
+
+      _export('globalSettings', globalSettings);
+
       DialogRenderer = (function () {
         function DialogRenderer() {
           var _this = this;
 
           _classCallCheck(this, DialogRenderer);
 
-          this.defaultSettings = {
-            lock: true,
-            centerHorizontalOnly: false
-          };
+          this.defaultSettings = globalSettings;
 
           this.dialogControllers = [];
-
           document.addEventListener('keyup', function (e) {
             if (e.keyCode === 27) {
               var _top = _this.dialogControllers[_this.dialogControllers.length - 1];
