@@ -30,7 +30,7 @@ var DialogController = (function () {
     return _lifecycle.invokeLifecycle(this.viewModel, 'deactivate').then(function () {
       return _this._renderer.hideDialog(_this).then(function () {
         return _this._renderer.destroyDialogHost(_this).then(function () {
-          _this.behavior.unbind();
+          _this.controller.unbind();
           _this._reject(message);
         });
       });
@@ -46,7 +46,7 @@ var DialogController = (function () {
         return _lifecycle.invokeLifecycle(_this2.viewModel, 'deactivate').then(function () {
           return _this2._renderer.hideDialog(_this2).then(function () {
             return _this2._renderer.destroyDialogHost(_this2).then(function () {
-              _this2.behavior.unbind();
+              _this2.controller.unbind();
               _this2._resolve(returnResult);
             });
           });
