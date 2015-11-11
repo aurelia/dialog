@@ -20,7 +20,7 @@ export class DialogController {
     return invokeLifecycle(this.viewModel, 'deactivate').then(() => {
       return this._renderer.hideDialog(this).then(() => {
         return this._renderer.destroyDialogHost(this).then(() => {
-          this.behavior.unbind();
+          this.controller.unbind();
           this._reject(message);
         });
       });
@@ -34,7 +34,7 @@ export class DialogController {
         return invokeLifecycle(this.viewModel, 'deactivate').then(() => {
           return this._renderer.hideDialog(this).then(() => {
             return this._renderer.destroyDialogHost(this).then(() => {
-              this.behavior.unbind();
+              this.controller.unbind();
               this._resolve(returnResult);
             });
           });

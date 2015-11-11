@@ -46,6 +46,7 @@ ai-dialog {
   border-image-width: initial;
   border-image-outset: initial;
   border-image-repeat: initial;
+  background: white;
 }
 ai-dialog > ai-dialog-header {
   display: block;

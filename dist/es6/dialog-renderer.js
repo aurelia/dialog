@@ -42,8 +42,8 @@ export class DialogRenderer {
     });
   }
 
-  createDialogHost(controller) {
-    let settings = controller.settings;
+  createDialogHost(dialogController) {
+    let settings = dialogController.settings;
     let modalOverlay = document.createElement('ai-dialog-overlay');
     let modalContainer = document.createElement('ai-dialog-container');
     let body = document.body;
@@ -54,18 +54,18 @@ export class DialogRenderer {
     document.body.appendChild(modalOverlay);
     document.body.appendChild(modalContainer);
 
-    controller.slot = new ViewSlot(modalContainer, true);
-    controller.slot.add(controller.view);
+    dialogController.slot = new ViewSlot(modalContainer, true);
+    dialogController.slot.add(dialogController.view);
 
-    controller.showDialog = () => {
-      this.dialogControllers.push(controller);
+    dialogController.showDialog = () => {
+      this.dialogControllers.push(dialogController);
 
-      controller.slot.attached();
-      controller.centerDialog();
+      dialogController.slot.attached();
+      dialogController.centerDialog();
 
       modalOverlay.onclick = () => {
         if (!settings.lock) {
-          controller.cancel();
+          dialogController.cancel();
         } else {
           return false;
         }
@@ -85,8 +85,8 @@ export class DialogRenderer {
       });
     };
 
-    controller.hideDialog = () => {
-      let i = this.dialogControllers.indexOf(controller);
+    dialogController.hideDialog = () => {
+      let i = this.dialogControllers.indexOf(dialogController);
       if (i !== -1) {
         this.dialogControllers.splice(i, 1);
       }
@@ -105,14 +105,14 @@ export class DialogRenderer {
       });
     };
 
-    controller.destroyDialogHost = () => {
+    dialogController.destroyDialogHost = () => {
       document.body.removeChild(modalOverlay);
       document.body.removeChild(modalContainer);
-      controller.slot.detached();
+      dialogController.slot.detached();
       return Promise.resolve();
     };
 
-    controller.centerDialog = () => {
+    dialogController.centerDialog = () => {
       let child = modalContainer.children[0];
 
       let vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
@@ -128,15 +128,15 @@ export class DialogRenderer {
     return Promise.resolve();
   }
 
-  showDialog(controller) {
-    return controller.showDialog();
+  showDialog(dialogController) {
+    return dialogController.showDialog();
   }
 
-  hideDialog(controller) {
-    return controller.hideDialog();
+  hideDialog(dialogController) {
+    return dialogController.hideDialog();
   }
 
-  destroyDialogHost(controller) {
-    return controller.destroyDialogHost();
+  destroyDialogHost(dialogController) {
+    return dialogController.destroyDialogHost();
   }
 }

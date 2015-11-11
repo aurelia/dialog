@@ -20,7 +20,7 @@ export class DialogService {
     }
 
     if (typeof instruction.viewModel === 'string') {
-      return this.compositionEngine.createViewModel(instruction);
+      return this.compositionEngine.ensureViewModel(instruction);
     }
 
     return Promise.resolve(instruction);
@@ -31,7 +31,7 @@ export class DialogService {
 
     return new Promise((resolve, reject) => {
       let childContainer = this.container.createChild();
-      let controller = new DialogController(this.renderer, _settings, resolve, reject);
+      let dialogController = new DialogController(this.renderer, _settings, resolve, reject);
       let instruction = {
         viewModel: _settings.viewModel,
         container: this.container,
@@ -39,20 +39,20 @@ export class DialogService {
         model: _settings.model
       };
 
-      childContainer.registerInstance(DialogController, controller);
+      childContainer.registerInstance(DialogController, dialogController);
 
       return this._getViewModel(instruction).then(returnedInstruction => {
-        controller.viewModel = returnedInstruction.viewModel;
+        dialogController.viewModel = returnedInstruction.viewModel;
 
         return invokeLifecycle(returnedInstruction.viewModel, 'canActivate', _settings.model).then(canActivate => {
           if (canActivate) {
-            return this.compositionEngine.createController(returnedInstruction).then(behavior => {
-              controller.behavior = behavior;
-              controller.view = behavior.view;
-              behavior.view.bind(behavior.model);
+            return this.compositionEngine.createController(returnedInstruction).then(controller => {
+              dialogController.controller = controller;
+              dialogController.view = controller.view;
+              controller.automate();
 
-              return this.renderer.createDialogHost(controller).then(() => {
-                return this.renderer.showDialog(controller);
+              return this.renderer.createDialogHost(dialogController).then(() => {
+                return this.renderer.showDialog(dialogController);
               });
             });
           }

@@ -54,10 +54,10 @@ define(['exports', 'aurelia-templating'], function (exports, _aureliaTemplating)
       });
     }
 
-    DialogRenderer.prototype.createDialogHost = function createDialogHost(controller) {
+    DialogRenderer.prototype.createDialogHost = function createDialogHost(dialogController) {
       var _this2 = this;
 
-      var settings = controller.settings;
+      var settings = dialogController.settings;
       var modalOverlay = document.createElement('ai-dialog-overlay');
       var modalContainer = document.createElement('ai-dialog-container');
       var body = document.body;
@@ -68,18 +68,18 @@ define(['exports', 'aurelia-templating'], function (exports, _aureliaTemplating)
       document.body.appendChild(modalOverlay);
       document.body.appendChild(modalContainer);
 
-      controller.slot = new _aureliaTemplating.ViewSlot(modalContainer, true);
-      controller.slot.add(controller.view);
+      dialogController.slot = new _aureliaTemplating.ViewSlot(modalContainer, true);
+      dialogController.slot.add(dialogController.view);
 
-      controller.showDialog = function () {
-        _this2.dialogControllers.push(controller);
+      dialogController.showDialog = function () {
+        _this2.dialogControllers.push(dialogController);
 
-        controller.slot.attached();
-        controller.centerDialog();
+        dialogController.slot.attached();
+        dialogController.centerDialog();
 
         modalOverlay.onclick = function () {
           if (!settings.lock) {
-            controller.cancel();
+            dialogController.cancel();
           } else {
             return false;
           }
@@ -99,8 +99,8 @@ define(['exports', 'aurelia-templating'], function (exports, _aureliaTemplating)
         });
       };
 
-      controller.hideDialog = function () {
-        var i = _this2.dialogControllers.indexOf(controller);
+      dialogController.hideDialog = function () {
+        var i = _this2.dialogControllers.indexOf(dialogController);
         if (i !== -1) {
           _this2.dialogControllers.splice(i, 1);
         }
@@ -119,14 +119,14 @@ define(['exports', 'aurelia-templating'], function (exports, _aureliaTemplating)
         });
       };
 
-      controller.destroyDialogHost = function () {
+      dialogController.destroyDialogHost = function () {
         document.body.removeChild(modalOverlay);
         document.body.removeChild(modalContainer);
-        controller.slot.detached();
+        dialogController.slot.detached();
         return Promise.resolve();
       };
 
-      controller.centerDialog = function () {
+      dialogController.centerDialog = function () {
         var child = modalContainer.children[0];
 
         var vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
@@ -142,16 +142,16 @@ define(['exports', 'aurelia-templating'], function (exports, _aureliaTemplating)
       return Promise.resolve();
     };
 
-    DialogRenderer.prototype.showDialog = function showDialog(controller) {
-      return controller.showDialog();
+    DialogRenderer.prototype.showDialog = function showDialog(dialogController) {
+      return dialogController.showDialog();
     };
 
-    DialogRenderer.prototype.hideDialog = function hideDialog(controller) {
-      return controller.hideDialog();
+    DialogRenderer.prototype.hideDialog = function hideDialog(dialogController) {
+      return dialogController.hideDialog();
     };
 
-    DialogRenderer.prototype.destroyDialogHost = function destroyDialogHost(controller) {
-      return controller.destroyDialogHost();
+    DialogRenderer.prototype.destroyDialogHost = function destroyDialogHost(dialogController) {
+      return dialogController.destroyDialogHost();
     };
 
     return DialogRenderer;
