@@ -1,0 +1,14 @@
+<template>
+  <ai-dialog>
+
+    <ai-dialog-body>
+      <p color="text">${model.text}</p>
+    </ai-dialog-body>
+
+    <ai-dialog-footer actions>
+      <template repeat.for="action of model.actions">
+        <ai-button flat click.trigger="$parent.model[action]($event, $parent.controller)">${action}</ai-button>
+      </template>
+    </ai-dialog-footer>
+  </ai-dialog>
+</template>

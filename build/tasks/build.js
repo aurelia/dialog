@@ -1,3 +1,4 @@
+var gutil = require('gulp-util');
 var gulp = require('gulp');
 var runSequence = require('run-sequence');
 var changed = require('gulp-changed');
@@ -32,13 +33,14 @@ gulp.task('build-commonjs', ['build-html-commonjs'], function () {
 
 gulp.task('build-html-amd', function () {
   return gulp.src(paths.html)
-    .pipe(gulp.dest(paths.output + 'amd'));
+    .pipe(gulp.dest(gutil.env.dev ? paths.app : paths.output + 'amd'));
 });
 
 gulp.task('build-amd', ['build-html-amd'], function () {
+  console.log(gutil.env.dev ? paths.app : paths.output)
   return gulp.src(paths.source)
     .pipe(to5(assign({}, compilerOptions, {modules:'amd'})))
-    .pipe(gulp.dest(paths.output + 'amd'));
+    .pipe(gulp.dest(gutil.env.dev ? paths.app : paths.output + 'amd'));
 });
 
 gulp.task('build-html-system', function () {

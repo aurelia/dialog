@@ -1,4 +1,8 @@
 import {invokeLifecycle} from './lifecycle';
+import {handleEventListeners} from './util';
+const GLOBAL_ACTIVE_CLASS  = 'ai-dialog-active';
+const ELEMENT_ACTIVE_CLASS = 'active';
+
 
 export class DialogController {
   constructor(renderer, settings, resolve, reject) {
@@ -17,30 +21,32 @@ export class DialogController {
   }
 
   error(message) {
-    return invokeLifecycle(this.viewModel, 'deactivate').then(() => {
-      return this._renderer.hideDialog(this).then(() => {
-        return this._renderer.destroyDialogHost(this).then(() => {
-          this.controller.unbind();
-          this._reject(message);
-        });
-      });
-    });
+    return this._renderer.deactivateLifecycle(this, message);
   }
 
   close(ok, result) {
     let returnResult = new DialogResult(!ok, result);
-    return invokeLifecycle(this.viewModel, 'canDeactivate').then(canDeactivate => {
-      if (canDeactivate) {
-        return invokeLifecycle(this.viewModel, 'deactivate').then(() => {
-          return this._renderer.hideDialog(this).then(() => {
-            return this._renderer.destroyDialogHost(this).then(() => {
-              this.controller.unbind();
-              this._resolve(returnResult);
-            });
-          });
-        });
-      }
-    });
+    return this._renderer.deactivateLifecycle(this, returnResult);
+  }
+
+  showDialog() {
+    return this.handleAnimations(true);
+  }
+
+  hideDialog() {
+    return this.handleAnimations(false);
+  }
+
+  handleAnimations(value) {
+    let toggle = value ? 'add' : 'remove';
+    let element = this.element;
+    return handleEventListeners(element, 'animationend', trigger);
+
+    ///////////////////
+    function trigger() {
+      element.classList[toggle](ELEMENT_ACTIVE_CLASS);
+      document.body.classList[toggle](GLOBAL_ACTIVE_CLASS);
+    }
   }
 }
 

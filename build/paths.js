@@ -3,9 +3,11 @@ var fs = require('fs');
 
 var appRoot = 'src/';
 var pkg = JSON.parse(fs.readFileSync('./package.json', 'utf-8'));
+var app = path.join(process.cwd(), '../skeleton-interface/jspm_packages/github/aurelia/dialog@'+pkg.version);
 
 module.exports = {
   root: appRoot,
+  app:app,
   source: appRoot + '**/*.js',
   html: appRoot + '**/*.html',
   style: 'styles/**/*.css',

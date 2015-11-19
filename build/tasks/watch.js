@@ -11,12 +11,18 @@ function reportChange(event) {
 // to js, html, and css files and call the
 // reportChange method. Also, by depending on the
 // serve task, it will instantiate a browserSync session
-gulp.task('watch', ['serve'], function() {
-  var bs = browserSync.get('Sample server');
+gulp.task('watch', ['build'], function() {
 
-  gulp.watch(paths.source, ['build-amd', bs.reload]).on('change', reportChange);
-  gulp.watch(paths.html, ['build-html-amd', bs.reload]).on('change', reportChange);
-  gulp.watch(paths.style, bs.reload).on('change', reportChange);
-  gulp.watch(paths.sample + '/*', bs.reload).on('change', reportChange);
-  gulp.watch(paths.sample + '/src/**/*', bs.reload).on('change', reportChange);
+  gulp.watch(paths.source, ['build-amd']).on('change', reportChange);
+  gulp.watch(paths.html, ['build-html-amd']).on('change', reportChange);
+  gulp.watch(paths.style).on('change', reportChange);
+  gulp.watch(paths.sample + '/*').on('change', reportChange);
+  gulp.watch(paths.sample + '/src/**/*').on('change', reportChange);
+
+  // var bs = browserSync.get('Sample server');
+  // gulp.watch(paths.source, ['build-amd', bs.reload]).on('change', reportChange);
+  // gulp.watch(paths.html, ['build-html-amd', bs.reload]).on('change', reportChange);
+  // gulp.watch(paths.style, bs.reload).on('change', reportChange);
+  // gulp.watch(paths.sample + '/*', bs.reload).on('change', reportChange);
+  // gulp.watch(paths.sample + '/src/**/*', bs.reload).on('change', reportChange);
 });

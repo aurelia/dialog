@@ -4,6 +4,7 @@ import {CompositionEngine} from 'aurelia-templating';
 import {DialogController} from './dialog-controller';
 import {DialogRenderer} from './dialog-renderer';
 import {invokeLifecycle} from './lifecycle';
+import {Alert} from './models/alert';
 
 export class DialogService {
   static inject = [Container, CompositionEngine, DialogRenderer];
@@ -26,38 +27,38 @@ export class DialogService {
     return Promise.resolve(instruction);
   }
 
-  open(settings) {
-    let _settings =  Object.assign({}, this.renderer.defaultSettings, settings);
-
+  createViewModel(Controller, settings, instruction) {
+    var controller;
     return new Promise((resolve, reject) => {
-      let childContainer = this.container.createChild();
-      let dialogController = new DialogController(this.renderer, _settings, resolve, reject);
-      let instruction = {
-        viewModel: _settings.viewModel,
-        container: this.container,
-        childContainer: childContainer,
-        model: _settings.model
-      };
+      controller     = new Controller(this.renderer, settings, resolve, reject);
+      instruction.childContainer.registerInstance(Controller, controller);
 
-      childContainer.registerInstance(DialogController, dialogController);
-
-      return this._getViewModel(instruction).then(returnedInstruction => {
-        dialogController.viewModel = returnedInstruction.viewModel;
-
-        return invokeLifecycle(returnedInstruction.viewModel, 'canActivate', _settings.model).then(canActivate => {
-          if (canActivate) {
-            return this.compositionEngine.createController(returnedInstruction).then(controller => {
-              dialogController.controller = controller;
-              dialogController.view = controller.view;
-              controller.automate();
-
-              return this.renderer.createDialogHost(dialogController).then(() => {
-                return this.renderer.showDialog(dialogController);
-              });
-            });
-          }
-        });
-      });
+      return this._getViewModel(instruction).then(
+        (returnedInstruction) => this.renderer.activateLifecycle(controller, returnedInstruction, instruction.model, resolve)
+      );
     });
   }
+
+  open(_settings) {
+    let viewModel = _settings.viewModel;
+    let model     = _settings.model;
+    let container = this.container;
+    let settings  = Object.assign({}, this.defaultSettings, _settings, this.config);
+    let instruction = {
+      viewModel: _settings.viewModel,
+      container: this.container,
+      childContainer: this.container.createChild(),
+      model: _settings.model
+    };
+    return this.createViewModel(DialogController, settings, instruction);
+  }
+
+  alert(_settings) {
+    return this.open({
+      viewModel: Alert,
+      model:_settings
+    })
+  }
+
+  close() {}
 }
