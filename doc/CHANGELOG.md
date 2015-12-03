@@ -1,3 +1,8 @@
+### 0.5.1 (2015-12-03)
+
+* Destroy modal only when modalContainer ends its transition
+* incorrect DialogFooter name
+
 ### 0.2.1 (2015-09-07)
 
 
@@ -19,5 +24,3 @@
 
 
 ### 0.1.1 (2015-08-24)
-
-

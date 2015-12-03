@@ -74,7 +74,10 @@ export class DialogRenderer {
       return new Promise((resolve) => {
         modalContainer.addEventListener(transitionEvent, onTransitionEnd);
 
-        function onTransitionEnd() {
+        function onTransitionEnd(e) {
+          if (e.target !== modalContainer) {
+            return;
+          }
           modalContainer.removeEventListener(transitionEvent, onTransitionEnd);
           resolve();
         }
