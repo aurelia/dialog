@@ -57,19 +57,44 @@ To run the unit tests, first ensure that you have followed the steps above in or
 	```shell
 	npm install -g jspm
 	```
-3. Download the [SystemJS](https://github.com/systemjs/systemjs) module loader:
 
-	```shell
-	jspm dl-loader
-	```
+3. You can now run `jspm` to install dependencies required for running the test suite:
 
-4. Ensure that you have Chrome installed. Karma runs the test suite in Chrome.
+  ```shell
+  jspm install
+  ```
 
-5. You can now run the tests with this command:
+4. Download the [SystemJS](https://github.com/systemjs/systemjs) module loader:
+
+  ```shell
+  jspm dl-loader
+  ```
+
+5. Ensure that you have Chrome installed. Karma runs the test suite in Chrome.
+
+6. You can now run the tests with this command:
 
 	```shell
 	karma start
 	```
+
+## Running The Sample
+
+To run the sample code using this plugin proceed with these additional steps:
+
+1. Go to the `sample` directory and install dependencies using `jspm`:
+
+  ```shell
+  cd sample
+  jspm install
+  ```
+2. Go back to the root of the project and use gulp to serve the sample project:
+
+  ```shell
+  cd ..
+  gulp watch
+  ```
+
 
 ## How to install this plugin?
 
