@@ -13,7 +13,7 @@ export class AiDialogFooter {
   }
 
   close(buttonValue) {
-    if (DialogFooter.isCancelButton(buttonValue)) {
+    if (AiDialogFooter.isCancelButton(buttonValue)) {
       this.controller.cancel(buttonValue);
     } else {
       this.controller.ok(buttonValue);
