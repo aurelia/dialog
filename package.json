@@ -1,6 +1,6 @@
 {
   "name": "aurelia-dialog",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "A dialog plugin for Aurelia.",
   "keywords": [
     "aurelia",
@@ -28,10 +28,10 @@
     },
     "dependencies": {
       "aurelia-dependency-injection": "npm:aurelia-dependency-injection@^1.0.0-beta.1",
-      "aurelia-framework": "npm:aurelia-framework@^1.0.0-beta.1",
+      "aurelia-framework": "npm:aurelia-framework@^1.0.0-beta.1.0.3",
       "aurelia-metadata": "npm:aurelia-metadata@^1.0.0-beta.1",
       "aurelia-pal": "npm:aurelia-pal@^1.0.0-beta.1",
-      "aurelia-templating": "npm:aurelia-templating@^1.0.0-beta.1",
+      "aurelia-templating": "npm:aurelia-templating@^1.0.0-beta.1.0.1",
       "text": "github:systemjs/plugin-text@^0.0.2"
     },
     "devDependencies": {
