@@ -8,7 +8,7 @@ import {invokeLifecycle} from './lifecycle';
 export class DialogService {
   static inject = [Container, CompositionEngine, DialogRenderer];
 
-  constructor(container, compositionEngine, renderer) {
+  constructor(container: Container, compositionEngine, renderer) {
     this.container = container;
     this.compositionEngine = compositionEngine;
     this.renderer = renderer;

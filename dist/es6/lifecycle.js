@@ -1,4 +1,4 @@
-export function invokeLifecycle(instance, name, model) {
+export function invokeLifecycle(instance: any, name: string, model: any) {
   if (typeof instance[name] === 'function') {
     let result = instance[name](model);
 

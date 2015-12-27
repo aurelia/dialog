@@ -42,7 +42,7 @@ export class DialogRenderer {
     });
   }
 
-  createDialogHost(dialogController) {
+  createDialogHost(dialogController: DialogController) {
     let settings = dialogController.settings;
     let modalOverlay = document.createElement('ai-dialog-overlay');
     let modalContainer = document.createElement('ai-dialog-container');
@@ -131,15 +131,15 @@ export class DialogRenderer {
     return Promise.resolve();
   }
 
-  showDialog(dialogController) {
+  showDialog(dialogController: DialogController) {
     return dialogController.showDialog();
   }
 
-  hideDialog(dialogController) {
+  hideDialog(dialogController: DialogController) {
     return dialogController.hideDialog();
   }
 
-  destroyDialogHost(dialogController) {
+  destroyDialogHost(dialogController: DialogController) {
     return dialogController.destroyDialogHost();
   }
 }

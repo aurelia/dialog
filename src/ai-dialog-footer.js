@@ -1,18 +1,21 @@
 import {customElement, bindable} from 'aurelia-templating';
 import {DialogController} from './dialog-controller';
 
+/**
+ * * View-model for footer of Dialog.
+ * */
 @customElement('ai-dialog-footer')
 export class AiDialogFooter {
   static inject = [DialogController];
 
-  @bindable buttons = [];
-  @bindable useDefaultButtons = false;
+  @bindable buttons: any[] = [];
+  @bindable useDefaultButtons: boolean = false;
 
-  constructor(controller) {
+  constructor(controller: DialogController) {
     this.controller = controller;
   }
 
-  close(buttonValue) {
+  close(buttonValue: string) {
     if (AiDialogFooter.isCancelButton(buttonValue)) {
       this.controller.cancel(buttonValue);
     } else {
@@ -20,13 +23,14 @@ export class AiDialogFooter {
     }
   }
 
-  useDefaultButtonsChanged(newValue) {
+  useDefaultButtonsChanged(newValue: boolean) {
     if (newValue) {
       this.buttons = ['Cancel', 'Ok'];
     }
   }
 
-  static isCancelButton(value) {
+  static isCancelButton(value: string) {
     return value === 'Cancel';
   }
 }
+

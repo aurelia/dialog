@@ -19,17 +19,17 @@ module.exports = {
   optional: [
     "es7.decorators",
     "es7.classProperties"
-  ]
-  // plugins: [
-  //   "babel-dts-generator"
-  // ],
-  // extra: {
-  //   dts: {
-  //     packageName: paths.packageName,
-  //     typings: '',
-  //     suppressModulePath: true,
-  //     suppressComments: false,
-  //     memberOutputFilter: /^_.*/
-  //   }
-  // }
+  ],
+  plugins: [
+    "babel-dts-generator"
+  ],
+  extra: {
+    dts: {
+      packageName: paths.packageName,
+      typings: '',
+      suppressModulePath: true,
+      suppressComments: false,
+      memberOutputFilter: /^_.*/
+    }
+  }
 };
