@@ -45,10 +45,10 @@
     "aurelia-dependency-injection": "^1.0.0-beta.1",
     "aurelia-framework": "^1.0.0-beta.1",
     "aurelia-metadata": "^1.0.0-beta.1",
-    "aurelia-pal": "^1.0.0-beta.1",
     "aurelia-templating": "^1.0.0-beta.1"
   },
   "devDependencies": {
+    "aurelia-pal": "^1.0.0-beta.1.0.2",
     "aurelia-tools": "^0.1.12",
     "babel-dts-generator": "^0.2.17",
     "babel-eslint": "^4.1.1",
