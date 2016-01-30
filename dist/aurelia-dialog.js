@@ -240,9 +240,6 @@ export class DialogRenderer {
     dialogController.centerDialog = () => {
       let child = modalContainer.children[0];
 
-      let vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
-      child.style.marginLeft = Math.max((vw - child.offsetWidth) / 2, 0) + 'px';
-
       if (!settings.centerHorizontalOnly) {
         let vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
         // Left at least 30px from the top

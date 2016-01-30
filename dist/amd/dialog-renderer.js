@@ -132,9 +132,6 @@ define(['exports', 'aurelia-templating'], function (exports, _aureliaTemplating)
       dialogController.centerDialog = function () {
         var child = modalContainer.children[0];
 
-        var vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
-        child.style.marginLeft = Math.max((vw - child.offsetWidth) / 2, 0) + 'px';
-
         if (!settings.centerHorizontalOnly) {
           var vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
 

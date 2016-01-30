@@ -20,6 +20,7 @@ ai-dialog-container {
   opacity: 0;
   overflow-x: hidden;
   overflow-y: auto;
+  pointer-events: none;
   -webkit-overflow-scrolling: touch;
   outline: 0;
 }
@@ -47,6 +48,7 @@ ai-dialog {
   border-image-outset: initial;
   border-image-repeat: initial;
   background: white;
+  pointer-events: initial;
 }
 ai-dialog > ai-dialog-header {
   display: block;
