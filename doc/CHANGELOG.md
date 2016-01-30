@@ -1,3 +1,10 @@
+## o.5.4 (2016-01-30)
+
+* feat(all): update jspm meta; core-js; aurelia deps
+* fix(deps): move aurelia-pal to dev-dep
+* disable pointer events on ai-dialog-container
+* fix(dialog): use CSS auto margins instead of JS
+
 ### 0.5.1 (2015-12-03)
 
 * Destroy modal only when modalContainer ends its transition
