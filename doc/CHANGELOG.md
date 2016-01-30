@@ -1,4 +1,4 @@
-## o.5.4 (2016-01-30)
+## 0.5.4 (2016-01-30)
 
 * feat(all): update jspm meta; core-js; aurelia deps
 * fix(deps): move aurelia-pal to dev-dep
