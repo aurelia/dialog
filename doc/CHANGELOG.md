@@ -1,3 +1,12 @@
+### 0.5.6 (2016-02-09)
+
+
+#### Bug Fixes
+
+* **changelog:** fix changelog generation ([3f123e38](https://github.com/aurelia/dialog/commit/3f123e38987e9326e6086a18e3a47aec59df3350), closes [#71](https://github.com/aurelia/dialog/issues/71))
+* **ie:** clicking overlay closes ([2c4cfa63](https://github.com/aurelia/dialog/commit/2c4cfa635e178071cd8080384cfc1592cbfbaef2), closes [#87](https://github.com/aurelia/dialog/issues/87))
+
+
 ## 0.5.4 (2016-01-30)
 
 * feat(all): update jspm meta; core-js; aurelia deps

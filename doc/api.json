@@ -1044,7 +1044,7 @@
                   "type": {
                     "type": "reference",
                     "name": "Container",
-                    "id": 502,
+                    "id": 580,
                     "moduleName": "\"aurelia-dependency-injection\""
                   }
                 },
