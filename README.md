@@ -211,6 +211,23 @@ There are a few ways you can take advantage of the Aurelia dialog.
     </ai-dialog>
   </template>
   ```
+
+### attach-focus custom attribute
+
+The modal exposes an `attach-focus` custom attribute that allows focusing in on an element in the modal when it is loaded.  You can use this to focus a button, input, etc...  Example usage -
+
+  ```html
+  <template>
+    <ai-dialog>
+      <ai-dialog-body>
+        <h2>Edit first name</h2>
+        <input attach-focus="true" value.bind="person.firstName" />
+      </ai-dialog-body>
+    </ai-dialog>
+  </template>
+  ```
+
+
 ###Settings
 The settings available for the dialog are set on the dialog controller on a per-dialog basis.
 - `lock` makes the dialog modal, and removes the close button from the top-right hand corner. (defaults to true)
