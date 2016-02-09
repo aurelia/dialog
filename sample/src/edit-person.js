@@ -5,6 +5,7 @@ export class EditPerson {
   person = { firstName: '' };
   constructor(controller){
     this.controller = controller;
+    this.controller.settings.lock = false;
   }
   activate(person){
     this.person = person;
