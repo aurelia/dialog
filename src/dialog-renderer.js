@@ -51,8 +51,8 @@ export class DialogRenderer {
     modalOverlay.style.zIndex = getNextZIndex();
     modalContainer.style.zIndex = getNextZIndex();
 
-    document.body.appendChild(modalOverlay);
-    document.body.appendChild(modalContainer);
+    document.body.insertBefore(modalContainer, document.body.firstChild);
+    document.body.insertBefore(modalOverlay, document.body.firstChild);
 
     dialogController.slot = new ViewSlot(modalContainer, true);
     dialogController.slot.add(dialogController.view);
