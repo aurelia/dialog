@@ -6,6 +6,9 @@ ai-dialog-overlay {
   right: 0;
   opacity: 0;
 
+  // prevent pointer events to enable click event on ai-dialog-overlay
+  pointer-events: none;
+
   &.active {
     opacity: 1;
   }
@@ -23,9 +26,6 @@ ai-dialog-container {
   overflow-x: hidden;
   overflow-y: auto;
 
-  // prevent pointer events to enable click event on ai-dialog-overlay
-  pointer-events: none;
-
   -webkit-overflow-scrolling: touch;
   // Prevent Chrome on Windows from adding a focus outline. For details, see
   // https://github.com/twbs/bootstrap/pull/10951
@@ -33,6 +33,12 @@ ai-dialog-container {
 
   &.active {
     opacity: 1;
+  }
+  
+  & > div {
+    // Prevent Chrome on Windows from adding a focus outline. For details, see
+    // https://github.com/twbs/bootstrap/pull/10951
+    outline: 0;
   }
 }
 
