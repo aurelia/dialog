@@ -227,6 +227,24 @@ The modal exposes an `attach-focus` custom attribute that allows focusing in on 
   </template>
   ```
 
+###Global Settings
+You can specify global settings as well for all dialogs to use when installing the plugin via the configure method.
+
+```javascript
+export function configure(aurelia) {
+  aurelia.use
+    .standardConfiguration()
+    .developmentLogging()
+    .plugin('aurelia-dialog', (settings) => {
+      settings.lock = true;
+      settings.centerHorizontalOnly = false;
+      settings.startingZIndex = 5;
+    });
+
+  aurelia.start().then(a => a.setRoot('src/app'));
+}
+```
+
 
 ###Settings
 The settings available for the dialog are set on the dialog controller on a per-dialog basis.

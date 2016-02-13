@@ -6,11 +6,13 @@ import {configure} from '../../src/index';
 let element = document.createElement('div');
 let defaultSettings = {
   lock: true,
-  centerHorizontalOnly: false
+  centerHorizontalOnly: false,
+  startingZIndex: 1000
 };
 let newSettings = {
   lock: false,
-  centerHorizontalOnly: true
+  centerHorizontalOnly: true,
+  startingZIndex: 1
 };
 
 let frameworkConfig = {

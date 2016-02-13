@@ -1,6 +1,7 @@
 import {ViewSlot} from 'aurelia-templating';
 
 let currentZIndex = 1000;
+
 let transitionEvent = (function() {
   let t;
   let el = document.createElement('fakeelement');
@@ -25,12 +26,14 @@ function getNextZIndex() {
 
 export let globalSettings = {
   lock: true,
-  centerHorizontalOnly: false
+  centerHorizontalOnly: false,
+  startingZIndex: 1000
 };
 
 export class DialogRenderer {
   defaultSettings = globalSettings;
   constructor() {
+    currentZIndex = globalSettings.startingZIndex;
     this.dialogControllers = [];
     document.addEventListener('keyup', e => {
       if (e.keyCode === 27) {

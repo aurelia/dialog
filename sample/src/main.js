@@ -6,6 +6,7 @@ export function configure(aurelia) {
     .developmentLogging()
     .plugin('aurelia-dialog', (settings) => {
       settings.lock = true;
+      settings.startingZIndex = 5;
     });
 
   aurelia.start().then(a => a.setRoot('src/app'));
