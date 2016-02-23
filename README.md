@@ -226,6 +226,13 @@ The modal exposes an `attach-focus` custom attribute that allows focusing in on 
     </ai-dialog>
   </template>
   ```
+  
+You can also bind the value of the attach-focus attribute if you want to alter which element will be focused based on a view model property.
+
+  ```html
+  <input attach-focus.bind="isNewPerson" value.bind="person.email" />
+  <input attach-focus.bind="!isNewPerson" value.bind="person.firstName" />
+  ```
 
 ###Global Settings
 You can specify global settings as well for all dialogs to use when installing the plugin via the configure method.
