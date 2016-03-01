@@ -4,12 +4,20 @@ import {customAttribute} from 'aurelia-templating';
 export class AttachFocus {
   static inject = [Element];
 
+  value = true;
+
   constructor(element) {
     this.element = element;
   }
 
   attached() {
-    this.element.focus();
+    if (this.value && this.value !== 'false') {
+      this.element.focus();
+    }
+  }
+  
+  valueChanged(newValue) {
+    this.value = newValue;
   }
 }
 
