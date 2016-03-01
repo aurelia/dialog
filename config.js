@@ -16,7 +16,6 @@ System.config({
 
   map: {
     "aurelia-dependency-injection": "npm:aurelia-dependency-injection@1.0.0-beta.1.1.2",
-    "aurelia-framework": "npm:aurelia-framework@1.0.0-beta.1.1.0",
     "aurelia-metadata": "npm:aurelia-metadata@1.0.0-beta.1.1.3",
     "aurelia-pal": "npm:aurelia-pal@1.0.0-beta.1.1.1",
     "aurelia-pal-browser": "npm:aurelia-pal-browser@1.0.0-beta.1.1.2",
@@ -49,18 +48,6 @@ System.config({
       "aurelia-logging": "npm:aurelia-logging@1.0.0-beta.1.1.1",
       "aurelia-metadata": "npm:aurelia-metadata@1.0.0-beta.1.1.3",
       "aurelia-pal": "npm:aurelia-pal@1.0.0-beta.1.1.1",
-      "core-js": "npm:core-js@2.0.3"
-    },
-    "npm:aurelia-framework@1.0.0-beta.1.1.0": {
-      "aurelia-binding": "npm:aurelia-binding@1.0.0-beta.1.1.0",
-      "aurelia-dependency-injection": "npm:aurelia-dependency-injection@1.0.0-beta.1.1.2",
-      "aurelia-loader": "npm:aurelia-loader@1.0.0-beta.1.1.0",
-      "aurelia-logging": "npm:aurelia-logging@1.0.0-beta.1.1.1",
-      "aurelia-metadata": "npm:aurelia-metadata@1.0.0-beta.1.1.3",
-      "aurelia-pal": "npm:aurelia-pal@1.0.0-beta.1.1.1",
-      "aurelia-path": "npm:aurelia-path@1.0.0-beta.1.1.0",
-      "aurelia-task-queue": "npm:aurelia-task-queue@1.0.0-beta.1.1.0",
-      "aurelia-templating": "npm:aurelia-templating@1.0.0-beta.1.1.0",
       "core-js": "npm:core-js@2.0.3"
     },
     "npm:aurelia-loader@1.0.0-beta.1.1.0": {
