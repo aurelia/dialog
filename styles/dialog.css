@@ -5,6 +5,7 @@ ai-dialog-overlay {
   top: 0;
   right: 0;
   opacity: 0;
+  pointer-events: none;
 }
 ai-dialog-overlay.active {
   opacity: 1;
@@ -20,12 +21,14 @@ ai-dialog-container {
   opacity: 0;
   overflow-x: hidden;
   overflow-y: auto;
-  pointer-events: none;
   -webkit-overflow-scrolling: touch;
-  outline: 0;
 }
 ai-dialog-container.active {
   opacity: 1;
+}
+ai-dialog-container,
+ai-dialog-container > div {
+  outline: 0;
 }
 ai-dialog {
   position: relative;
@@ -66,9 +69,6 @@ ai-dialog > ai-dialog-header > button {
   padding: 0;
   cursor: pointer;
 }
-ai-dialog > ai-dialog-header > button:focus {
-  outline: 0;
-}
 ai-dialog > ai-dialog-body {
   display: block;
   padding: 16px;
@@ -90,10 +90,6 @@ ai-dialog > ai-dialog-footer button {
   -ms-touch-action: manipulation;
   touch-action: manipulation;
   cursor: pointer;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
   background-image: none;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -107,9 +103,6 @@ ai-dialog > ai-dialog-footer button:hover:enabled {
   color: #333;
   background-color: #e6e6e6;
   border-color: #adadad;
-}
-ai-dialog > ai-dialog-footer button:focus {
-  outline: 0;
 }
 .ai-dialog-open {
   overflow: hidden;

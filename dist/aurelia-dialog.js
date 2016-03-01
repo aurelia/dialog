@@ -59,12 +59,20 @@ export class AiDialog {
 export class AttachFocus {
   static inject = [Element];
 
+  value = true;
+
   constructor(element) {
     this.element = element;
   }
 
   attached() {
-    this.element.focus();
+    if (this.value && this.value !== 'false') {
+      this.element.focus();
+    }
+  }
+
+  valueChanged(newValue) {
+    this.value = newValue;
   }
 }
 
@@ -123,6 +131,7 @@ class DialogResult {
 }
 
 let currentZIndex = 1000;
+
 let transitionEvent = (function() {
   let t;
   let el = document.createElement('fakeelement');
@@ -147,12 +156,14 @@ function getNextZIndex() {
 
 export let globalSettings = {
   lock: true,
-  centerHorizontalOnly: false
+  centerHorizontalOnly: false,
+  startingZIndex: 1000
 };
 
 export class DialogRenderer {
   defaultSettings = globalSettings;
   constructor() {
+    currentZIndex = globalSettings.startingZIndex;
     this.dialogControllers = [];
     document.addEventListener('keyup', e => {
       if (e.keyCode === 27) {
@@ -173,8 +184,8 @@ export class DialogRenderer {
     modalOverlay.style.zIndex = getNextZIndex();
     modalContainer.style.zIndex = getNextZIndex();
 
-    document.body.appendChild(modalOverlay);
-    document.body.appendChild(modalContainer);
+    document.body.insertBefore(modalContainer, document.body.firstChild);
+    document.body.insertBefore(modalOverlay, document.body.firstChild);
 
     dialogController.slot = new ViewSlot(modalContainer, true);
     dialogController.slot.add(dialogController.view);

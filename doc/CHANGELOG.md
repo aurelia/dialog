@@ -1,3 +1,20 @@
+### 0.5.7 (2016-03-01)
+
+
+#### Bug Fixes
+
+* **dialog:**
+  * allow response to click events ([1fd3bfc8](https://github.com/aurelia/dialog/commit/1fd3bfc89d736fdbf4f7fc407a2fbb7630ab5e7e))
+  * allow response to click events ([ec8a8ce0](https://github.com/aurelia/dialog/commit/ec8a8ce0aba4965e7793a9aa074c5e3074b85570))
+  * accessibility fixes ([79a796da](https://github.com/aurelia/dialog/commit/79a796da73ce94336e0d1eaf28acb964247dec8c))
+
+
+#### Features
+
+* use attach-focus attribute value to decide if the element is to be focused ([ceb7196f](https://github.com/aurelia/dialog/commit/ceb7196fbb226ae1f6de25222460ebb6fddaa8e5))
+* **z-index:** make z-index configurable ([e9d164f5](https://github.com/aurelia/dialog/commit/e9d164f592a5409785ef94b9590ae689c3115485), closes [#90](https://github.com/aurelia/dialog/issues/90))
+
+
 ### 0.5.6 (2016-02-09)
 
 

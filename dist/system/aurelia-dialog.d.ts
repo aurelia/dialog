@@ -25,8 +25,10 @@ declare module 'aurelia-dialog' {
   }
   export class AttachFocus {
     static inject: any;
+    value: any;
     constructor(element: any);
     attached(): any;
+    valueChanged(newValue: any): any;
   }
   export class DialogController {
     constructor(renderer: DialogRenderer, settings: any, resolve: Function, reject: Function);

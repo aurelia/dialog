@@ -6,6 +6,7 @@ define(['exports', 'aurelia-templating'], function (exports, _aureliaTemplating)
   function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
   var currentZIndex = 1000;
+
   var transitionEvent = (function () {
     var t = undefined;
     var el = document.createElement('fakeelement');
@@ -30,7 +31,8 @@ define(['exports', 'aurelia-templating'], function (exports, _aureliaTemplating)
 
   var globalSettings = {
     lock: true,
-    centerHorizontalOnly: false
+    centerHorizontalOnly: false,
+    startingZIndex: 1000
   };
 
   exports.globalSettings = globalSettings;
@@ -43,6 +45,7 @@ define(['exports', 'aurelia-templating'], function (exports, _aureliaTemplating)
 
       this.defaultSettings = globalSettings;
 
+      currentZIndex = globalSettings.startingZIndex;
       this.dialogControllers = [];
       document.addEventListener('keyup', function (e) {
         if (e.keyCode === 27) {
@@ -65,8 +68,8 @@ define(['exports', 'aurelia-templating'], function (exports, _aureliaTemplating)
       modalOverlay.style.zIndex = getNextZIndex();
       modalContainer.style.zIndex = getNextZIndex();
 
-      document.body.appendChild(modalOverlay);
-      document.body.appendChild(modalContainer);
+      document.body.insertBefore(modalContainer, document.body.firstChild);
+      document.body.insertBefore(modalOverlay, document.body.firstChild);
 
       dialogController.slot = new _aureliaTemplating.ViewSlot(modalContainer, true);
       dialogController.slot.add(dialogController.view);

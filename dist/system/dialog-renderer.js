@@ -36,7 +36,8 @@ System.register(['aurelia-templating'], function (_export) {
 
       globalSettings = {
         lock: true,
-        centerHorizontalOnly: false
+        centerHorizontalOnly: false,
+        startingZIndex: 1000
       };
 
       _export('globalSettings', globalSettings);
@@ -49,6 +50,7 @@ System.register(['aurelia-templating'], function (_export) {
 
           this.defaultSettings = globalSettings;
 
+          currentZIndex = globalSettings.startingZIndex;
           this.dialogControllers = [];
           document.addEventListener('keyup', function (e) {
             if (e.keyCode === 27) {
@@ -71,8 +73,8 @@ System.register(['aurelia-templating'], function (_export) {
           modalOverlay.style.zIndex = getNextZIndex();
           modalContainer.style.zIndex = getNextZIndex();
 
-          document.body.appendChild(modalOverlay);
-          document.body.appendChild(modalContainer);
+          document.body.insertBefore(modalContainer, document.body.firstChild);
+          document.body.insertBefore(modalOverlay, document.body.firstChild);
 
           dialogController.slot = new ViewSlot(modalContainer, true);
           dialogController.slot.add(dialogController.view);

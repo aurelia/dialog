@@ -7,6 +7,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var _aureliaTemplating = require('aurelia-templating');
 
 var currentZIndex = 1000;
+
 var transitionEvent = (function () {
   var t = undefined;
   var el = document.createElement('fakeelement');
@@ -31,7 +32,8 @@ function getNextZIndex() {
 
 var globalSettings = {
   lock: true,
-  centerHorizontalOnly: false
+  centerHorizontalOnly: false,
+  startingZIndex: 1000
 };
 
 exports.globalSettings = globalSettings;
@@ -44,6 +46,7 @@ var DialogRenderer = (function () {
 
     this.defaultSettings = globalSettings;
 
+    currentZIndex = globalSettings.startingZIndex;
     this.dialogControllers = [];
     document.addEventListener('keyup', function (e) {
       if (e.keyCode === 27) {
@@ -66,8 +69,8 @@ var DialogRenderer = (function () {
     modalOverlay.style.zIndex = getNextZIndex();
     modalContainer.style.zIndex = getNextZIndex();
 
-    document.body.appendChild(modalOverlay);
-    document.body.appendChild(modalContainer);
+    document.body.insertBefore(modalContainer, document.body.firstChild);
+    document.body.insertBefore(modalOverlay, document.body.firstChild);
 
     dialogController.slot = new _aureliaTemplating.ViewSlot(modalContainer, true);
     dialogController.slot.add(dialogController.view);

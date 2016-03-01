@@ -22,11 +22,19 @@ System.register(['aurelia-templating'], function (_export) {
         function AttachFocus(element) {
           _classCallCheck(this, _AttachFocus);
 
+          this.value = true;
+
           this.element = element;
         }
 
         AttachFocus.prototype.attached = function attached() {
-          this.element.focus();
+          if (this.value && this.value !== 'false') {
+            this.element.focus();
+          }
+        };
+
+        AttachFocus.prototype.valueChanged = function valueChanged(newValue) {
+          this.value = newValue;
         };
 
         var _AttachFocus = AttachFocus;

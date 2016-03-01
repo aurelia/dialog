@@ -15,7 +15,7 @@ export class AttachFocus {
       this.element.focus();
     }
   }
-  
+
   valueChanged(newValue) {
     this.value = newValue;
   }
