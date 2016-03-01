@@ -54,19 +54,5 @@ describe('the Dialog Renderer', () => {
     expect(renderer.defaultSettings).toEqual(newSettings);
     done();
   });
-
-  xit('calls the corresponding controller methods', done => {
-    renderer = new DialogRenderer();
-    controller = new DialogController(renderer);
-    renderer.createDialogHost(controller);
-    spyOn(controller, 'showDialog');
-    spyOn(controller, 'hideDialog');
-    spyOn(controller, 'destroyDialogHost');
-    renderer.showDialog(controller);
-    expect(controller.showDialog).toHaveBeenCalled();
-    expect(controller.hideDialog).toHaveBeenCalled();
-    expect(controller.destroyDialogHost).toHaveBeenCalled();
-    done();
-  });
 });
 
