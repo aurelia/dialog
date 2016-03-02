@@ -1,9 +1,7 @@
 import {DialogRenderer} from '../../src/dialog-renderer';
 import {DialogController} from '../../src/dialog-controller';
-import {Container} from 'aurelia-dependency-injection';
 import {configure} from '../../src/index';
 
-let element = document.createElement('div');
 let defaultSettings = {
   lock: true,
   centerHorizontalOnly: false,
@@ -24,35 +22,21 @@ let frameworkConfig = {
 };
 
 describe('the Dialog Renderer', () => {
-  let renderer,
-    container,
-    controller;
-
-  beforeEach(() => {
-    container = new Container().makeGlobal();
-    container.registerInstance(Element, element);
-    jasmine.clock().install();
-  });
-
-  afterEach(() => {
-    jasmine.clock().uninstall();
-  });
-
-  it('uses the default settings', done => {
-    renderer = new DialogRenderer();
+  it('uses the default settings', () => {
+    let renderer = new DialogRenderer();
     expect(renderer.defaultSettings).toEqual(defaultSettings);
-    done();
   });
 
-  it('allows overriding the default settings', done => {
+  it('allows overriding the default settings', () => {
     let callback = (globalSettings) => {
       Object.assign(globalSettings, newSettings);
     }
+
     configure(frameworkConfig, callback);
-    renderer = new DialogRenderer();
+    let renderer = new DialogRenderer();
     let dialogController = new DialogController(renderer);
+
     expect(renderer.defaultSettings).toEqual(newSettings);
-    done();
   });
 });
 
