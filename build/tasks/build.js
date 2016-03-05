@@ -81,15 +81,6 @@ gulp.task('build-system', ['build-html-system'], function () {
     .pipe(gulp.dest(paths.output + 'system'));
 });
 
-gulp.task('build-dts', function(){
-  return gulp.src(paths.root + paths.packageName + '.d.ts')
-    .pipe(gulp.dest(paths.output))
-    .pipe(gulp.dest(paths.output + 'es6'))
-    .pipe(gulp.dest(paths.output + 'commonjs'))
-    .pipe(gulp.dest(paths.output + 'amd'))
-    .pipe(gulp.dest(paths.output + 'system'));
-});
-
 gulp.task('build-html-commonjs', function () {
   return gulp.src(paths.html)
     .pipe(gulp.dest(paths.output + 'commonjs'));
