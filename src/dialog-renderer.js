@@ -24,6 +24,13 @@ function getNextZIndex() {
   return ++currentZIndex;
 }
 
+function centerDialog(modalContainer) {
+  const child = modalContainer.children[0];
+  const vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+
+  child.style.marginTop = Math.max((vh - child.offsetHeight) / 2, 30) + 'px';
+}
+
 export let globalSettings = {
   lock: true,
   centerHorizontalOnly: false,
@@ -64,7 +71,13 @@ export class DialogRenderer {
       this.dialogControllers.push(dialogController);
 
       dialogController.slot.attached();
-      dialogController.centerDialog();
+      if (typeof settings.position === 'function') {
+        settings.position(modalContainer, modalOverlay);
+      } else {
+        if (!settings.centerHorizontalOnly) {
+          centerDialog(modalContainer);
+        }
+      }
 
       modalOverlay.onclick = () => {
         if (!settings.lock) {
@@ -116,16 +129,6 @@ export class DialogRenderer {
       document.body.removeChild(modalContainer);
       dialogController.slot.detached();
       return Promise.resolve();
-    };
-
-    dialogController.centerDialog = () => {
-      let child = modalContainer.children[0];
-
-      if (!settings.centerHorizontalOnly) {
-        let vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-        // Left at least 30px from the top
-        child.style.marginTop = Math.max((vh - child.offsetHeight) / 2, 30) + 'px';
-      }
     };
 
     return Promise.resolve();

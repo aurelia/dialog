@@ -1,15 +1,10 @@
 import {configure} from '../../src/index';
 
 describe('testing aurelia configure routine', () => {
-
   var frameworkConfig = {
-    globalResources: () => {
-
-    },
+    globalResources: () => { },
     container: {
-      registerInstance: (type, callback) => {
-
-      },
+      registerInstance: (type, callback) => { },
       get: (type) => { return new type(); }
     }
   };

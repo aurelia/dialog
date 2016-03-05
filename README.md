@@ -226,7 +226,7 @@ The modal exposes an `attach-focus` custom attribute that allows focusing in on 
     </ai-dialog>
   </template>
   ```
-  
+
 You can also bind the value of the attach-focus attribute if you want to alter which element will be focused based on a view model property.
 
   ```html
@@ -257,6 +257,7 @@ export function configure(aurelia) {
 The settings available for the dialog are set on the dialog controller on a per-dialog basis.
 - `lock` makes the dialog modal, and removes the close button from the top-right hand corner. (defaults to true)
 - `centerHorizontalOnly` means that the dialog will be centered horizontally, and the vertical alignment is left up to you. (defaults to false)
+- `position` a callback that is called right before showing the modal with the signature: `(modalContainer: Element, modalOverlay: Element) => void`. This allows you to setup special classes, play with the position, etc... If specified, `centerHorizontalOnly` is ignored. (optional)
 
 ```javascript
 export class Prompt {
