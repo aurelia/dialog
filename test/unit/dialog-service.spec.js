@@ -9,10 +9,10 @@ import {DefaultLoader} from 'aurelia-loader-default';
 import {TemplatingBindingLanguage} from 'aurelia-templating-binding';
 
 describe('the Dialog Service', () => {
-  let dialogService,
-    container,
-    compEng,
-    renderer;
+  let dialogService;
+  let container;
+  let compEng;
+  let renderer;
 
   beforeEach(() => {
     initialize();

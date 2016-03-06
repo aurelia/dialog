@@ -2,9 +2,9 @@ import {DialogController} from '../../src/dialog-controller';
 import {Container} from 'aurelia-dependency-injection';
 
 describe('the Dialog Controller', () => {
-  let dialogController,
-    renderer,
-    settings;
+  let dialogController;
+  let renderer;
+  let settings;
 
   beforeEach(() => {
     new Container().makeGlobal();
@@ -30,3 +30,4 @@ describe('the Dialog Controller', () => {
     expect(dialogController.close).toHaveBeenCalledWith(false, calledValue);
   });
 });
+
