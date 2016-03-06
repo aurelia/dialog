@@ -18,28 +18,30 @@ export class DialogController {
   }
 
   error(message: any) {
-    return invokeLifecycle(this.viewModel, 'deactivate').then(() => {
-      return this._renderer.hideDialog(this).then(() => {
-        return this._renderer.destroyDialogHost(this).then(() => {
-          this.controller.unbind();
-          this._reject(message);
-        });
+    return invokeLifecycle(this.viewModel, 'deactivate')
+      .then(() => {
+        return this._renderer.hideDialog(this);
+      }).then(() => {
+        return this._renderer.destroyDialogHost(this);
+      }).then(() => {
+        this.controller.unbind();
+        this._reject(message);
       });
-    });
   }
 
   close(ok: boolean, result: any) {
     let returnResult = new DialogResult(!ok, result);
     return invokeLifecycle(this.viewModel, 'canDeactivate').then(canDeactivate => {
       if (canDeactivate) {
-        return invokeLifecycle(this.viewModel, 'deactivate').then(() => {
-          return this._renderer.hideDialog(this).then(() => {
-            return this._renderer.destroyDialogHost(this).then(() => {
-              this.controller.unbind();
-              this._resolve(returnResult);
-            });
+        return invokeLifecycle(this.viewModel, 'deactivate')
+          .then(() => {
+            return this._renderer.hideDialog(this);
+          }).then(() => {
+            return this._renderer.destroyDialogHost(this);
+          }).then(() => {
+            this.controller.unbind();
+            this._resolve(returnResult);
           });
-        });
       }
     });
   }
