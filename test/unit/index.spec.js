@@ -1,16 +1,11 @@
 import {configure} from '../../src/index';
 
 describe('testing aurelia configure routine', () => {
-
-  var frameworkConfig = {
-    globalResources: () => {
-
-    },
+  let frameworkConfig = {
+    globalResources: () => { },
     container: {
-      registerInstance: (type, callback) => {
-
-      },
-      get: (type) => { return new type(); }
+      registerInstance: (Type, callback) => { },
+      get: (type) => { return new Type(); }
     }
   };
 
@@ -19,8 +14,8 @@ describe('testing aurelia configure routine', () => {
   });
 
   it('should accept a setup callback passing back the callback', (done) => {
-    let callback = (callback) => {
-      expect(typeof callback).toBe('object');
+    let callback = (callbackObj) => {
+      expect(typeof callbackObj).toBe('object');
       done();
     };
     configure(frameworkConfig, callback);

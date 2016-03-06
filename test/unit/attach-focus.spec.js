@@ -23,32 +23,29 @@ describe('modal gets focused when attached', () => {
     jasmine.clock().uninstall();
   });
 
-  it('should call the focus method when attached without value', done => {
+  it('should call the focus method when attached without value', () => {
     attachFocus = templatingEngine.createViewModelForUnitTest(AttachFocus);
     spyOn(element, 'focus').and.callThrough();
     attachFocus.attached();
     jasmine.clock().tick(1);
     expect(element.focus).toHaveBeenCalled();
-    done();
   });
-  
-  it('should call the focus method when attached to true value', done => {
+
+  it('should call the focus method when attached to true value', () => {
     attachFocus = templatingEngine.createViewModelForUnitTest(AttachFocus);
     attachFocus.value = true;
     spyOn(element, 'focus').and.callThrough();
     attachFocus.attached();
     jasmine.clock().tick(1);
     expect(element.focus).toHaveBeenCalled();
-    done();
   });
-  
-  it('should not call the focus method when attached to false value', done => {
+
+  it('should not call the focus method when attached to false value', () => {
     attachFocus = templatingEngine.createViewModelForUnitTest(AttachFocus);
     attachFocus.value = false;
     spyOn(element, 'focus').and.callThrough();
     attachFocus.attached();
     jasmine.clock().tick(1);
     expect(element.focus).not.toHaveBeenCalled();
-    done();
   });
 });

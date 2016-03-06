@@ -1,5 +1,6 @@
 export class TestModel {
-  constructor(){
+  constructor() {
     this.name = 'Testing';
   }
 }
+
