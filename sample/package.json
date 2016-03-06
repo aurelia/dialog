@@ -17,6 +17,6 @@
     }
   },
   "devDependencies": {
-    "jspm": "^0.16.6"
+    "jspm": "0.16.15"
   }
 }
