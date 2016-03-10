@@ -74,9 +74,7 @@ export class DialogRenderer {
       if (typeof settings.position === 'function') {
         settings.position(modalContainer, modalOverlay);
       } else {
-        if (!settings.centerHorizontalOnly) {
-          centerDialog(modalContainer);
-        }
+        dialogController.centerDialog();
       }
 
       modalOverlay.onclick = () => {
@@ -122,6 +120,11 @@ export class DialogRenderer {
         modalContainer.classList.remove('active');
         body.classList.remove('ai-dialog-open');
       });
+    };
+
+    dialogController.centerDialog = () => {
+      if (settings.centerHorizontalOnly) return;
+      centerDialog(modalContainer);
     };
 
     dialogController.destroyDialogHost = () => {
