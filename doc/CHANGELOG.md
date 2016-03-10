@@ -1,3 +1,19 @@
+### 0.5.8 (2016-03-10)
+
+
+#### Bug Fixes
+
+* **dialog:** put back centerDialog ([1e03984a](https://github.com/aurelia/dialog/commit/1e03984a4163ab9999b2890d5f70f19f2d8ded9e))
+* **dialog-controller:**
+  * remove promise pyramid of doom ([e5d42e3f](https://github.com/aurelia/dialog/commit/e5d42e3fa5a63032d298a4e2fd7c5eaec18de3f7))
+  * fix the class interface ([7ac0be86](https://github.com/aurelia/dialog/commit/7ac0be86d7a98964d8c30f27e3669004549d93d5), closes [#82](https://github.com/aurelia/dialog/issues/82))
+
+
+#### Features
+
+* **position:** allow to pass in callback to do setup on elements ([825e0e16](https://github.com/aurelia/dialog/commit/825e0e16a7b456ba40f009b590d909b3dc499bdc))
+
+
 ### 0.5.7 (2016-03-01)
 
 

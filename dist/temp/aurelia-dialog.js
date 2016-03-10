@@ -174,12 +174,12 @@ var DialogController = (function () {
     var _this = this;
 
     return invokeLifecycle(this.viewModel, 'deactivate').then(function () {
-      return _this._renderer.hideDialog(_this).then(function () {
-        return _this._renderer.destroyDialogHost(_this).then(function () {
-          _this.controller.unbind();
-          _this._reject(message);
-        });
-      });
+      return _this._renderer.hideDialog(_this);
+    }).then(function () {
+      return _this._renderer.destroyDialogHost(_this);
+    }).then(function () {
+      _this.controller.unbind();
+      _this._reject(message);
     });
   };
 
@@ -190,12 +190,12 @@ var DialogController = (function () {
     return invokeLifecycle(this.viewModel, 'canDeactivate').then(function (canDeactivate) {
       if (canDeactivate) {
         return invokeLifecycle(_this2.viewModel, 'deactivate').then(function () {
-          return _this2._renderer.hideDialog(_this2).then(function () {
-            return _this2._renderer.destroyDialogHost(_this2).then(function () {
-              _this2.controller.unbind();
-              _this2._resolve(returnResult);
-            });
-          });
+          return _this2._renderer.hideDialog(_this2);
+        }).then(function () {
+          return _this2._renderer.destroyDialogHost(_this2);
+        }).then(function () {
+          _this2.controller.unbind();
+          _this2._resolve(returnResult);
         });
       }
     });
@@ -237,6 +237,13 @@ var transitionEvent = (function () {
 
 function getNextZIndex() {
   return ++currentZIndex;
+}
+
+function centerDialog(modalContainer) {
+  var child = modalContainer.children[0];
+  var vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+
+  child.style.marginTop = Math.max((vh - child.offsetHeight) / 2, 30) + 'px';
 }
 
 var globalSettings = {
@@ -288,7 +295,11 @@ var DialogRenderer = (function () {
       _this4.dialogControllers.push(dialogController);
 
       dialogController.slot.attached();
-      dialogController.centerDialog();
+      if (typeof settings.position === 'function') {
+        settings.position(modalContainer, modalOverlay);
+      } else {
+        dialogController.centerDialog();
+      }
 
       modalOverlay.onclick = function () {
         if (!settings.lock) {
@@ -335,21 +346,16 @@ var DialogRenderer = (function () {
       });
     };
 
+    dialogController.centerDialog = function () {
+      if (settings.centerHorizontalOnly) return;
+      centerDialog(modalContainer);
+    };
+
     dialogController.destroyDialogHost = function () {
       document.body.removeChild(modalOverlay);
       document.body.removeChild(modalContainer);
       dialogController.slot.detached();
       return Promise.resolve();
-    };
-
-    dialogController.centerDialog = function () {
-      var child = modalContainer.children[0];
-
-      if (!settings.centerHorizontalOnly) {
-        var vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-
-        child.style.marginTop = Math.max((vh - child.offsetHeight) / 2, 30) + 'px';
-      }
     };
 
     return Promise.resolve();

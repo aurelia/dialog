@@ -31,16 +31,17 @@ declare module 'aurelia-dialog' {
     valueChanged(newValue: any): any;
   }
   export class DialogController {
+    settings: any;
     constructor(renderer: DialogRenderer, settings: any, resolve: Function, reject: Function);
-    ok(result: DialogResult): any;
-    cancel(result: DialogResult): any;
+    ok(result: any): any;
+    cancel(result: any): any;
     error(message: any): any;
-    close(ok: boolean, result: DialogResult): any;
+    close(ok: boolean, result: any): any;
   }
   class DialogResult {
-    wasCancelled: any;
+    wasCancelled: boolean;
     output: any;
-    constructor(cancelled: any, result: any);
+    constructor(cancelled: boolean, result: any);
   }
   export let globalSettings: any;
   export class DialogRenderer {

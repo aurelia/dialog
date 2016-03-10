@@ -30,6 +30,13 @@ function getNextZIndex() {
   return ++currentZIndex;
 }
 
+function centerDialog(modalContainer) {
+  var child = modalContainer.children[0];
+  var vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+
+  child.style.marginTop = Math.max((vh - child.offsetHeight) / 2, 30) + 'px';
+}
+
 var globalSettings = {
   lock: true,
   centerHorizontalOnly: false,
@@ -79,7 +86,11 @@ var DialogRenderer = (function () {
       _this2.dialogControllers.push(dialogController);
 
       dialogController.slot.attached();
-      dialogController.centerDialog();
+      if (typeof settings.position === 'function') {
+        settings.position(modalContainer, modalOverlay);
+      } else {
+        dialogController.centerDialog();
+      }
 
       modalOverlay.onclick = function () {
         if (!settings.lock) {
@@ -126,21 +137,16 @@ var DialogRenderer = (function () {
       });
     };
 
+    dialogController.centerDialog = function () {
+      if (settings.centerHorizontalOnly) return;
+      centerDialog(modalContainer);
+    };
+
     dialogController.destroyDialogHost = function () {
       document.body.removeChild(modalOverlay);
       document.body.removeChild(modalContainer);
       dialogController.slot.detached();
       return Promise.resolve();
-    };
-
-    dialogController.centerDialog = function () {
-      var child = modalContainer.children[0];
-
-      if (!settings.centerHorizontalOnly) {
-        var vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-
-        child.style.marginTop = Math.max((vh - child.offsetHeight) / 2, 30) + 'px';
-      }
     };
 
     return Promise.resolve();
