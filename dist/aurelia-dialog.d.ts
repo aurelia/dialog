@@ -32,10 +32,10 @@ declare module 'aurelia-dialog' {
   }
   export class DialogController {
     constructor(renderer: DialogRenderer, settings: any, resolve: Function, reject: Function);
-    ok(result: DialogResult): any;
-    cancel(result: DialogResult): any;
+    ok(result: any): any;
+    cancel(result: any): any;
     error(message: any): any;
-    close(ok: boolean, result: DialogResult): any;
+    close(ok: boolean, result: any): any;
   }
   class DialogResult {
     wasCancelled: any;
