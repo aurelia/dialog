@@ -1,9 +1,8 @@
-import {Origin} from 'aurelia-metadata';
 import {Container} from 'aurelia-dependency-injection';
 import {CompositionEngine} from 'aurelia-templating';
 import {DialogController} from './dialog-controller';
 import {DialogRenderer} from './dialog-renderer';
-import {invokeLifecycle} from './lifecycle';
+import {getViewModel, invokeLifecycle} from './dialog-utilities';
 
 export class DialogService {
   static inject = [Container, CompositionEngine, DialogRenderer];
@@ -12,18 +11,6 @@ export class DialogService {
     this.container = container;
     this.compositionEngine = compositionEngine;
     this.renderer = renderer;
-  }
-
-  _getViewModel(instruction) {
-    if (typeof instruction.viewModel === 'function') {
-      instruction.viewModel = Origin.get(instruction.viewModel).moduleId;
-    }
-
-    if (typeof instruction.viewModel === 'string') {
-      return this.compositionEngine.ensureViewModel(instruction);
-    }
-
-    return Promise.resolve(instruction);
   }
 
   open(settings) {
@@ -42,7 +29,7 @@ export class DialogService {
       childContainer.registerInstance(DialogController, dialogController);
 
       let controllerInstruction;
-      return this._getViewModel(instruction)
+      return getViewModel(instruction, this.compositionEngine)
         .then(returnedInstruction => {
           controllerInstruction = returnedInstruction;
           dialogController.viewModel = controllerInstruction.viewModel;

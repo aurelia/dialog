@@ -1,4 +1,4 @@
-import {invokeLifecycle} from './lifecycle';
+import {invokeLifecycle} from './dialog-utilities';
 
 export class DialogController {
   settings: any;
@@ -37,7 +37,8 @@ export class DialogController {
           .then(() => {
             this.controller.unbind();
             this._resolve(returnResult);
-          }));
+          })
+      );
   }
 }
 
