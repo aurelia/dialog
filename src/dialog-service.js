@@ -41,23 +41,23 @@ export class DialogService {
 
       childContainer.registerInstance(DialogController, dialogController);
 
-      return this._getViewModel(instruction).then(returnedInstruction => {
-        dialogController.viewModel = returnedInstruction.viewModel;
-
-        return invokeLifecycle(returnedInstruction.viewModel, 'canActivate', _settings.model).then(canActivate => {
-          if (canActivate) {
-            return this.compositionEngine.createController(returnedInstruction).then(controller => {
+      let controllerInstruction;
+      return this._getViewModel(instruction)
+        .then(returnedInstruction => {
+          controllerInstruction = returnedInstruction;
+          dialogController.viewModel = controllerInstruction.viewModel;
+          return invokeLifecycle(controllerInstruction.viewModel, 'canActivate', _settings.model);
+        })
+        .then(canActivate => !canActivate ? null :
+          this.compositionEngine.createController(controllerInstruction)
+            .then(controller => {
               dialogController.controller = controller;
               dialogController.view = controller.view;
               controller.automate();
-
-              return this.renderer.createDialogHost(dialogController).then(() => {
-                return this.renderer.showDialog(dialogController);
-              });
-            });
-          }
-        });
-      });
+              return this.renderer.createDialogHost(dialogController);
+            })
+            .then(() => this.renderer.showDialog(dialogController))
+        );
     });
   }
 }
