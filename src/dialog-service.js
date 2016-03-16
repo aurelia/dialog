@@ -1,9 +1,8 @@
-import {Origin} from 'aurelia-metadata';
 import {Container} from 'aurelia-dependency-injection';
 import {CompositionEngine} from 'aurelia-templating';
 import {DialogController} from './dialog-controller';
 import {DialogRenderer} from './dialog-renderer';
-import {invokeLifecycle} from './lifecycle';
+import {getViewModel, invokeLifecycle} from './dialog-utilities';
 
 export class DialogService {
   static inject = [Container, CompositionEngine, DialogRenderer];
@@ -12,18 +11,6 @@ export class DialogService {
     this.container = container;
     this.compositionEngine = compositionEngine;
     this.renderer = renderer;
-  }
-
-  _getViewModel(instruction) {
-    if (typeof instruction.viewModel === 'function') {
-      instruction.viewModel = Origin.get(instruction.viewModel).moduleId;
-    }
-
-    if (typeof instruction.viewModel === 'string') {
-      return this.compositionEngine.ensureViewModel(instruction);
-    }
-
-    return Promise.resolve(instruction);
   }
 
   open(settings) {
@@ -41,23 +28,23 @@ export class DialogService {
 
       childContainer.registerInstance(DialogController, dialogController);
 
-      return this._getViewModel(instruction).then(returnedInstruction => {
-        dialogController.viewModel = returnedInstruction.viewModel;
-
-        return invokeLifecycle(returnedInstruction.viewModel, 'canActivate', _settings.model).then(canActivate => {
-          if (canActivate) {
-            return this.compositionEngine.createController(returnedInstruction).then(controller => {
+      let controllerInstruction;
+      return getViewModel(instruction, this.compositionEngine)
+        .then(returnedInstruction => {
+          controllerInstruction = returnedInstruction;
+          dialogController.viewModel = controllerInstruction.viewModel;
+          return invokeLifecycle(controllerInstruction.viewModel, 'canActivate', _settings.model);
+        })
+        .then(canActivate => !canActivate ? null :
+          this.compositionEngine.createController(controllerInstruction)
+            .then(controller => {
               dialogController.controller = controller;
               dialogController.view = controller.view;
               controller.automate();
-
-              return this.renderer.createDialogHost(dialogController).then(() => {
-                return this.renderer.showDialog(dialogController);
-              });
-            });
-          }
-        });
-      });
+              return this.renderer.createDialogHost(dialogController);
+            })
+            .then(() => this.renderer.showDialog(dialogController))
+        );
     });
   }
 }
