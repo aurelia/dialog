@@ -1,4 +1,5 @@
-import {DialogRenderer} from '../../src/dialog-renderer';
+import {DialogRenderer} from '../../src/renderers/dialog-renderer';
+import {dialogOptions} from '../../src/dialog-options';
 import {configure} from '../../src/index';
 
 let defaultSettings = {
@@ -27,8 +28,8 @@ describe('the Dialog Renderer', () => {
   });
 
   it('allows overriding the default settings', () => {
-    let callback = (globalSettings) => {
-      Object.assign(globalSettings, newSettings);
+    let callback = (config) => {
+      config.settings = Object.assign(dialogOptions, newSettings);
     };
 
     configure(frameworkConfig, callback);

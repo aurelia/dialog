@@ -1,21 +1,19 @@
-import {globalSettings} from './dialog-renderer';
-export {AiDialog} from './ai-dialog';
-export {AiDialogHeader} from './ai-dialog-header';
-export {AiDialogBody} from './ai-dialog-body';
-export {AiDialogFooter} from './ai-dialog-footer';
-export {AttachFocus} from './attach-focus';
+import {DialogConfiguration} from './dialog-configuration';
+export {AiDialog} from './resources/ai-dialog';
+export {AiDialogHeader} from './resources/ai-dialog-header';
+export {AiDialogBody} from './resources/ai-dialog-body';
+export {AiDialogFooter} from './resources/ai-dialog-footer';
+export {AttachFocus} from './resources/attach-focus';
 
-export function configure(config, callback) {
-  config.globalResources(
-    './ai-dialog',
-    './ai-dialog-header',
-    './ai-dialog-body',
-    './ai-dialog-footer',
-    './attach-focus'
-  );
+export function configure(aurelia, callback) {
+  let config = new DialogConfiguration(aurelia);
+
   if (typeof callback === 'function') {
-    callback(globalSettings);
+    callback(config);
+    return;
   }
+
+  config.useDefaults();
 }
 
 export * from './dialog-service';

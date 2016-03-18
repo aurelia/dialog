@@ -1,4 +1,4 @@
-import {ViewSlot} from 'aurelia-templating';
+import {dialogOptions} from '../dialog-options';
 
 let currentZIndex = 1000;
 
@@ -31,17 +31,12 @@ function centerDialog(modalContainer) {
   child.style.marginTop = Math.max((vh - child.offsetHeight) / 2, 30) + 'px';
 }
 
-export let globalSettings = {
-  lock: true,
-  centerHorizontalOnly: false,
-  startingZIndex: 1000
-};
-
 export class DialogRenderer {
-  defaultSettings = globalSettings;
+  defaultSettings = dialogOptions;
   constructor() {
-    currentZIndex = globalSettings.startingZIndex;
+    currentZIndex = dialogOptions.startingZIndex;
     this.dialogControllers = [];
+    this.containerTagName = 'ai-dialog-container';
     document.addEventListener('keyup', e => {
       if (e.keyCode === 27) {
         let top = this.dialogControllers[this.dialogControllers.length - 1];
@@ -52,10 +47,14 @@ export class DialogRenderer {
     });
   }
 
+  getDialogContainer() {
+    return document.createElement('ai-dialog-container');
+  }
+
   createDialogHost(dialogController: DialogController) {
     let settings = dialogController.settings;
     let modalOverlay = document.createElement('ai-dialog-overlay');
-    let modalContainer = document.createElement('ai-dialog-container');
+    let modalContainer = dialogController.slot.anchor;
     let body = document.body;
 
     modalOverlay.style.zIndex = getNextZIndex();
@@ -63,9 +62,6 @@ export class DialogRenderer {
 
     document.body.insertBefore(modalContainer, document.body.firstChild);
     document.body.insertBefore(modalOverlay, document.body.firstChild);
-
-    dialogController.slot = new ViewSlot(modalContainer, true);
-    dialogController.slot.add(dialogController.view);
 
     dialogController.showDialog = () => {
       this.dialogControllers.push(dialogController);
@@ -138,14 +134,18 @@ export class DialogRenderer {
   }
 
   showDialog(dialogController: DialogController) {
+    if (!dialogController.showDialog) {
+      return this.createDialogHost(dialogController).then(() => {
+        return dialogController.showDialog();
+      });
+    }
+
     return dialogController.showDialog();
   }
 
   hideDialog(dialogController: DialogController) {
-    return dialogController.hideDialog();
-  }
-
-  destroyDialogHost(dialogController: DialogController) {
-    return dialogController.destroyDialogHost();
+    return dialogController.hideDialog().then(() => {
+      return dialogController.destroyDialogHost();
+    });
   }
 }

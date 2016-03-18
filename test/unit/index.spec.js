@@ -6,7 +6,8 @@ describe('testing aurelia configure routine', () => {
     container: {
       registerInstance: (Type, callback) => { },
       get: (type) => { return new Type(); }
-    }
+    },
+    singleton: () => {}
   };
 
   it('should export configure function', () => {

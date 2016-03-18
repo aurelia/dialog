@@ -1,12 +1,12 @@
 import {Origin} from 'aurelia-metadata';
 import {Container} from 'aurelia-dependency-injection';
-import {CompositionEngine} from 'aurelia-templating';
+import {CompositionEngine, ViewSlot} from 'aurelia-templating';
 import {DialogController} from './dialog-controller';
-import {DialogRenderer} from './dialog-renderer';
+import {Renderer} from './renderers/renderer';
 import {invokeLifecycle} from './lifecycle';
 
 export class DialogService {
-  static inject = [Container, CompositionEngine, DialogRenderer];
+  static inject = [Container, CompositionEngine, Renderer];
 
   constructor(container: Container, compositionEngine, renderer) {
     this.container = container;
@@ -51,9 +51,10 @@ export class DialogService {
               dialogController.view = controller.view;
               controller.automate();
 
-              return this.renderer.createDialogHost(dialogController).then(() => {
-                return this.renderer.showDialog(dialogController);
-              });
+              dialogController.slot = new ViewSlot(this.renderer.getDialogContainer(), true);
+              dialogController.slot.add(dialogController.view);
+
+              return this.renderer.showDialog(dialogController);
             });
           }
         });
