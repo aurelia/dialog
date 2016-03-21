@@ -16,7 +16,7 @@ let resources = {
  * @constructor
  */
 export class DialogConfiguration {
-  constructor(aurelia) {
+  constructor(aurelia: FrameworkConfiguration) {
     this.aurelia = aurelia;
     this.settings = dialogOptions;
   }
@@ -25,7 +25,7 @@ export class DialogConfiguration {
    * Selects the Aurelia conventional defaults for the dialog plugin.
    * @chainable
    */
-  useDefaults() {
+  useDefaults(): DialogConfiguration {
     return this.useRenderer(defaultRenderer)
       .useResource('ai-dialog')
       .useResource('ai-dialog-header')
@@ -39,7 +39,7 @@ export class DialogConfiguration {
    * @param resourceName The name of the dialog resource to export.
    * @chainable
    */
-  useResource(resourceName) {
+  useResource(resourceName: string): DialogConfiguration {
     this.aurelia.globalResources(resources[resourceName]);
     return this;
   }
@@ -50,7 +50,7 @@ export class DialogConfiguration {
    * @param settings Global settings for the renderer.
    * @chainable
    */
-  useRenderer(renderer, settings) {
+  useRenderer(renderer: Renderer, settings?: Object): DialogConfiguration {
     this.aurelia.singleton(Renderer, renderer);
     this.settings = Object.assign(dialogOptions, settings);
     return this;

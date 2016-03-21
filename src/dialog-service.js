@@ -23,7 +23,7 @@ export class DialogService {
    * @param settings Dialog settings for this dialog instance.
    * @return Promise A promise that settles when the dialog is closed.
    */
-  open(settings) {
+  open(settings?: Object) {
     let _settings = Object.assign({}, this.renderer.defaultSettings, settings);
 
     return new Promise((resolve, reject) => {

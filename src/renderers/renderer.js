@@ -6,7 +6,7 @@ export class Renderer {
    * Gets an anchor for the ViewSlot to insert a view into.
    * @returns A DOM element.
    */
-  getDialogContainer() {
+  getDialogContainer(): any {
     throw new Error('DialogRenderer must implement getDialogContainer().');
   }
 
@@ -14,7 +14,7 @@ export class Renderer {
    * Displays the dialog.
    * @returns Promise A promise that resolves when the dialog has been displayed.
    */
-  showDialog(dialogController: DialogController) {
+  showDialog(dialogController: DialogController): Promise<any> {
     throw new Error('DialogRenderer must implement showDialog().');
   }
 
@@ -22,7 +22,7 @@ export class Renderer {
    * Hides the dialog.
    * @returns Promise A promise that resolves when the dialog has been hidden.
    */
-  hideDialog(dialogController: DialogController) {
+  hideDialog(dialogController: DialogController): Promise<any> {
     throw new Error('DialogRenderer must implement hideDialog().');
   }
 }
