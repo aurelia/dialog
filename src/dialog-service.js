@@ -16,6 +16,8 @@ export class DialogService {
     this.container = container;
     this.compositionEngine = compositionEngine;
     this.renderer = renderer;
+    this.controllers = [];
+    this.hasActiveDialog = false;
   }
 
   /**
@@ -25,10 +27,11 @@ export class DialogService {
    */
   open(settings?: Object) {
     let _settings = Object.assign({}, this.renderer.defaultSettings, settings);
+    let dialogController;
 
-    return new Promise((resolve, reject) => {
+    let promise = new Promise((resolve, reject) => {
       let childContainer = this.container.createChild();
-      let dialogController = new DialogController(this.renderer, _settings, resolve, reject);
+      dialogController = new DialogController(this.renderer, _settings, resolve, reject);
       let instruction = {
         viewModel: _settings.viewModel,
         container: this.container,
@@ -43,6 +46,9 @@ export class DialogService {
 
         return invokeLifecycle(returnedInstruction.viewModel, 'canActivate', _settings.model).then(canActivate => {
           if (canActivate) {
+            this.controllers.push(dialogController);
+            this.hasActiveDialog = !!this.controllers.length;
+
             return this.compositionEngine.createController(returnedInstruction).then(controller => {
               dialogController.controller = controller;
               dialogController.view = controller.view;
@@ -56,6 +62,16 @@ export class DialogService {
           }
         });
       });
+    });
+
+    return promise.then((result) => {
+      let i = this.controllers.indexOf(dialogController);
+      if (i !== -1) {
+        this.controllers.splice(i, 1);
+        this.hasActiveDialog = !!this.controllers.length;
+      }
+
+      return result;
     });
   }
 

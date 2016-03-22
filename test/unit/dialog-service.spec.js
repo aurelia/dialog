@@ -49,4 +49,32 @@ describe('the Dialog Service', () => {
 
     dialogService.open(settings);
   });
+
+  it('reports no active dialog if no dialog is open', () => {
+    const settings = { viewModel: TestElement };
+
+    spyOn(renderer, 'showDialog').and.callFake((dialogController) => {
+      dialogController.cancel();
+      done();
+    });
+
+    expect(dialogService.hasActiveDialog).toBe(false);
+
+    dialogService.open(settings)
+      .then(() => {
+        expect(dialogService.hasActiveDialog).toBe(false);
+        done();
+      });
+  });
+
+  it('reports an active dialog if a dialog is open', (done) => {
+    const settings = { viewModel: TestElement };
+
+    spyOn(renderer, 'showDialog').and.callFake((dialogController) => {
+      expect(dialogService.hasActiveDialog).toBe(true);
+      done();
+    });
+
+    dialogService.open(settings);
+  });
 });
