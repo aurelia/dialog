@@ -1,3 +1,11 @@
+### 0.5.10 (2016-03-23)
+
+
+#### Bug Fixes
+
+* **build:** incorrect build configuration ([f03146ee](https://github.com/aurelia/dialog/commit/f03146ee66ec3545d508f62de3bb618a064b4b2f))
+
+
 ### 0.5.9 (2016-03-22)
 
 

@@ -8,7 +8,6 @@ exports.DialogConfiguration = exports.DialogService = exports.DialogRenderer = e
 var _dec, _class, _dec2, _class2, _desc, _value, _class3, _descriptor, _descriptor2, _class4, _temp, _dec3, _class5, _class6, _temp2, _dec4, _class7, _dec5, _class8, _class9, _temp3, _class13, _temp4;
 
 exports.invokeLifecycle = invokeLifecycle;
-exports.configure = configure;
 
 var _aureliaTemplating = require('aurelia-templating');
 
@@ -507,14 +506,3 @@ var DialogConfiguration = exports.DialogConfiguration = function () {
 
   return DialogConfiguration;
 }();
-
-function configure(aurelia, callback) {
-  var config = new DialogConfiguration(aurelia);
-
-  if (typeof callback === 'function') {
-    callback(config);
-    return;
-  }
-
-  config.useDefaults();
-}

@@ -166,5 +166,4 @@ declare module 'aurelia-dialog' {
        */
     useRenderer(renderer: Renderer, settings?: Object): DialogConfiguration;
   }
-  export function configure(aurelia: any, callback: any): any;
 }

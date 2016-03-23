@@ -500,14 +500,3 @@ export class DialogConfiguration {
     return this;
   }
 }
-
-export function configure(aurelia, callback) {
-  let config = new DialogConfiguration(aurelia);
-
-  if (typeof callback === 'function') {
-    callback(config);
-    return;
-  }
-
-  config.useDefaults();
-}
