@@ -1,11 +1,13 @@
-System.register(['./prompt', '../dialog-service'], function (_export) {
-  'use strict';
+'use strict';
 
-  var Prompt, DialogService, CommonDialogs;
+System.register(['./prompt', '../dialog-service'], function (_export, _context) {
+  var Prompt, DialogService, _class, _temp, CommonDialogs;
 
-  var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-  function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+  function _classCallCheck(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+      throw new TypeError("Cannot call a class as a function");
+    }
+  }
 
   return {
     setters: [function (_prompt) {
@@ -14,13 +16,7 @@ System.register(['./prompt', '../dialog-service'], function (_export) {
       DialogService = _dialogService.DialogService;
     }],
     execute: function () {
-      CommonDialogs = (function () {
-        _createClass(CommonDialogs, null, [{
-          key: 'inject',
-          value: [DialogService],
-          enumerable: true
-        }]);
-
+      _export('CommonDialogs', CommonDialogs = (_temp = _class = function () {
         function CommonDialogs(dialogService) {
           _classCallCheck(this, CommonDialogs);
 
@@ -32,7 +28,7 @@ System.register(['./prompt', '../dialog-service'], function (_export) {
         };
 
         return CommonDialogs;
-      })();
+      }(), _class.inject = [DialogService], _temp));
 
       _export('CommonDialogs', CommonDialogs);
     }

@@ -1,16 +1,20 @@
-System.register(['./lifecycle'], function (_export) {
-  'use strict';
+'use strict';
 
+System.register(['./lifecycle'], function (_export, _context) {
   var invokeLifecycle, DialogController, DialogResult;
 
-  function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+  function _classCallCheck(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+      throw new TypeError("Cannot call a class as a function");
+    }
+  }
 
   return {
     setters: [function (_lifecycle) {
       invokeLifecycle = _lifecycle.invokeLifecycle;
     }],
     execute: function () {
-      DialogController = (function () {
+      _export('DialogController', DialogController = function () {
         function DialogController(renderer, settings, resolve, reject) {
           _classCallCheck(this, DialogController);
 
@@ -34,8 +38,6 @@ System.register(['./lifecycle'], function (_export) {
           return invokeLifecycle(this.viewModel, 'deactivate').then(function () {
             return _this._renderer.hideDialog(_this);
           }).then(function () {
-            return _this._renderer.destroyDialogHost(_this);
-          }).then(function () {
             _this.controller.unbind();
             _this._reject(message);
           });
@@ -50,8 +52,6 @@ System.register(['./lifecycle'], function (_export) {
               return invokeLifecycle(_this2.viewModel, 'deactivate').then(function () {
                 return _this2._renderer.hideDialog(_this2);
               }).then(function () {
-                return _this2._renderer.destroyDialogHost(_this2);
-              }).then(function () {
                 _this2.controller.unbind();
                 _this2._resolve(returnResult);
               });
@@ -60,7 +60,7 @@ System.register(['./lifecycle'], function (_export) {
         };
 
         return DialogController;
-      })();
+      }());
 
       _export('DialogController', DialogController);
 

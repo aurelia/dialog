@@ -1,12 +1,15 @@
 'use strict';
 
-exports.__esModule = true;
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.DialogController = undefined;
 
 var _lifecycle = require('./lifecycle');
 
-var DialogController = (function () {
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var DialogController = exports.DialogController = function () {
   function DialogController(renderer, settings, resolve, reject) {
     _classCallCheck(this, DialogController);
 
@@ -27,10 +30,8 @@ var DialogController = (function () {
   DialogController.prototype.error = function error(message) {
     var _this = this;
 
-    return _lifecycle.invokeLifecycle(this.viewModel, 'deactivate').then(function () {
+    return (0, _lifecycle.invokeLifecycle)(this.viewModel, 'deactivate').then(function () {
       return _this._renderer.hideDialog(_this);
-    }).then(function () {
-      return _this._renderer.destroyDialogHost(_this);
     }).then(function () {
       _this.controller.unbind();
       _this._reject(message);
@@ -41,12 +42,10 @@ var DialogController = (function () {
     var _this2 = this;
 
     var returnResult = new DialogResult(!ok, result);
-    return _lifecycle.invokeLifecycle(this.viewModel, 'canDeactivate').then(function (canDeactivate) {
+    return (0, _lifecycle.invokeLifecycle)(this.viewModel, 'canDeactivate').then(function (canDeactivate) {
       if (canDeactivate) {
-        return _lifecycle.invokeLifecycle(_this2.viewModel, 'deactivate').then(function () {
+        return (0, _lifecycle.invokeLifecycle)(_this2.viewModel, 'deactivate').then(function () {
           return _this2._renderer.hideDialog(_this2);
-        }).then(function () {
-          return _this2._renderer.destroyDialogHost(_this2);
         }).then(function () {
           _this2.controller.unbind();
           _this2._resolve(returnResult);
@@ -56,9 +55,7 @@ var DialogController = (function () {
   };
 
   return DialogController;
-})();
-
-exports.DialogController = DialogController;
+}();
 
 var DialogResult = function DialogResult(cancelled, result) {
   _classCallCheck(this, DialogResult);

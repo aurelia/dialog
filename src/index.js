@@ -1,9 +1,4 @@
 import {DialogConfiguration} from './dialog-configuration';
-export {AiDialog} from './resources/ai-dialog';
-export {AiDialogHeader} from './resources/ai-dialog-header';
-export {AiDialogBody} from './resources/ai-dialog-body';
-export {AiDialogFooter} from './resources/ai-dialog-footer';
-export {AttachFocus} from './resources/attach-focus';
 
 export function configure(aurelia, callback) {
   let config = new DialogConfiguration(aurelia);
@@ -15,6 +10,3 @@ export function configure(aurelia, callback) {
 
   config.useDefaults();
 }
-
-export * from './dialog-service';
-export * from './dialog-controller';

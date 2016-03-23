@@ -1,28 +1,28 @@
-System.register([], function (_export) {
-  'use strict';
+'use strict';
 
-  _export('invokeLifecycle', invokeLifecycle);
-
-  function invokeLifecycle(instance, name, model) {
-    if (typeof instance[name] === 'function') {
-      var result = instance[name](model);
-
-      if (result instanceof Promise) {
-        return result;
-      }
-
-      if (result !== null && result !== undefined) {
-        return Promise.resolve(result);
-      }
-
-      return Promise.resolve(true);
-    }
-
-    return Promise.resolve(true);
-  }
-
+System.register([], function (_export, _context) {
   return {
     setters: [],
-    execute: function () {}
+    execute: function () {
+      function invokeLifecycle(instance, name, model) {
+        if (typeof instance[name] === 'function') {
+          var result = instance[name](model);
+
+          if (result instanceof Promise) {
+            return result;
+          }
+
+          if (result !== null && result !== undefined) {
+            return Promise.resolve(result);
+          }
+
+          return Promise.resolve(true);
+        }
+
+        return Promise.resolve(true);
+      }
+
+      _export('invokeLifecycle', invokeLifecycle);
+    }
   };
 });

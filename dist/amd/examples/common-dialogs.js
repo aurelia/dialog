@@ -1,19 +1,20 @@
 define(['exports', './prompt', '../dialog-service'], function (exports, _prompt, _dialogService) {
   'use strict';
 
-  exports.__esModule = true;
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.CommonDialogs = undefined;
 
-  var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+  function _classCallCheck(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+      throw new TypeError("Cannot call a class as a function");
+    }
+  }
 
-  function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+  var _class, _temp;
 
-  var CommonDialogs = (function () {
-    _createClass(CommonDialogs, null, [{
-      key: 'inject',
-      value: [_dialogService.DialogService],
-      enumerable: true
-    }]);
-
+  var CommonDialogs = exports.CommonDialogs = (_temp = _class = function () {
     function CommonDialogs(dialogService) {
       _classCallCheck(this, CommonDialogs);
 
@@ -25,7 +26,5 @@ define(['exports', './prompt', '../dialog-service'], function (exports, _prompt,
     };
 
     return CommonDialogs;
-  })();
-
-  exports.CommonDialogs = CommonDialogs;
+  }(), _class.inject = [_dialogService.DialogService], _temp);
 });

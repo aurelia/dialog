@@ -1,8 +1,9 @@
 'use strict';
 
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 exports.invokeLifecycle = invokeLifecycle;
-
 function invokeLifecycle(instance, name, model) {
   if (typeof instance[name] === 'function') {
     var result = instance[name](model);

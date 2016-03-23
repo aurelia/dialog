@@ -16,7 +16,7 @@ let resources = {
  * @constructor
  */
 export class DialogConfiguration {
-  constructor(aurelia: FrameworkConfiguration) {
+  constructor(aurelia) {
     this.aurelia = aurelia;
     this.settings = dialogOptions;
   }

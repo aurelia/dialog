@@ -1,39 +1,24 @@
-System.register(['./dialog-renderer', './ai-dialog', './ai-dialog-header', './ai-dialog-body', './ai-dialog-footer', './attach-focus', './dialog-service', './dialog-controller'], function (_export) {
-  'use strict';
+'use strict';
 
-  var globalSettings;
-
-  _export('configure', configure);
-
-  function configure(config, callback) {
-    config.globalResources('./ai-dialog', './ai-dialog-header', './ai-dialog-body', './ai-dialog-footer', './attach-focus');
-    if (typeof callback === 'function') {
-      callback(globalSettings);
-    }
-  }
-
+System.register(['./dialog-configuration'], function (_export, _context) {
+  var DialogConfiguration;
   return {
-    setters: [function (_dialogRenderer) {
-      globalSettings = _dialogRenderer.globalSettings;
-    }, function (_aiDialog) {
-      _export('AiDialog', _aiDialog.AiDialog);
-    }, function (_aiDialogHeader) {
-      _export('AiDialogHeader', _aiDialogHeader.AiDialogHeader);
-    }, function (_aiDialogBody) {
-      _export('AiDialogBody', _aiDialogBody.AiDialogBody);
-    }, function (_aiDialogFooter) {
-      _export('AiDialogFooter', _aiDialogFooter.AiDialogFooter);
-    }, function (_attachFocus) {
-      _export('AttachFocus', _attachFocus.AttachFocus);
-    }, function (_dialogService) {
-      for (var _key in _dialogService) {
-        if (_key !== 'default') _export(_key, _dialogService[_key]);
-      }
-    }, function (_dialogController) {
-      for (var _key2 in _dialogController) {
-        if (_key2 !== 'default') _export(_key2, _dialogController[_key2]);
-      }
+    setters: [function (_dialogConfiguration) {
+      DialogConfiguration = _dialogConfiguration.DialogConfiguration;
     }],
-    execute: function () {}
+    execute: function () {
+      function configure(aurelia, callback) {
+        var config = new DialogConfiguration(aurelia);
+
+        if (typeof callback === 'function') {
+          callback(config);
+          return;
+        }
+
+        config.useDefaults();
+      }
+
+      _export('configure', configure);
+    }
   };
 });

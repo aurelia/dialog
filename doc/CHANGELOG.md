@@ -1,3 +1,11 @@
+### 0.5.9 (2016-03-22)
+
+
+#### Features
+
+* **dialog:** track controllers in service ([b58d17f5](https://github.com/aurelia/dialog/commit/b58d17f5d1bd4461ad1fb5f943de63d6ce8b81bd), closes [#121](https://github.com/aurelia/dialog/issues/121))
+
+
 ### 0.5.8 (2016-03-10)
 
 

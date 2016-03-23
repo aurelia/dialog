@@ -1,6 +1,12 @@
-import {customElement,bindable,customAttribute,ViewSlot,CompositionEngine} from 'aurelia-templating';
+import {customElement,bindable,customAttribute,CompositionEngine,ViewSlot} from 'aurelia-templating';
 import {Origin} from 'aurelia-metadata';
 import {Container} from 'aurelia-dependency-injection';
+
+export let dialogOptions = {
+  lock: true,
+  centerHorizontalOnly: false,
+  startingZIndex: 1000
+};
 
 @customElement('ai-dialog-body')
 export class AiDialogBody {
@@ -77,6 +83,36 @@ export class AttachFocus {
 }
 
 
+/**
+ * Call a lifecycle method on a viewModel if it exists.
+ * @function
+ * @param instance The viewModel instance.
+ * @param name The lifecycle method name.
+ * @param model The model to pass to the lifecycle method.
+ * @returns Promise The result of the lifecycle method.
+ */
+export function invokeLifecycle(instance: any, name: string, model: any) {
+  if (typeof instance[name] === 'function') {
+    let result = instance[name](model);
+
+    if (result instanceof Promise) {
+      return result;
+    }
+
+    if (result !== null && result !== undefined) {
+      return Promise.resolve(result);
+    }
+
+    return Promise.resolve(true);
+  }
+
+  return Promise.resolve(true);
+}
+
+/**
+ * A controller object for a Dialog instance.
+ * @constructor
+ */
 export class DialogController {
   settings: any;
   constructor(renderer: DialogRenderer, settings: any, resolve: Function, reject: Function) {
@@ -86,26 +122,43 @@ export class DialogController {
     this._reject = reject;
   }
 
+  /**
+   * Closes the dialog with a successful result.
+   * @param result The returned success result.
+   */
   ok(result: any) {
     this.close(true, result);
   }
 
+  /**
+   * Closes the dialog with a cancel result.
+   * @param result The returned cancel result.
+   */
   cancel(result: any) {
     this.close(false, result);
   }
 
+  /**
+   * Closes the dialog with an error result.
+   * @param message An error message.
+   * @returns Promise An empty promise object.
+   */
   error(message: any) {
     return invokeLifecycle(this.viewModel, 'deactivate')
       .then(() => {
         return this._renderer.hideDialog(this);
-      }).then(() => {
-        return this._renderer.destroyDialogHost(this);
       }).then(() => {
         this.controller.unbind();
         this._reject(message);
       });
   }
 
+  /**
+   * Closes the dialog.
+   * @param ok Whether or not the user input signified success.
+   * @param result The specified result.
+   * @returns Promise An empty promise object.
+   */
   close(ok: boolean, result: any) {
     let returnResult = new DialogResult(!ok, result);
     return invokeLifecycle(this.viewModel, 'canDeactivate').then(canDeactivate => {
@@ -113,8 +166,6 @@ export class DialogController {
         return invokeLifecycle(this.viewModel, 'deactivate')
           .then(() => {
             return this._renderer.hideDialog(this);
-          }).then(() => {
-            return this._renderer.destroyDialogHost(this);
           }).then(() => {
             this.controller.unbind();
             this._resolve(returnResult);
@@ -130,6 +181,35 @@ class DialogResult {
   constructor(cancelled: boolean, result: any) {
     this.wasCancelled = cancelled;
     this.output = result;
+  }
+}
+
+/**
+ * An abstract base class for implementors of the basic Renderer API.
+ */
+export class Renderer {
+  /**
+   * Gets an anchor for the ViewSlot to insert a view into.
+   * @returns A DOM element.
+   */
+  getDialogContainer(): any {
+    throw new Error('DialogRenderer must implement getDialogContainer().');
+  }
+
+  /**
+   * Displays the dialog.
+   * @returns Promise A promise that resolves when the dialog has been displayed.
+   */
+  showDialog(dialogController: DialogController): Promise<any> {
+    throw new Error('DialogRenderer must implement showDialog().');
+  }
+
+  /**
+   * Hides the dialog.
+   * @returns Promise A promise that resolves when the dialog has been hidden.
+   */
+  hideDialog(dialogController: DialogController): Promise<any> {
+    throw new Error('DialogRenderer must implement hideDialog().');
   }
 }
 
@@ -164,17 +244,12 @@ function centerDialog(modalContainer) {
   child.style.marginTop = Math.max((vh - child.offsetHeight) / 2, 30) + 'px';
 }
 
-export let globalSettings = {
-  lock: true,
-  centerHorizontalOnly: false,
-  startingZIndex: 1000
-};
-
 export class DialogRenderer {
-  defaultSettings = globalSettings;
+  defaultSettings = dialogOptions;
   constructor() {
-    currentZIndex = globalSettings.startingZIndex;
+    currentZIndex = dialogOptions.startingZIndex;
     this.dialogControllers = [];
+    this.containerTagName = 'ai-dialog-container';
     document.addEventListener('keyup', e => {
       if (e.keyCode === 27) {
         let top = this.dialogControllers[this.dialogControllers.length - 1];
@@ -185,10 +260,14 @@ export class DialogRenderer {
     });
   }
 
+  getDialogContainer() {
+    return document.createElement('ai-dialog-container');
+  }
+
   createDialogHost(dialogController: DialogController) {
     let settings = dialogController.settings;
     let modalOverlay = document.createElement('ai-dialog-overlay');
-    let modalContainer = document.createElement('ai-dialog-container');
+    let modalContainer = dialogController.slot.anchor;
     let body = document.body;
 
     modalOverlay.style.zIndex = getNextZIndex();
@@ -196,9 +275,6 @@ export class DialogRenderer {
 
     document.body.insertBefore(modalContainer, document.body.firstChild);
     document.body.insertBefore(modalOverlay, document.body.firstChild);
-
-    dialogController.slot = new ViewSlot(modalContainer, true);
-    dialogController.slot.add(dialogController.view);
 
     dialogController.showDialog = () => {
       this.dialogControllers.push(dialogController);
@@ -271,45 +347,49 @@ export class DialogRenderer {
   }
 
   showDialog(dialogController: DialogController) {
+    if (!dialogController.showDialog) {
+      return this.createDialogHost(dialogController).then(() => {
+        return dialogController.showDialog();
+      });
+    }
+
     return dialogController.showDialog();
   }
 
   hideDialog(dialogController: DialogController) {
-    return dialogController.hideDialog();
-  }
-
-  destroyDialogHost(dialogController: DialogController) {
-    return dialogController.destroyDialogHost();
+    return dialogController.hideDialog().then(() => {
+      return dialogController.destroyDialogHost();
+    });
   }
 }
 
+/**
+ * A service allowing for the creation of dialogs.
+ * @constructor
+ */
 export class DialogService {
-  static inject = [Container, CompositionEngine, DialogRenderer];
+  static inject = [Container, CompositionEngine, Renderer];
 
   constructor(container: Container, compositionEngine, renderer) {
     this.container = container;
     this.compositionEngine = compositionEngine;
     this.renderer = renderer;
+    this.controllers = [];
+    this.hasActiveDialog = false;
   }
 
-  _getViewModel(instruction) {
-    if (typeof instruction.viewModel === 'function') {
-      instruction.viewModel = Origin.get(instruction.viewModel).moduleId;
-    }
+  /**
+   * Opens a new dialog.
+   * @param settings Dialog settings for this dialog instance.
+   * @return Promise A promise that settles when the dialog is closed.
+   */
+  open(settings?: Object) {
+    let _settings = Object.assign({}, this.renderer.defaultSettings, settings);
+    let dialogController;
 
-    if (typeof instruction.viewModel === 'string') {
-      return this.compositionEngine.ensureViewModel(instruction);
-    }
-
-    return Promise.resolve(instruction);
-  }
-
-  open(settings) {
-    let _settings =  Object.assign({}, this.renderer.defaultSettings, settings);
-
-    return new Promise((resolve, reject) => {
+    let promise = new Promise((resolve, reject) => {
       let childContainer = this.container.createChild();
-      let dialogController = new DialogController(this.renderer, _settings, resolve, reject);
+      dialogController = new DialogController(this.renderer, _settings, resolve, reject);
       let instruction = {
         viewModel: _settings.viewModel,
         container: this.container,
@@ -324,36 +404,110 @@ export class DialogService {
 
         return invokeLifecycle(returnedInstruction.viewModel, 'canActivate', _settings.model).then(canActivate => {
           if (canActivate) {
+            this.controllers.push(dialogController);
+            this.hasActiveDialog = !!this.controllers.length;
+
             return this.compositionEngine.createController(returnedInstruction).then(controller => {
               dialogController.controller = controller;
               dialogController.view = controller.view;
               controller.automate();
 
-              return this.renderer.createDialogHost(dialogController).then(() => {
-                return this.renderer.showDialog(dialogController);
-              });
+              dialogController.slot = new ViewSlot(this.renderer.getDialogContainer(), true);
+              dialogController.slot.add(dialogController.view);
+
+              return this.renderer.showDialog(dialogController);
             });
           }
         });
       });
     });
+
+    return promise.then((result) => {
+      let i = this.controllers.indexOf(dialogController);
+      if (i !== -1) {
+        this.controllers.splice(i, 1);
+        this.hasActiveDialog = !!this.controllers.length;
+      }
+
+      return result;
+    });
+  }
+
+  _getViewModel(instruction) {
+    if (typeof instruction.viewModel === 'function') {
+      instruction.viewModel = Origin.get(instruction.viewModel).moduleId;
+    }
+
+    if (typeof instruction.viewModel === 'string') {
+      return this.compositionEngine.ensureViewModel(instruction);
+    }
+
+    return Promise.resolve(instruction);
   }
 }
 
-export function invokeLifecycle(instance: any, name: string, model: any) {
-  if (typeof instance[name] === 'function') {
-    let result = instance[name](model);
+let defaultRenderer = DialogRenderer;
+let resources = {
+  'ai-dialog': './resources/ai-dialog',
+  'ai-dialog-header': './resources/ai-dialog-header',
+  'ai-dialog-body': './resources/ai-dialog-body',
+  'ai-dialog-footer': './resources/ai-dialog-footer',
+  'attach-focus': './resources/attach-focus'
+};
 
-    if (result instanceof Promise) {
-      return result;
-    }
-
-    if (result !== null && result !== undefined) {
-      return Promise.resolve(result);
-    }
-
-    return Promise.resolve(true);
+/**
+ * A configuration builder for the dialog plugin.
+ * @constructor
+ */
+export class DialogConfiguration {
+  constructor(aurelia) {
+    this.aurelia = aurelia;
+    this.settings = dialogOptions;
   }
 
-  return Promise.resolve(true);
+  /**
+   * Selects the Aurelia conventional defaults for the dialog plugin.
+   * @chainable
+   */
+  useDefaults(): DialogConfiguration {
+    return this.useRenderer(defaultRenderer)
+      .useResource('ai-dialog')
+      .useResource('ai-dialog-header')
+      .useResource('ai-dialog-body')
+      .useResource('ai-dialog-footer')
+      .useResource('attach-focus');
+  }
+
+  /**
+   * Exports the chosen dialog element or view to Aurelia's global resources.
+   * @param resourceName The name of the dialog resource to export.
+   * @chainable
+   */
+  useResource(resourceName: string): DialogConfiguration {
+    this.aurelia.globalResources(resources[resourceName]);
+    return this;
+  }
+
+  /**
+   * Configures the plugin to use a specific dialog renderer.
+   * @param renderer An object with a Renderer interface.
+   * @param settings Global settings for the renderer.
+   * @chainable
+   */
+  useRenderer(renderer: Renderer, settings?: Object): DialogConfiguration {
+    this.aurelia.singleton(Renderer, renderer);
+    this.settings = Object.assign(dialogOptions, settings);
+    return this;
+  }
+}
+
+export function configure(aurelia, callback) {
+  let config = new DialogConfiguration(aurelia);
+
+  if (typeof callback === 'function') {
+    callback(config);
+    return;
+  }
+
+  config.useDefaults();
 }
