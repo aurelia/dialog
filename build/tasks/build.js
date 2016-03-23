@@ -31,15 +31,19 @@ function removeDTSPlugin(options) {
 gulp.task('build-index', function(){
   var importsToAdd = [];
   var files = [
-    'ai-dialog-body.js',
-    'ai-dialog-footer.js',
-    'ai-dialog-header.js',
-    'ai-dialog.js',
-    'attach-focus.js',
+    'dialog-options.js',
+    'resources/ai-dialog-body.js',
+    'resources/ai-dialog-footer.js',
+    'resources/ai-dialog-header.js',
+    'resources/ai-dialog.js',
+    'resources/attach-focus.js',
+    'lifecycle.js',
     'dialog-controller.js',
-    'dialog-renderer.js',
+    'renderers/renderer.js',
+    'renderers/dialog-renderer.js',
     'dialog-service.js',
-    'lifecycle.js'
+    'dialog-configuration.js',
+    'index.js'
     ].map(function(file){
       return paths.root + file;
     });
