@@ -1,6 +1,6 @@
 import {DialogRenderer} from '../../src/renderers/dialog-renderer';
 import {dialogOptions} from '../../src/dialog-options';
-import {configure} from '../../src/index';
+import {configure} from '../../src/aurelia-dialog';
 
 let defaultSettings = {
   lock: true,
@@ -38,4 +38,3 @@ describe('the Dialog Renderer', () => {
     expect(renderer.defaultSettings).toEqual(newSettings);
   });
 });
-

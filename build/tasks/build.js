@@ -15,6 +15,7 @@ var rename = require('gulp-rename');
 var tools = require('aurelia-tools');
 var del = require('del');
 var vinylPaths = require('vinyl-paths');
+var gulpIgnore = require('gulp-ignore');
 
 var jsName = paths.packageName + '.js';
 
@@ -43,12 +44,13 @@ gulp.task('build-index', function(){
     'renderers/dialog-renderer.js',
     'dialog-service.js',
     'dialog-configuration.js',
-    'index.js'
+    'aurelia-dialog.js'
     ].map(function(file){
       return paths.root + file;
     });
 
   return gulp.src(files)
+    .pipe(gulpIgnore.exclude('aurelia-dialog.js'))
     .pipe(through2.obj(function(file, enc, callback) {
       file.contents = new Buffer(tools.extractImports(file.contents.toString("utf8"), importsToAdd));
       this.push(file);
