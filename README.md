@@ -235,20 +235,21 @@ You can also bind the value of the attach-focus attribute if you want to alter w
   ```
 
 ###Global Settings
-You can specify global settings as well for all dialogs to use when installing the plugin via the configure method.
+You can specify global settings as well for all dialogs to use when installing the plugin via the configure method. If providing a custom configuration, you *must* call the `useDefaults()` method to apply the base configuration.
 
 ```javascript
 export function configure(aurelia) {
   aurelia.use
     .standardConfiguration()
     .developmentLogging()
-    .plugin('aurelia-dialog', (settings) => {
-      settings.lock = true;
-      settings.centerHorizontalOnly = false;
-      settings.startingZIndex = 5;
+    .plugin('aurelia-dialog', config => {
+      config.useDefaults();
+      config.settings.lock = true;
+      config.settings.centerHorizontalOnly = false;
+      config.settings.startingZIndex = 5;
     });
 
-  aurelia.start().then(a => a.setRoot('src/app'));
+  aurelia.start().then(a => a.setRoot());
 }
 ```
 

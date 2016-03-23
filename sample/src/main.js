@@ -4,7 +4,7 @@ export function configure(aurelia) {
   aurelia.use
     .standardConfiguration()
     .developmentLogging()
-    .plugin('aurelia-dialog', (config) => {
+    .plugin('aurelia-dialog', config => {
       config.useDefaults();
       config.settings.lock = true;
       config.settings.centerHorizontalOnly = false;
