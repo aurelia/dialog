@@ -273,3 +273,13 @@ export class Prompt {
   }
 }
 ```
+
+## Overlay with 50% opacity
+
+Bootstrap adds 50% opacity and a background color of black to the modal.  To achieve this in dialog you can simply add the following CSS -
+```css
+ai-dialog-overlay.active {
+  background-color: black;
+  opacity: .5;
+}
+```
