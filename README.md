@@ -253,6 +253,7 @@ export function configure(aurelia) {
 }
 ```
 
+> Note: The startingZIndex will only be assignable during initial configuration.  This is because we stack everything on that Z-index after bootstrapping the modal.
 
 ###Settings
 The settings available for the dialog are set on the dialog controller on a per-dialog basis.
