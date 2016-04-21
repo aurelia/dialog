@@ -1,7 +1,10 @@
 import {DialogConfiguration} from '../../src/dialog-configuration';
 import {dialogOptions} from '../../src/dialog-options';
 import {DialogRenderer} from '../../src/renderers/dialog-renderer';
+import {initialize} from 'aurelia-pal-browser';
 import {Renderer} from '../../src/renderers/renderer';
+
+initialize();
 
 let defaultDialogOptions = Object.assign({}, dialogOptions);
 
@@ -13,6 +16,8 @@ let aurelia = {
 describe('DialogConfiguration', () => {
   let configuration;
   beforeEach(() => {
+    initialize();
+
     configuration = new DialogConfiguration(aurelia);
 
     Object.keys(dialogOptions).forEach((key) => {

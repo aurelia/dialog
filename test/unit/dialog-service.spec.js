@@ -1,12 +1,14 @@
 import {DialogService} from '../../src/dialog-service';
+import {Renderer} from '../../src/renderers/renderer';
 import {Container} from 'aurelia-dependency-injection';
 import {CompositionEngine, BindingLanguage} from 'aurelia-templating';
-import {DialogRenderer} from '../../src/renderers/dialog-renderer';
 import {TestElement} from '../fixtures/test-element';
 import {initialize} from 'aurelia-pal-browser';
 import {Loader} from 'aurelia-loader';
 import {DefaultLoader} from 'aurelia-loader-default';
 import {TemplatingBindingLanguage} from 'aurelia-templating-binding';
+
+initialize();
 
 describe('the Dialog Service', () => {
   let dialogService;
@@ -17,13 +19,22 @@ describe('the Dialog Service', () => {
   beforeEach(() => {
     initialize();
 
+    renderer = {
+      showDialog: function() {
+        return Promise.resolve();
+      },
+      getDialogContainer: function() {
+        return document.createElement('div');
+      }
+    };
+
     container = new Container();
     container.registerSingleton(Loader, DefaultLoader);
     container.registerSingleton(BindingLanguage, TemplatingBindingLanguage);
     container.registerAlias(BindingLanguage, TemplatingBindingLanguage);
+    container.registerInstance(Renderer, renderer);
 
     compEng = container.get(CompositionEngine);
-    renderer = new DialogRenderer();
     dialogService = new DialogService(container, compEng, renderer);
   });
 
@@ -33,19 +44,6 @@ describe('the Dialog Service', () => {
     spyOn(renderer, 'showDialog').and.callFake((dialogController) => {
       done();
     });
-
-    dialogService.open(settings);
-  });
-
-  it('calls position if specified', (done) => {
-    const settings = {
-      viewModel: TestElement,
-      position: (modalContainer, modalOverlay) => {
-        expect(modalContainer.tagName).toBe('AI-DIALOG-CONTAINER');
-        expect(modalOverlay.tagName).toBe('AI-DIALOG-OVERLAY');
-        done();
-      }
-    };
 
     dialogService.open(settings);
   });

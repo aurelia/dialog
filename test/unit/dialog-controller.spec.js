@@ -1,12 +1,18 @@
 import {DialogController} from '../../src/dialog-controller';
 import {Container} from 'aurelia-dependency-injection';
+import {initialize} from 'aurelia-pal-browser';
+
+initialize();
 
 describe('the Dialog Controller', () => {
   let dialogController;
-  let renderer;
+  let renderer = {
+    defaultSettings: {}
+  };
   let settings;
 
   beforeEach(() => {
+    initialize();
     new Container().makeGlobal();
     settings = { name: 'Test' };
     dialogController = new DialogController(renderer, settings);

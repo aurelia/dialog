@@ -1,5 +1,6 @@
 import {invokeLifecycle} from './lifecycle';
 
+
 /**
  * A controller object for a Dialog instance.
  * @constructor
@@ -8,7 +9,7 @@ export class DialogController {
   settings: any;
   constructor(renderer: DialogRenderer, settings: any, resolve: Function, reject: Function) {
     this._renderer = renderer;
-    this.settings = settings;
+    this.settings = Object.assign({}, this._renderer.defaultSettings, settings);
     this._resolve = resolve;
     this._reject = reject;
   }
