@@ -6,10 +6,11 @@ import {EditPerson} from './edit-person';
 export class App {
   constructor(dialogService) {
     this.dialogService = dialogService;
+    this.showExtraData = true;
   }
 
   submit(){
-    this.dialogService.open({ viewModel: EditPerson, model: { firstName: 'Owen' }}).then((result) => {
+    this.dialogService.open({ viewModel: EditPerson, model: { firstName: 'Owen', testScrolling: this.showExtraData }}).then((result) => {
       if (!result.wasCancelled) {
         console.log('good');
         console.log(result.output);
@@ -22,11 +23,12 @@ export class App {
   positionManually(e) {
     const settings = {
       viewModel: EditPerson,
-      model: { firstName: 'Owen' },
+      model: { firstName: 'Owen', testScrolling: this.showExtraData },
       position: (modalContainer) => {
         const { offsetWidth, offsetLeft, offsetTop } = e.target;
 
         const dialog = modalContainer.querySelector('ai-dialog');
+        dialog.style.position = 'absolute';
         dialog.style.top = offsetTop + 'px';
         dialog.style.left = offsetLeft + offsetWidth + 'px';
 

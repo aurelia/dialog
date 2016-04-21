@@ -6,9 +6,6 @@ ai-dialog-overlay {
   right: 0;
   opacity: 0;
 
-  // prevent pointer events to enable click event on ai-dialog-overlay
-  pointer-events: none;
-
   &.active {
     opacity: 1;
   }
@@ -16,22 +13,43 @@ ai-dialog-overlay {
 
 ai-dialog-container {
   display: block;
-  position: fixed;
   transition: opacity .2s linear;
+  opacity: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  position: fixed;
   top: 0;
   right: 0;
   bottom: 0;
   left: 0;
-  opacity: 0;
-  overflow-x: hidden;
-  overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 
   &.active {
     opacity: 1;
   }
-  
-  &, & > div {
+
+  & > div {
+    padding: 30px;
+  }
+
+  & > div > div {
+    width: 100%;
+    display: block;
+    box-shadow: 0 5px 15px rgba(0,0,0,.5);
+    border: 1px solid rgba(0,0,0,.2);
+    border-radius: 5px;
+    padding: 3;
+    min-width: 300px;
+    width: -moz-fit-content;
+    width: -webkit-fit-content;
+    width: fit-content;
+    height: -moz-fit-content;
+    height: -webkit-fit-content;
+    height: fit-content;
+    margin: auto;
+  }
+
+  &, & > div, & > div > div {
     // Prevent Chrome on Windows from adding a focus outline. For details, see
     // https://github.com/twbs/bootstrap/pull/10951
     outline: 0;
@@ -39,13 +57,13 @@ ai-dialog-container {
 }
 
 ai-dialog {
-  position: relative;
+  width: 100%;
   display: block;
-  min-width: 300px;
   box-shadow: 0 5px 15px rgba(0,0,0,.5);
   border: 1px solid rgba(0,0,0,.2);
   border-radius: 5px;
   padding: 3;
+  min-width: 300px;
   width: -moz-fit-content;
   width: -webkit-fit-content;
   width: fit-content;
@@ -59,8 +77,6 @@ ai-dialog {
   border-image-outset: initial;
   border-image-repeat: initial;
   background: white;
-
-  pointer-events: auto;
 
   > ai-dialog-header {
     display: block;

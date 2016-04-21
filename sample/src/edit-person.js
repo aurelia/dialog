@@ -10,4 +10,8 @@ export class EditPerson {
   activate(person){
     this.person = person;
   }
+
+  testDelegate () {
+    alert("Delegation worked");
+  }
 }

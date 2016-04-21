@@ -4,6 +4,7 @@ import {CompositionEngine, ViewSlot} from 'aurelia-templating';
 import {DialogController} from './dialog-controller';
 import {Renderer} from './renderers/renderer';
 import {invokeLifecycle} from './lifecycle';
+import {DOM} from 'aurelia-pal';
 
 /**
  * A service allowing for the creation of dialogs.

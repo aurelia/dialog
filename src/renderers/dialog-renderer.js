@@ -1,4 +1,5 @@
 import {dialogOptions} from '../dialog-options';
+import {DOM} from 'aurelia-pal';
 
 let currentZIndex = 1000;
 
@@ -29,6 +30,7 @@ function centerDialog(modalContainer) {
   const vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
 
   child.style.marginTop = Math.max((vh - child.offsetHeight) / 2, 30) + 'px';
+  child.style.marginBottom = Math.max((vh - child.offsetHeight) / 2, 30) + 'px';
 }
 
 export class DialogRenderer {
@@ -48,14 +50,29 @@ export class DialogRenderer {
   }
 
   getDialogContainer() {
-    return document.createElement('ai-dialog-container');
+    return document.createElement('div');
   }
 
   createDialogHost(dialogController: DialogController) {
     let settings = dialogController.settings;
     let modalOverlay = document.createElement('ai-dialog-overlay');
-    let modalContainer = dialogController.slot.anchor;
+    let modalContainer = document.createElement('ai-dialog-container');
+    let wrapper = document.createElement('div');
+    let anchor = dialogController.slot.anchor;
+    wrapper.appendChild(anchor);
+    modalContainer.appendChild(wrapper);
     let body = document.body;
+    let closeModalClick = (e) => {
+      if (!settings.lock && !e._aureliaDialogHostClicked) {
+        dialogController.cancel();
+      } else {
+        return false;
+      }
+    };
+
+    let stopPropagation = (e) => { e._aureliaDialogHostClicked = true; };
+
+    let dialogHost = modalContainer.querySelector('ai-dialog');
 
     modalOverlay.style.zIndex = getNextZIndex();
     modalContainer.style.zIndex = getNextZIndex();
@@ -67,19 +84,15 @@ export class DialogRenderer {
       this.dialogControllers.push(dialogController);
 
       dialogController.slot.attached();
+
       if (typeof settings.position === 'function') {
         settings.position(modalContainer, modalOverlay);
       } else {
         dialogController.centerDialog();
       }
 
-      modalOverlay.onclick = () => {
-        if (!settings.lock) {
-          dialogController.cancel();
-        } else {
-          return false;
-        }
-      };
+      modalContainer.addEventListener('click', closeModalClick);
+      dialogHost.addEventListener('click', stopPropagation);
 
       return new Promise((resolve) => {
         modalContainer.addEventListener(transitionEvent, onTransitionEnd);
@@ -99,6 +112,9 @@ export class DialogRenderer {
     };
 
     dialogController.hideDialog = () => {
+      modalContainer.removeEventListener('click', closeModalClick);
+      dialogHost.removeEventListener('click', stopPropagation);
+
       let i = this.dialogControllers.indexOf(dialogController);
       if (i !== -1) {
         this.dialogControllers.splice(i, 1);
