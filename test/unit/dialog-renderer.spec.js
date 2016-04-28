@@ -5,12 +5,14 @@ import {configure} from '../../src/aurelia-dialog';
 let defaultSettings = {
   lock: true,
   centerHorizontalOnly: false,
-  startingZIndex: 1000
+  startingZIndex: 1000,
+  showDialogTimeout: 250
 };
 let newSettings = {
   lock: false,
   centerHorizontalOnly: true,
-  startingZIndex: 1
+  startingZIndex: 1,
+  showDialogTimeout: 300
 };
 
 let frameworkConfig = {

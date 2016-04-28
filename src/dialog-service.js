@@ -41,11 +41,13 @@ export class DialogService {
 
       childContainer.registerInstance(DialogController, dialogController);
 
-      return this._getViewModel(instruction).then(returnedInstruction => {
+      _settings.model.showDialogPromise = this._getViewModel(instruction).then(returnedInstruction => {
         dialogController.viewModel = returnedInstruction.viewModel;
 
         return invokeLifecycle(returnedInstruction.viewModel, 'canActivate', _settings.model).then(canActivate => {
-          if (canActivate) {
+          if (!canActivate) {
+            return false;
+          } else {
             this.controllers.push(dialogController);
             this.hasActiveDialog = !!this.controllers.length;
 
@@ -58,6 +60,8 @@ export class DialogService {
               dialogController.slot.add(dialogController.view);
 
               return this.renderer.showDialog(dialogController);
+            }).then(() => {
+              return true;
             });
           }
         });

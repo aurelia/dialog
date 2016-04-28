@@ -82,15 +82,17 @@ export class DialogRenderer {
       };
 
       return new Promise((resolve) => {
-        modalContainer.addEventListener(transitionEvent, onTransitionEnd);
+        modalContainer.addEventListener(transitionEvent, this.onShowTransitionEnd);
 
-        function onTransitionEnd(e) {
-          if (e.target !== modalContainer) {
+        this.onShowTransitionEnd = (e) => {
+          if (e && e.target !== modalContainer) {
             return;
           }
-          modalContainer.removeEventListener(transitionEvent, onTransitionEnd);
+          modalContainer.removeEventListener(transitionEvent, this.onShowTransitionEnd);
           resolve();
         }
+
+        setTimeout(this.onShowTransitionEnd, settings.showDialogTimeout);
 
         modalOverlay.classList.add('active');
         modalContainer.classList.add('active');
@@ -103,6 +105,8 @@ export class DialogRenderer {
       if (i !== -1) {
         this.dialogControllers.splice(i, 1);
       }
+
+      this.onShowTransitionEnd();
 
       return new Promise((resolve) => {
         modalContainer.addEventListener(transitionEvent, onTransitionEnd);
