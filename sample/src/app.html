@@ -1,4 +1,12 @@
 <template>
   <button click.trigger="submit()">Open Modal</button>
-  <button style="position: absolute; top: 100px; left: 50px;" click.trigger="positionManually($event)">Open Next To Me</button>
+  <button style="position: absolute; top: 200px; left: 50px;" click.trigger="positionManually($event)">Open Next To Me</button>
+
+  <h3>Progress dialogs</h3>
+
+  <button click.trigger="slowProgress($event)">Slow Progress</button>
+  <button click.trigger="faultyProgress($event)">Faulty Progress</button>
+  <button click.trigger="fastProgress($event)">Fast Progress</button>
+  <button click.trigger="fastestProgress($event)">Fastest Progress</button>
+
 </template>

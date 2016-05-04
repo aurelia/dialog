@@ -1,0 +1,17 @@
+<template>
+  <require from='./progress.css'></require>
+  <ai-dialog>
+    <ai-dialog-body>
+      <div class='blockPageDialog'>
+        <div class='progress-message'>${waitMessage}</div>
+        <!-- <i class="fa fa-spinner fa-spin"></i>  -->
+        <div class="progress-bar progress">
+          <div css="width: ${completedPercent}%"></div>
+        </div>
+      </div>
+    </ai-dialog-body>
+    <ai-dialog-footer>
+      <button click.trigger="controller.cancel()">Cancel</button>
+    </ai-dialog-footer>
+  </ai-dialog>
+</template>
