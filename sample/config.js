@@ -23,6 +23,7 @@ System.config({
         "aurelia-framework": "npm:aurelia-framework@1.0.0-beta.1.1.2",
         "aurelia-metadata": "npm:aurelia-metadata@1.0.0-beta.1.1.4",
         "aurelia-templating": "npm:aurelia-templating@1.0.0-beta.1.1.1",
+        "aurelia-pal-browser": "npm:aurelia-pal-browser@1.0.0-beta.1.2.0",
         "aurelia-pal": "npm:aurelia-pal@1.0.0-beta.1.2.0"
       }
     }
@@ -33,8 +34,8 @@ System.config({
     "aurelia-dependency-injection": "npm:aurelia-dependency-injection@1.0.0-beta.1.2.0",
     "aurelia-framework": "npm:aurelia-framework@1.0.0-beta.1.2.0",
     "aurelia-metadata": "npm:aurelia-metadata@1.0.0-beta.1.2.0",
-    "aurelia-templating": "npm:aurelia-templating@1.0.0-beta.1.2.0",
     "aurelia-pal": "npm:aurelia-pal@1.0.0-beta.1.2.0",
+    "aurelia-templating": "npm:aurelia-templating@1.0.0-beta.1.2.0",
     "babel": "npm:babel-core@5.8.38",
     "babel-runtime": "npm:babel-runtime@5.8.38",
     "core-js": "npm:core-js@1.2.6",
