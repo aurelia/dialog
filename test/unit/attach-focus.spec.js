@@ -4,6 +4,8 @@ import {TemplatingEngine} from 'aurelia-templating';
 import {initialize} from 'aurelia-pal-browser';
 import {DOM} from 'aurelia-pal';
 
+initialize();
+
 let element = document.createElement('div');
 
 describe('modal gets focused when attached', () => {
