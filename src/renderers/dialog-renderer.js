@@ -1,13 +1,15 @@
 import {dialogOptions} from '../dialog-options';
 import {DOM} from 'aurelia-pal';
-import {Container, transient} from 'aurelia-dependency-injection';
+import {transient} from 'aurelia-dependency-injection';
 
 let containerTagName = 'ai-dialog-container';
 let overlayTagName = 'ai-dialog-overlay';
-let transitionEvent = function() {
+let transitionEvent = (function() {
   let transition = null;
 
-  return transition || function() {
+  return function() {
+    if (transition) return transition;
+
     let t;
     let el = DOM.createElement('fakeelement');
     let transitions = {
@@ -23,7 +25,7 @@ let transitionEvent = function() {
       }
     }
   };
-};
+}());
 
 @transient()
 export class DialogRenderer {
@@ -37,15 +39,12 @@ export class DialogRenderer {
     }
   };
 
-  static inject = [Container];
-
   constructor() {
     this.defaultSettings = dialogOptions;
-    this.dialogController = null;
   }
 
   getDialogContainer() {
-    return DOM.createElement(containerTagName);
+    return DOM.createElement('div');
   }
 
   showDialog(dialogController: DialogController) {
@@ -66,8 +65,23 @@ export class DialogRenderer {
   _createDialogHost(dialogController: DialogController) {
     let settings = dialogController.settings;
     let modalOverlay = DOM.createElement(overlayTagName);
-    let modalContainer = dialogController.slot.anchor;
+    let modalContainer = DOM.createElement(containerTagName);
+    let wrapper = document.createElement('div');
+    let anchor = dialogController.slot.anchor;
+    wrapper.appendChild(anchor);
+    modalContainer.appendChild(wrapper);
     let body = DOM.querySelectorAll('body')[0];
+    let closeModalClick = (e) => {
+      if (!settings.lock && !e._aureliaDialogHostClicked) {
+        dialogController.cancel();
+      } else {
+        return false;
+      }
+    };
+
+    let stopPropagation = (e) => { e._aureliaDialogHostClicked = true; };
+
+    let dialogHost = modalContainer.querySelector('ai-dialog');
 
     dialogController.showDialog = () => {
       if (!this.dialogControllers.length) {
@@ -77,19 +91,15 @@ export class DialogRenderer {
       this.dialogControllers.push(dialogController);
 
       dialogController.slot.attached();
+
       if (typeof settings.position === 'function') {
         settings.position(modalContainer, modalOverlay);
       } else {
         dialogController.centerDialog();
       }
 
-      modalOverlay.onclick = () => {
-        if (!settings.lock) {
-          dialogController.cancel();
-        } else {
-          return false;
-        }
-      };
+      modalContainer.addEventListener('click', closeModalClick);
+      dialogHost.addEventListener('click', stopPropagation);
 
       return new Promise((resolve) => {
         modalContainer.addEventListener(transitionEvent(), onTransitionEnd);
@@ -109,6 +119,9 @@ export class DialogRenderer {
     };
 
     dialogController.hideDialog = () => {
+      modalContainer.removeEventListener('click', closeModalClick);
+      dialogHost.removeEventListener('click', stopPropagation);
+
       let i = this.dialogControllers.indexOf(dialogController);
       if (i !== -1) {
         this.dialogControllers.splice(i, 1);
@@ -169,4 +182,5 @@ function centerDialog(modalContainer) {
   const vh = Math.max(DOM.querySelectorAll('html')[0].clientHeight, window.innerHeight || 0);
 
   child.style.marginTop = Math.max((vh - child.offsetHeight) / 2, 30) + 'px';
+  child.style.marginBottom = Math.max((vh - child.offsetHeight) / 2, 30) + 'px';
 }
