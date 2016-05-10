@@ -3,7 +3,7 @@ import { invokeLifecycle } from './lifecycle';
 export let DialogController = class DialogController {
   constructor(renderer, settings, resolve, reject) {
     this._renderer = renderer;
-    this.settings = settings;
+    this.settings = Object.assign({}, this._renderer.defaultSettings, settings);
     this._resolve = resolve;
     this._reject = reject;
   }

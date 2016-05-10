@@ -1,6 +1,7 @@
 import {customElement,bindable,customAttribute,CompositionEngine,ViewSlot} from 'aurelia-templating';
+import {DOM} from 'aurelia-pal';
+import {transient,Container} from 'aurelia-dependency-injection';
 import {Origin} from 'aurelia-metadata';
-import {Container} from 'aurelia-dependency-injection';
 
 export let dialogOptions = {
   lock: true,
@@ -117,7 +118,7 @@ export class DialogController {
   settings: any;
   constructor(renderer: DialogRenderer, settings: any, resolve: Function, reject: Function) {
     this._renderer = renderer;
-    this.settings = settings;
+    this.settings = Object.assign({}, this._renderer.defaultSettings, settings);
     this._resolve = resolve;
     this._reject = reject;
   }
@@ -213,95 +214,113 @@ export class Renderer {
   }
 }
 
-let currentZIndex = 1000;
-
+let containerTagName = 'ai-dialog-container';
+let overlayTagName = 'ai-dialog-overlay';
 let transitionEvent = (function() {
-  let t;
-  let el = document.createElement('fakeelement');
+  let transition = null;
 
-  let transitions = {
-    'transition': 'transitionend',
-    'OTransition': 'oTransitionEnd',
-    'MozTransition': 'transitionend',
-    'WebkitTransition': 'webkitTransitionEnd'
+  return function() {
+    if (transition) return transition;
+
+    let t;
+    let el = DOM.createElement('fakeelement');
+    let transitions = {
+      'transition': 'transitionend',
+      'OTransition': 'oTransitionEnd',
+      'MozTransition': 'transitionend',
+      'WebkitTransition': 'webkitTransitionEnd'
+    };
+    for (t in transitions) {
+      if (el.style[t] !== undefined) {
+        transition = transitions[t];
+        return transition;
+      }
+    }
+  };
+}());
+
+@transient()
+export class DialogRenderer {
+  dialogControllers = [];
+  escapeKeyEvent = (e) => {
+    if (e.keyCode === 27) {
+      let top = this.dialogControllers[this.dialogControllers.length - 1];
+      if (top && top.settings.lock !== true) {
+        top.cancel();
+      }
+    }
   };
 
-  for (t in transitions) {
-    if (el.style[t] !== undefined) {
-      return transitions[t];
-    }
-  }
-})();
-
-function getNextZIndex() {
-  return ++currentZIndex;
-}
-
-function centerDialog(modalContainer) {
-  const child = modalContainer.children[0];
-  const vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-
-  child.style.marginTop = Math.max((vh - child.offsetHeight) / 2, 30) + 'px';
-}
-
-export class DialogRenderer {
-  defaultSettings = dialogOptions;
   constructor() {
-    currentZIndex = dialogOptions.startingZIndex;
-    this.dialogControllers = [];
-    this.containerTagName = 'ai-dialog-container';
-    document.addEventListener('keyup', e => {
-      if (e.keyCode === 27) {
-        let top = this.dialogControllers[this.dialogControllers.length - 1];
-        if (top && top.settings.lock !== true) {
-          top.cancel();
-        }
-      }
-    });
+    this.defaultSettings = dialogOptions;
   }
 
   getDialogContainer() {
-    return document.createElement('ai-dialog-container');
+    return DOM.createElement('div');
   }
 
-  createDialogHost(dialogController: DialogController) {
+  showDialog(dialogController: DialogController) {
+    if (!dialogController.showDialog) {
+      return this._createDialogHost(dialogController).then(() => {
+        return dialogController.showDialog();
+      });
+    }
+    return dialogController.showDialog();
+  }
+
+  hideDialog(dialogController: DialogController) {
+    return dialogController.hideDialog().then(() => {
+      return dialogController.destroyDialogHost();
+    });
+  }
+
+  _createDialogHost(dialogController: DialogController) {
     let settings = dialogController.settings;
-    let modalOverlay = document.createElement('ai-dialog-overlay');
-    let modalContainer = dialogController.slot.anchor;
-    let body = document.body;
+    let modalOverlay = DOM.createElement(overlayTagName);
+    let modalContainer = DOM.createElement(containerTagName);
+    let wrapper = document.createElement('div');
+    let anchor = dialogController.slot.anchor;
+    wrapper.appendChild(anchor);
+    modalContainer.appendChild(wrapper);
+    let body = DOM.querySelectorAll('body')[0];
+    let closeModalClick = (e) => {
+      if (!settings.lock && !e._aureliaDialogHostClicked) {
+        dialogController.cancel();
+      } else {
+        return false;
+      }
+    };
 
-    modalOverlay.style.zIndex = getNextZIndex();
-    modalContainer.style.zIndex = getNextZIndex();
+    let stopPropagation = (e) => { e._aureliaDialogHostClicked = true; };
 
-    document.body.insertBefore(modalContainer, document.body.firstChild);
-    document.body.insertBefore(modalOverlay, document.body.firstChild);
+    let dialogHost = modalContainer.querySelector('ai-dialog');
 
     dialogController.showDialog = () => {
+      if (!this.dialogControllers.length) {
+        DOM.addEventListener('keyup', this.escapeKeyEvent);
+      }
+
       this.dialogControllers.push(dialogController);
 
       dialogController.slot.attached();
+
       if (typeof settings.position === 'function') {
         settings.position(modalContainer, modalOverlay);
       } else {
         dialogController.centerDialog();
       }
 
-      modalOverlay.onclick = () => {
-        if (!settings.lock) {
-          dialogController.cancel();
-        } else {
-          return false;
-        }
-      };
+      modalContainer.addEventListener('click', closeModalClick);
+      dialogHost.addEventListener('click', stopPropagation);
 
       return new Promise((resolve) => {
-        modalContainer.addEventListener(transitionEvent, onTransitionEnd);
+        modalContainer.addEventListener(transitionEvent(), onTransitionEnd);
 
         function onTransitionEnd(e) {
           if (e.target !== modalContainer) {
             return;
           }
-          modalContainer.removeEventListener(transitionEvent, onTransitionEnd);
+          modalContainer.removeEventListener(transitionEvent(), onTransitionEnd);
           resolve();
         }
 
@@ -312,22 +331,32 @@ export class DialogRenderer {
     };
 
     dialogController.hideDialog = () => {
+      modalContainer.removeEventListener('click', closeModalClick);
+      dialogHost.removeEventListener('click', stopPropagation);
+
       let i = this.dialogControllers.indexOf(dialogController);
       if (i !== -1) {
         this.dialogControllers.splice(i, 1);
       }
 
+      if (!this.dialogControllers.length) {
+        DOM.removeEventListener('keyup', this.escapeKeyEvent);
+      }
+
       return new Promise((resolve) => {
-        modalContainer.addEventListener(transitionEvent, onTransitionEnd);
+        modalContainer.addEventListener(transitionEvent(), onTransitionEnd);
 
         function onTransitionEnd() {
-          modalContainer.removeEventListener(transitionEvent, onTransitionEnd);
+          modalContainer.removeEventListener(transitionEvent(), onTransitionEnd);
           resolve();
         }
 
         modalOverlay.classList.remove('active');
         modalContainer.classList.remove('active');
-        body.classList.remove('ai-dialog-open');
+
+        if (!this.dialogControllers.length) {
+          body.classList.remove('ai-dialog-open');
+        }
       });
     };
 
@@ -337,30 +366,35 @@ export class DialogRenderer {
     };
 
     dialogController.destroyDialogHost = () => {
-      document.body.removeChild(modalOverlay);
-      document.body.removeChild(modalContainer);
+      body.removeChild(modalOverlay);
+      body.removeChild(modalContainer);
       dialogController.slot.detached();
       return Promise.resolve();
     };
 
-    return Promise.resolve();
-  }
+    modalOverlay.style.zIndex = this.defaultSettings.startingZIndex;
+    modalContainer.style.zIndex = this.defaultSettings.startingZIndex;
 
-  showDialog(dialogController: DialogController) {
-    if (!dialogController.showDialog) {
-      return this.createDialogHost(dialogController).then(() => {
-        return dialogController.showDialog();
-      });
+    let lastContainer = Array.from(body.querySelectorAll(containerTagName)).pop();
+
+    if (lastContainer) {
+      lastContainer.parentNode.insertBefore(modalContainer, lastContainer.nextSibling);
+      lastContainer.parentNode.insertBefore(modalOverlay, lastContainer.nextSibling);
+    } else {
+      body.insertBefore(modalContainer, body.firstChild);
+      body.insertBefore(modalOverlay, body.firstChild);
     }
 
-    return dialogController.showDialog();
+    return Promise.resolve();
   }
+}
 
-  hideDialog(dialogController: DialogController) {
-    return dialogController.hideDialog().then(() => {
-      return dialogController.destroyDialogHost();
-    });
-  }
+function centerDialog(modalContainer) {
+  const child = modalContainer.children[0];
+  const vh = Math.max(DOM.querySelectorAll('html')[0].clientHeight, window.innerHeight || 0);
+
+  child.style.marginTop = Math.max((vh - child.offsetHeight) / 2, 30) + 'px';
+  child.style.marginBottom = Math.max((vh - child.offsetHeight) / 2, 30) + 'px';
 }
 
 /**
@@ -368,12 +402,11 @@ export class DialogRenderer {
  * @constructor
  */
 export class DialogService {
-  static inject = [Container, CompositionEngine, Renderer];
+  static inject = [Container, CompositionEngine];
 
-  constructor(container: Container, compositionEngine, renderer) {
+  constructor(container: Container, compositionEngine) {
     this.container = container;
     this.compositionEngine = compositionEngine;
-    this.renderer = renderer;
     this.controllers = [];
     this.hasActiveDialog = false;
   }
@@ -384,38 +417,35 @@ export class DialogService {
    * @return Promise A promise that settles when the dialog is closed.
    */
   open(settings?: Object) {
-    let _settings = Object.assign({}, this.renderer.defaultSettings, settings);
     let dialogController;
 
     let promise = new Promise((resolve, reject) => {
       let childContainer = this.container.createChild();
-      dialogController = new DialogController(this.renderer, _settings, resolve, reject);
-      let instruction = {
-        viewModel: _settings.viewModel,
-        container: this.container,
-        childContainer: childContainer,
-        model: _settings.model
-      };
-
+      dialogController = new DialogController(childContainer.get(Renderer), settings, resolve, reject);
       childContainer.registerInstance(DialogController, dialogController);
 
-      return this._getViewModel(instruction).then(returnedInstruction => {
-        dialogController.viewModel = returnedInstruction.viewModel;
+      let instruction = {
+        container: this.container,
+        childContainer: childContainer,
+        model: dialogController.settings.model,
+        viewModel: dialogController.settings.viewModel,
+        viewSlot: new ViewSlot(dialogController._renderer.getDialogContainer(), true)
+      };
 
-        return invokeLifecycle(returnedInstruction.viewModel, 'canActivate', _settings.model).then(canActivate => {
+      return _getViewModel(instruction, this.compositionEngine).then(returnedInstruction => {
+        dialogController.viewModel = returnedInstruction.viewModel;
+        dialogController.slot = returnedInstruction.viewSlot;
+
+        return invokeLifecycle(dialogController.viewModel, 'canActivate', dialogController.settings.model).then(canActivate => {
           if (canActivate) {
             this.controllers.push(dialogController);
             this.hasActiveDialog = !!this.controllers.length;
 
-            return this.compositionEngine.createController(returnedInstruction).then(controller => {
+            return this.compositionEngine.compose(returnedInstruction).then(controller => {
               dialogController.controller = controller;
               dialogController.view = controller.view;
-              controller.automate();
 
-              dialogController.slot = new ViewSlot(this.renderer.getDialogContainer(), true);
-              dialogController.slot.add(dialogController.view);
-
-              return this.renderer.showDialog(dialogController);
+              return dialogController._renderer.showDialog(dialogController);
             });
           }
         });
@@ -432,18 +462,18 @@ export class DialogService {
       return result;
     });
   }
+}
 
-  _getViewModel(instruction) {
-    if (typeof instruction.viewModel === 'function') {
-      instruction.viewModel = Origin.get(instruction.viewModel).moduleId;
-    }
-
-    if (typeof instruction.viewModel === 'string') {
-      return this.compositionEngine.ensureViewModel(instruction);
-    }
-
-    return Promise.resolve(instruction);
+function _getViewModel(instruction, compositionEngine) {
+  if (typeof instruction.viewModel === 'function') {
+    instruction.viewModel = Origin.get(instruction.viewModel).moduleId;
   }
+
+  if (typeof instruction.viewModel === 'string') {
+    return compositionEngine.ensureViewModel(instruction);
+  }
+
+  return Promise.resolve(instruction);
 }
 
 let defaultRenderer = DialogRenderer;

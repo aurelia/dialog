@@ -9,6 +9,17 @@ System.register(['aurelia-metadata', 'aurelia-dependency-injection', 'aurelia-te
     }
   }
 
+  function _getViewModel(instruction, compositionEngine) {
+    if (typeof instruction.viewModel === 'function') {
+      instruction.viewModel = Origin.get(instruction.viewModel).moduleId;
+    }
+
+    if (typeof instruction.viewModel === 'string') {
+      return compositionEngine.ensureViewModel(instruction);
+    }
+
+    return Promise.resolve(instruction);
+  }
   return {
     setters: [function (_aureliaMetadata) {
       Origin = _aureliaMetadata.Origin;
@@ -26,12 +37,11 @@ System.register(['aurelia-metadata', 'aurelia-dependency-injection', 'aurelia-te
     }],
     execute: function () {
       _export('DialogService', DialogService = (_temp = _class = function () {
-        function DialogService(container, compositionEngine, renderer) {
+        function DialogService(container, compositionEngine) {
           _classCallCheck(this, DialogService);
 
           this.container = container;
           this.compositionEngine = compositionEngine;
-          this.renderer = renderer;
           this.controllers = [];
           this.hasActiveDialog = false;
         }
@@ -39,38 +49,35 @@ System.register(['aurelia-metadata', 'aurelia-dependency-injection', 'aurelia-te
         DialogService.prototype.open = function open(settings) {
           var _this = this;
 
-          var _settings = Object.assign({}, this.renderer.defaultSettings, settings);
           var dialogController = void 0;
 
           var promise = new Promise(function (resolve, reject) {
             var childContainer = _this.container.createChild();
-            dialogController = new DialogController(_this.renderer, _settings, resolve, reject);
-            var instruction = {
-              viewModel: _settings.viewModel,
-              container: _this.container,
-              childContainer: childContainer,
-              model: _settings.model
-            };
-
+            dialogController = new DialogController(childContainer.get(Renderer), settings, resolve, reject);
             childContainer.registerInstance(DialogController, dialogController);
 
-            return _this._getViewModel(instruction).then(function (returnedInstruction) {
-              dialogController.viewModel = returnedInstruction.viewModel;
+            var instruction = {
+              container: _this.container,
+              childContainer: childContainer,
+              model: dialogController.settings.model,
+              viewModel: dialogController.settings.viewModel,
+              viewSlot: new ViewSlot(dialogController._renderer.getDialogContainer(), true)
+            };
 
-              return invokeLifecycle(returnedInstruction.viewModel, 'canActivate', _settings.model).then(function (canActivate) {
+            return _getViewModel(instruction, _this.compositionEngine).then(function (returnedInstruction) {
+              dialogController.viewModel = returnedInstruction.viewModel;
+              dialogController.slot = returnedInstruction.viewSlot;
+
+              return invokeLifecycle(dialogController.viewModel, 'canActivate', dialogController.settings.model).then(function (canActivate) {
                 if (canActivate) {
                   _this.controllers.push(dialogController);
                   _this.hasActiveDialog = !!_this.controllers.length;
 
-                  return _this.compositionEngine.createController(returnedInstruction).then(function (controller) {
+                  return _this.compositionEngine.compose(returnedInstruction).then(function (controller) {
                     dialogController.controller = controller;
                     dialogController.view = controller.view;
-                    controller.automate();
 
-                    dialogController.slot = new ViewSlot(_this.renderer.getDialogContainer(), true);
-                    dialogController.slot.add(dialogController.view);
-
-                    return _this.renderer.showDialog(dialogController);
+                    return dialogController._renderer.showDialog(dialogController);
                   });
                 }
               });
@@ -88,20 +95,8 @@ System.register(['aurelia-metadata', 'aurelia-dependency-injection', 'aurelia-te
           });
         };
 
-        DialogService.prototype._getViewModel = function _getViewModel(instruction) {
-          if (typeof instruction.viewModel === 'function') {
-            instruction.viewModel = Origin.get(instruction.viewModel).moduleId;
-          }
-
-          if (typeof instruction.viewModel === 'string') {
-            return this.compositionEngine.ensureViewModel(instruction);
-          }
-
-          return Promise.resolve(instruction);
-        };
-
         return DialogService;
-      }(), _class.inject = [Container, CompositionEngine, Renderer], _temp));
+      }(), _class.inject = [Container, CompositionEngine], _temp));
 
       _export('DialogService', DialogService);
     }

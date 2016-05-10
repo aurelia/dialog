@@ -9,47 +9,43 @@ import { invokeLifecycle } from './lifecycle';
 
 export let DialogService = (_temp = _class = class DialogService {
 
-  constructor(container, compositionEngine, renderer) {
+  constructor(container, compositionEngine) {
     this.container = container;
     this.compositionEngine = compositionEngine;
-    this.renderer = renderer;
     this.controllers = [];
     this.hasActiveDialog = false;
   }
 
   open(settings) {
-    let _settings = Object.assign({}, this.renderer.defaultSettings, settings);
     let dialogController;
 
     let promise = new Promise((resolve, reject) => {
       let childContainer = this.container.createChild();
-      dialogController = new DialogController(this.renderer, _settings, resolve, reject);
-      let instruction = {
-        viewModel: _settings.viewModel,
-        container: this.container,
-        childContainer: childContainer,
-        model: _settings.model
-      };
-
+      dialogController = new DialogController(childContainer.get(Renderer), settings, resolve, reject);
       childContainer.registerInstance(DialogController, dialogController);
 
-      return this._getViewModel(instruction).then(returnedInstruction => {
-        dialogController.viewModel = returnedInstruction.viewModel;
+      let instruction = {
+        container: this.container,
+        childContainer: childContainer,
+        model: dialogController.settings.model,
+        viewModel: dialogController.settings.viewModel,
+        viewSlot: new ViewSlot(dialogController._renderer.getDialogContainer(), true)
+      };
 
-        return invokeLifecycle(returnedInstruction.viewModel, 'canActivate', _settings.model).then(canActivate => {
+      return _getViewModel(instruction, this.compositionEngine).then(returnedInstruction => {
+        dialogController.viewModel = returnedInstruction.viewModel;
+        dialogController.slot = returnedInstruction.viewSlot;
+
+        return invokeLifecycle(dialogController.viewModel, 'canActivate', dialogController.settings.model).then(canActivate => {
           if (canActivate) {
             this.controllers.push(dialogController);
             this.hasActiveDialog = !!this.controllers.length;
 
-            return this.compositionEngine.createController(returnedInstruction).then(controller => {
+            return this.compositionEngine.compose(returnedInstruction).then(controller => {
               dialogController.controller = controller;
               dialogController.view = controller.view;
-              controller.automate();
 
-              dialogController.slot = new ViewSlot(this.renderer.getDialogContainer(), true);
-              dialogController.slot.add(dialogController.view);
-
-              return this.renderer.showDialog(dialogController);
+              return dialogController._renderer.showDialog(dialogController);
             });
           }
         });
@@ -66,16 +62,16 @@ export let DialogService = (_temp = _class = class DialogService {
       return result;
     });
   }
+}, _class.inject = [Container, CompositionEngine], _temp);
 
-  _getViewModel(instruction) {
-    if (typeof instruction.viewModel === 'function') {
-      instruction.viewModel = Origin.get(instruction.viewModel).moduleId;
-    }
-
-    if (typeof instruction.viewModel === 'string') {
-      return this.compositionEngine.ensureViewModel(instruction);
-    }
-
-    return Promise.resolve(instruction);
+function _getViewModel(instruction, compositionEngine) {
+  if (typeof instruction.viewModel === 'function') {
+    instruction.viewModel = Origin.get(instruction.viewModel).moduleId;
   }
-}, _class.inject = [Container, CompositionEngine, Renderer], _temp);
+
+  if (typeof instruction.viewModel === 'string') {
+    return compositionEngine.ensureViewModel(instruction);
+  }
+
+  return Promise.resolve(instruction);
+}

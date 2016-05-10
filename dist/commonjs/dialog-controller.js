@@ -14,7 +14,7 @@ var DialogController = exports.DialogController = function () {
     _classCallCheck(this, DialogController);
 
     this._renderer = renderer;
-    this.settings = settings;
+    this.settings = Object.assign({}, this._renderer.defaultSettings, settings);
     this._resolve = resolve;
     this._reject = reject;
   }

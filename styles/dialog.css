@@ -5,39 +5,58 @@ ai-dialog-overlay {
   top: 0;
   right: 0;
   opacity: 0;
-  pointer-events: none;
 }
 ai-dialog-overlay.active {
   opacity: 1;
 }
 ai-dialog-container {
   display: block;
-  position: fixed;
   transition: opacity .2s linear;
+  opacity: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  position: fixed;
   top: 0;
   right: 0;
   bottom: 0;
   left: 0;
-  opacity: 0;
-  overflow-x: hidden;
-  overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
 ai-dialog-container.active {
   opacity: 1;
 }
-ai-dialog-container,
 ai-dialog-container > div {
-  outline: 0;
+  padding: 30px;
 }
-ai-dialog {
-  position: relative;
+ai-dialog-container > div > div {
+  width: 100%;
   display: block;
-  min-width: 300px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
   border: 1px solid rgba(0, 0, 0, 0.2);
   border-radius: 5px;
-  padding: 0;
+  padding: 3;
+  min-width: 300px;
+  width: -moz-fit-content;
+  width: -webkit-fit-content;
+  width: fit-content;
+  height: -moz-fit-content;
+  height: -webkit-fit-content;
+  height: fit-content;
+  margin: auto;
+}
+ai-dialog-container,
+ai-dialog-container > div,
+ai-dialog-container > div > div {
+  outline: 0;
+}
+ai-dialog {
+  width: 100%;
+  display: block;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  padding: 3;
+  min-width: 300px;
   width: -moz-fit-content;
   width: -webkit-fit-content;
   width: fit-content;
@@ -51,7 +70,6 @@ ai-dialog {
   border-image-outset: initial;
   border-image-repeat: initial;
   background: white;
-  pointer-events: auto;
 }
 ai-dialog > ai-dialog-header {
   display: block;
@@ -61,11 +79,13 @@ ai-dialog > ai-dialog-header {
 ai-dialog > ai-dialog-header > button {
   float: right;
   border: none;
+  display: block;
+  width: 32px;
+  height: 32px;
   background: none;
   font-size: 22px;
-  position: relative;
-  top: -4px;
-  margin: 0;
+  line-height: 16px;
+  margin: -14px -16px 0 0;
   padding: 0;
   cursor: pointer;
 }

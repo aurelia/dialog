@@ -1,3 +1,12 @@
+## 0.6.0 (2016-05-10)
+
+
+#### Bug Fixes
+
+* **dialog.css:** fix close button positioning ([ca7af613](https://github.com/aurelia/dialog/commit/ca7af613be6f7c820d3493fe448314ac8c34887e), closes [#128](https://github.com/aurelia/dialog/issues/128))
+* **renderer:** modal scrolling, close behavior ([75f9606a](https://github.com/aurelia/dialog/commit/75f9606adf1671da3e4846c6ad9faca3253357a1), closes [#125](https://github.com/aurelia/dialog/issues/125), [#103](https://github.com/aurelia/dialog/issues/103))
+
+
 ### 0.5.10 (2016-03-23)
 
 

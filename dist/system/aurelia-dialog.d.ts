@@ -7,11 +7,15 @@ declare module 'aurelia-dialog' {
     ViewSlot
   } from 'aurelia-templating';
   import {
-    Origin
-  } from 'aurelia-metadata';
+    DOM
+  } from 'aurelia-pal';
   import {
+    transient,
     Container
   } from 'aurelia-dependency-injection';
+  import {
+    Origin
+  } from 'aurelia-metadata';
   export let dialogOptions: any;
   export class AiDialogBody {
   
@@ -114,10 +118,10 @@ declare module 'aurelia-dialog' {
     hideDialog(dialogController: DialogController): Promise<any>;
   }
   export class DialogRenderer {
-    defaultSettings: any;
+    dialogControllers: any;
+    escapeKeyEvent: any;
     constructor();
     getDialogContainer(): any;
-    createDialogHost(dialogController: DialogController): any;
     showDialog(dialogController: DialogController): any;
     hideDialog(dialogController: DialogController): any;
   }
@@ -128,7 +132,7 @@ declare module 'aurelia-dialog' {
    */
   export class DialogService {
     static inject: any;
-    constructor(container: Container, compositionEngine: any, renderer: any);
+    constructor(container: Container, compositionEngine: any);
     
     /**
        * Opens a new dialog.

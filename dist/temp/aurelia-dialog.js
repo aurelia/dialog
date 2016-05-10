@@ -5,15 +5,17 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.DialogConfiguration = exports.DialogService = exports.DialogRenderer = exports.Renderer = exports.DialogController = exports.AttachFocus = exports.AiDialog = exports.AiDialogHeader = exports.AiDialogFooter = exports.AiDialogBody = exports.dialogOptions = undefined;
 
-var _dec, _class, _dec2, _class2, _desc, _value, _class3, _descriptor, _descriptor2, _class4, _temp, _dec3, _class5, _class6, _temp2, _dec4, _class7, _dec5, _class8, _class9, _temp3, _class13, _temp4;
+var _dec, _class, _dec2, _class2, _desc, _value, _class3, _descriptor, _descriptor2, _class4, _temp, _dec3, _class5, _class6, _temp2, _dec4, _class7, _dec5, _class8, _class9, _temp3, _dec6, _class12, _class14, _temp4;
 
 exports.invokeLifecycle = invokeLifecycle;
 
 var _aureliaTemplating = require('aurelia-templating');
 
-var _aureliaMetadata = require('aurelia-metadata');
+var _aureliaPal = require('aurelia-pal');
 
 var _aureliaDependencyInjection = require('aurelia-dependency-injection');
+
+var _aureliaMetadata = require('aurelia-metadata');
 
 function _initDefineProp(target, property, descriptor, context) {
   if (!descriptor) return;
@@ -162,7 +164,7 @@ var DialogController = exports.DialogController = function () {
     _classCallCheck(this, DialogController);
 
     this._renderer = renderer;
-    this.settings = settings;
+    this.settings = Object.assign({}, this._renderer.defaultSettings, settings);
     this._resolve = resolve;
     this._reject = reject;
   }
@@ -234,102 +236,121 @@ var Renderer = exports.Renderer = function () {
   return Renderer;
 }();
 
-var currentZIndex = 1000;
-
+var containerTagName = 'ai-dialog-container';
+var overlayTagName = 'ai-dialog-overlay';
 var transitionEvent = function () {
-  var t = void 0;
-  var el = document.createElement('fakeelement');
+  var transition = null;
 
-  var transitions = {
-    'transition': 'transitionend',
-    'OTransition': 'oTransitionEnd',
-    'MozTransition': 'transitionend',
-    'WebkitTransition': 'webkitTransitionEnd'
-  };
+  return function () {
+    if (transition) return transition;
 
-  for (t in transitions) {
-    if (el.style[t] !== undefined) {
-      return transitions[t];
+    var t = void 0;
+    var el = _aureliaPal.DOM.createElement('fakeelement');
+    var transitions = {
+      'transition': 'transitionend',
+      'OTransition': 'oTransitionEnd',
+      'MozTransition': 'transitionend',
+      'WebkitTransition': 'webkitTransitionEnd'
+    };
+    for (t in transitions) {
+      if (el.style[t] !== undefined) {
+        transition = transitions[t];
+        return transition;
+      }
     }
-  }
+  };
 }();
 
-function getNextZIndex() {
-  return ++currentZIndex;
-}
-
-function centerDialog(modalContainer) {
-  var child = modalContainer.children[0];
-  var vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-
-  child.style.marginTop = Math.max((vh - child.offsetHeight) / 2, 30) + 'px';
-}
-
-var DialogRenderer = exports.DialogRenderer = function () {
+var DialogRenderer = exports.DialogRenderer = (_dec6 = (0, _aureliaDependencyInjection.transient)(), _dec6(_class12 = function () {
   function DialogRenderer() {
     var _this3 = this;
 
     _classCallCheck(this, DialogRenderer);
 
-    this.defaultSettings = dialogOptions;
-
-    currentZIndex = dialogOptions.startingZIndex;
     this.dialogControllers = [];
-    this.containerTagName = 'ai-dialog-container';
-    document.addEventListener('keyup', function (e) {
+
+    this.escapeKeyEvent = function (e) {
       if (e.keyCode === 27) {
         var top = _this3.dialogControllers[_this3.dialogControllers.length - 1];
         if (top && top.settings.lock !== true) {
           top.cancel();
         }
       }
-    });
+    };
+
+    this.defaultSettings = dialogOptions;
   }
 
   DialogRenderer.prototype.getDialogContainer = function getDialogContainer() {
-    return document.createElement('ai-dialog-container');
+    return _aureliaPal.DOM.createElement('div');
   };
 
-  DialogRenderer.prototype.createDialogHost = function createDialogHost(dialogController) {
+  DialogRenderer.prototype.showDialog = function showDialog(dialogController) {
+    if (!dialogController.showDialog) {
+      return this._createDialogHost(dialogController).then(function () {
+        return dialogController.showDialog();
+      });
+    }
+    return dialogController.showDialog();
+  };
+
+  DialogRenderer.prototype.hideDialog = function hideDialog(dialogController) {
+    return dialogController.hideDialog().then(function () {
+      return dialogController.destroyDialogHost();
+    });
+  };
+
+  DialogRenderer.prototype._createDialogHost = function _createDialogHost(dialogController) {
     var _this4 = this;
 
     var settings = dialogController.settings;
-    var modalOverlay = document.createElement('ai-dialog-overlay');
-    var modalContainer = dialogController.slot.anchor;
-    var body = document.body;
+    var modalOverlay = _aureliaPal.DOM.createElement(overlayTagName);
+    var modalContainer = _aureliaPal.DOM.createElement(containerTagName);
+    var wrapper = document.createElement('div');
+    var anchor = dialogController.slot.anchor;
+    wrapper.appendChild(anchor);
+    modalContainer.appendChild(wrapper);
+    var body = _aureliaPal.DOM.querySelectorAll('body')[0];
+    var closeModalClick = function closeModalClick(e) {
+      if (!settings.lock && !e._aureliaDialogHostClicked) {
+        dialogController.cancel();
+      } else {
+        return false;
+      }
+    };
 
-    modalOverlay.style.zIndex = getNextZIndex();
-    modalContainer.style.zIndex = getNextZIndex();
+    var stopPropagation = function stopPropagation(e) {
+      e._aureliaDialogHostClicked = true;
+    };
 
-    document.body.insertBefore(modalContainer, document.body.firstChild);
-    document.body.insertBefore(modalOverlay, document.body.firstChild);
+    var dialogHost = modalContainer.querySelector('ai-dialog');
 
     dialogController.showDialog = function () {
+      if (!_this4.dialogControllers.length) {
+        _aureliaPal.DOM.addEventListener('keyup', _this4.escapeKeyEvent);
+      }
+
       _this4.dialogControllers.push(dialogController);
 
       dialogController.slot.attached();
+
       if (typeof settings.position === 'function') {
         settings.position(modalContainer, modalOverlay);
       } else {
         dialogController.centerDialog();
       }
 
-      modalOverlay.onclick = function () {
-        if (!settings.lock) {
-          dialogController.cancel();
-        } else {
-          return false;
-        }
-      };
+      modalContainer.addEventListener('click', closeModalClick);
+      dialogHost.addEventListener('click', stopPropagation);
 
       return new Promise(function (resolve) {
-        modalContainer.addEventListener(transitionEvent, onTransitionEnd);
+        modalContainer.addEventListener(transitionEvent(), onTransitionEnd);
 
         function onTransitionEnd(e) {
           if (e.target !== modalContainer) {
             return;
           }
-          modalContainer.removeEventListener(transitionEvent, onTransitionEnd);
+          modalContainer.removeEventListener(transitionEvent(), onTransitionEnd);
           resolve();
         }
 
@@ -340,22 +361,32 @@ var DialogRenderer = exports.DialogRenderer = function () {
     };
 
     dialogController.hideDialog = function () {
+      modalContainer.removeEventListener('click', closeModalClick);
+      dialogHost.removeEventListener('click', stopPropagation);
+
       var i = _this4.dialogControllers.indexOf(dialogController);
       if (i !== -1) {
         _this4.dialogControllers.splice(i, 1);
       }
 
+      if (!_this4.dialogControllers.length) {
+        _aureliaPal.DOM.removeEventListener('keyup', _this4.escapeKeyEvent);
+      }
+
       return new Promise(function (resolve) {
-        modalContainer.addEventListener(transitionEvent, onTransitionEnd);
+        modalContainer.addEventListener(transitionEvent(), onTransitionEnd);
 
         function onTransitionEnd() {
-          modalContainer.removeEventListener(transitionEvent, onTransitionEnd);
+          modalContainer.removeEventListener(transitionEvent(), onTransitionEnd);
           resolve();
         }
 
         modalOverlay.classList.remove('active');
         modalContainer.classList.remove('active');
-        body.classList.remove('ai-dialog-open');
+
+        if (!_this4.dialogControllers.length) {
+          body.classList.remove('ai-dialog-open');
+        }
       });
     };
 
@@ -365,41 +396,46 @@ var DialogRenderer = exports.DialogRenderer = function () {
     };
 
     dialogController.destroyDialogHost = function () {
-      document.body.removeChild(modalOverlay);
-      document.body.removeChild(modalContainer);
+      body.removeChild(modalOverlay);
+      body.removeChild(modalContainer);
       dialogController.slot.detached();
       return Promise.resolve();
     };
 
+    modalOverlay.style.zIndex = this.defaultSettings.startingZIndex;
+    modalContainer.style.zIndex = this.defaultSettings.startingZIndex;
+
+    var lastContainer = Array.from(body.querySelectorAll(containerTagName)).pop();
+
+    if (lastContainer) {
+      lastContainer.parentNode.insertBefore(modalContainer, lastContainer.nextSibling);
+      lastContainer.parentNode.insertBefore(modalOverlay, lastContainer.nextSibling);
+    } else {
+      body.insertBefore(modalContainer, body.firstChild);
+      body.insertBefore(modalOverlay, body.firstChild);
+    }
+
     return Promise.resolve();
   };
 
-  DialogRenderer.prototype.showDialog = function showDialog(dialogController) {
-    if (!dialogController.showDialog) {
-      return this.createDialogHost(dialogController).then(function () {
-        return dialogController.showDialog();
-      });
-    }
-
-    return dialogController.showDialog();
-  };
-
-  DialogRenderer.prototype.hideDialog = function hideDialog(dialogController) {
-    return dialogController.hideDialog().then(function () {
-      return dialogController.destroyDialogHost();
-    });
-  };
-
   return DialogRenderer;
-}();
+}()) || _class12);
 
-var DialogService = exports.DialogService = (_temp4 = _class13 = function () {
-  function DialogService(container, compositionEngine, renderer) {
+
+function centerDialog(modalContainer) {
+  var child = modalContainer.children[0];
+  var vh = Math.max(_aureliaPal.DOM.querySelectorAll('html')[0].clientHeight, window.innerHeight || 0);
+
+  child.style.marginTop = Math.max((vh - child.offsetHeight) / 2, 30) + 'px';
+  child.style.marginBottom = Math.max((vh - child.offsetHeight) / 2, 30) + 'px';
+}
+
+var DialogService = exports.DialogService = (_temp4 = _class14 = function () {
+  function DialogService(container, compositionEngine) {
     _classCallCheck(this, DialogService);
 
     this.container = container;
     this.compositionEngine = compositionEngine;
-    this.renderer = renderer;
     this.controllers = [];
     this.hasActiveDialog = false;
   }
@@ -407,38 +443,35 @@ var DialogService = exports.DialogService = (_temp4 = _class13 = function () {
   DialogService.prototype.open = function open(settings) {
     var _this5 = this;
 
-    var _settings = Object.assign({}, this.renderer.defaultSettings, settings);
     var dialogController = void 0;
 
     var promise = new Promise(function (resolve, reject) {
       var childContainer = _this5.container.createChild();
-      dialogController = new DialogController(_this5.renderer, _settings, resolve, reject);
-      var instruction = {
-        viewModel: _settings.viewModel,
-        container: _this5.container,
-        childContainer: childContainer,
-        model: _settings.model
-      };
-
+      dialogController = new DialogController(childContainer.get(Renderer), settings, resolve, reject);
       childContainer.registerInstance(DialogController, dialogController);
 
-      return _this5._getViewModel(instruction).then(function (returnedInstruction) {
-        dialogController.viewModel = returnedInstruction.viewModel;
+      var instruction = {
+        container: _this5.container,
+        childContainer: childContainer,
+        model: dialogController.settings.model,
+        viewModel: dialogController.settings.viewModel,
+        viewSlot: new _aureliaTemplating.ViewSlot(dialogController._renderer.getDialogContainer(), true)
+      };
 
-        return invokeLifecycle(returnedInstruction.viewModel, 'canActivate', _settings.model).then(function (canActivate) {
+      return _getViewModel(instruction, _this5.compositionEngine).then(function (returnedInstruction) {
+        dialogController.viewModel = returnedInstruction.viewModel;
+        dialogController.slot = returnedInstruction.viewSlot;
+
+        return invokeLifecycle(dialogController.viewModel, 'canActivate', dialogController.settings.model).then(function (canActivate) {
           if (canActivate) {
             _this5.controllers.push(dialogController);
             _this5.hasActiveDialog = !!_this5.controllers.length;
 
-            return _this5.compositionEngine.createController(returnedInstruction).then(function (controller) {
+            return _this5.compositionEngine.compose(returnedInstruction).then(function (controller) {
               dialogController.controller = controller;
               dialogController.view = controller.view;
-              controller.automate();
 
-              dialogController.slot = new _aureliaTemplating.ViewSlot(_this5.renderer.getDialogContainer(), true);
-              dialogController.slot.add(dialogController.view);
-
-              return _this5.renderer.showDialog(dialogController);
+              return dialogController._renderer.showDialog(dialogController);
             });
           }
         });
@@ -456,21 +489,21 @@ var DialogService = exports.DialogService = (_temp4 = _class13 = function () {
     });
   };
 
-  DialogService.prototype._getViewModel = function _getViewModel(instruction) {
-    if (typeof instruction.viewModel === 'function') {
-      instruction.viewModel = _aureliaMetadata.Origin.get(instruction.viewModel).moduleId;
-    }
-
-    if (typeof instruction.viewModel === 'string') {
-      return this.compositionEngine.ensureViewModel(instruction);
-    }
-
-    return Promise.resolve(instruction);
-  };
-
   return DialogService;
-}(), _class13.inject = [_aureliaDependencyInjection.Container, _aureliaTemplating.CompositionEngine, Renderer], _temp4);
+}(), _class14.inject = [_aureliaDependencyInjection.Container, _aureliaTemplating.CompositionEngine], _temp4);
 
+
+function _getViewModel(instruction, compositionEngine) {
+  if (typeof instruction.viewModel === 'function') {
+    instruction.viewModel = _aureliaMetadata.Origin.get(instruction.viewModel).moduleId;
+  }
+
+  if (typeof instruction.viewModel === 'string') {
+    return compositionEngine.ensureViewModel(instruction);
+  }
+
+  return Promise.resolve(instruction);
+}
 
 var defaultRenderer = DialogRenderer;
 var resources = {
