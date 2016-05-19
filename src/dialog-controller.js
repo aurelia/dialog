@@ -67,7 +67,7 @@ export class DialogController {
   }
 }
 
-class DialogResult {
+export class DialogResult {
   wasCancelled: boolean = false;
   output: any;
   constructor(cancelled: boolean, result: any) {
