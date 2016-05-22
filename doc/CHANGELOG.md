@@ -1,3 +1,11 @@
+### 0.6.1 (2016-05-17)
+
+
+#### Bug Fixes
+
+* **style:** alter div styles ([388bffac](https://github.com/aurelia/dialog/commit/388bffac91d9f952d7b9ad30d2f781c6d9264735), closes [#148](https://github.com/aurelia/dialog/issues/148))
+
+
 ## 0.6.0 (2016-05-10)
 
 
