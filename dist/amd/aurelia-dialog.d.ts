@@ -93,6 +93,11 @@ declare module 'aurelia-dialog' {
        */
     close(ok: boolean, result: any): any;
   }
+  export class DialogResult {
+    wasCancelled: boolean;
+    output: any;
+    constructor(cancelled: boolean, result: any);
+  }
   
   /**
    * An abstract base class for implementors of the basic Renderer API.

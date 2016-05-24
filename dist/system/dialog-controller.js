@@ -64,14 +64,16 @@ System.register(['./lifecycle'], function (_export, _context) {
 
       _export('DialogController', DialogController);
 
-      DialogResult = function DialogResult(cancelled, result) {
+      _export('DialogResult', DialogResult = function DialogResult(cancelled, result) {
         _classCallCheck(this, DialogResult);
 
         this.wasCancelled = false;
 
         this.wasCancelled = cancelled;
         this.output = result;
-      };
+      });
+
+      _export('DialogResult', DialogResult);
     }
   };
 });

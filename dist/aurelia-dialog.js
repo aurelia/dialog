@@ -176,7 +176,7 @@ export class DialogController {
   }
 }
 
-class DialogResult {
+export class DialogResult {
   wasCancelled: boolean = false;
   output: any;
   constructor(cancelled: boolean, result: any) {
@@ -423,13 +423,15 @@ export class DialogService {
       let childContainer = this.container.createChild();
       dialogController = new DialogController(childContainer.get(Renderer), settings, resolve, reject);
       childContainer.registerInstance(DialogController, dialogController);
+      let host = dialogController._renderer.getDialogContainer();
 
       let instruction = {
         container: this.container,
         childContainer: childContainer,
         model: dialogController.settings.model,
         viewModel: dialogController.settings.viewModel,
-        viewSlot: new ViewSlot(dialogController._renderer.getDialogContainer(), true)
+        viewSlot: new ViewSlot(host, true),
+        host: host
       };
 
       return _getViewModel(instruction, this.compositionEngine).then(returnedInstruction => {

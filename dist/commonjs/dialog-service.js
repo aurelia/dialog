@@ -40,13 +40,15 @@ var DialogService = exports.DialogService = (_temp = _class = function () {
       var childContainer = _this.container.createChild();
       dialogController = new _dialogController.DialogController(childContainer.get(_renderer.Renderer), settings, resolve, reject);
       childContainer.registerInstance(_dialogController.DialogController, dialogController);
+      var host = dialogController._renderer.getDialogContainer();
 
       var instruction = {
         container: _this.container,
         childContainer: childContainer,
         model: dialogController.settings.model,
         viewModel: dialogController.settings.viewModel,
-        viewSlot: new _aureliaTemplating.ViewSlot(dialogController._renderer.getDialogContainer(), true)
+        viewSlot: new _aureliaTemplating.ViewSlot(host, true),
+        host: host
       };
 
       return _getViewModel(instruction, _this.compositionEngine).then(function (returnedInstruction) {

@@ -486,7 +486,7 @@
       ]
     },
     {
-      "id": 89,
+      "id": 96,
       "name": "DialogConfiguration",
       "kind": 128,
       "kindString": "Class",
@@ -504,7 +504,7 @@
       },
       "children": [
         {
-          "id": 90,
+          "id": 97,
           "name": "constructor",
           "kind": 512,
           "kindString": "Constructor",
@@ -513,14 +513,14 @@
           },
           "signatures": [
             {
-              "id": 91,
+              "id": 98,
               "name": "new DialogConfiguration",
               "kind": 16384,
               "kindString": "Constructor signature",
               "flags": {},
               "parameters": [
                 {
-                  "id": 92,
+                  "id": 99,
                   "name": "aurelia",
                   "kind": 32768,
                   "kindString": "Parameter",
@@ -534,14 +534,14 @@
               "type": {
                 "type": "reference",
                 "name": "DialogConfiguration",
-                "id": 89,
+                "id": 96,
                 "moduleName": "\"aurelia-dialog\""
               }
             }
           ]
         },
         {
-          "id": 93,
+          "id": 100,
           "name": "useDefaults",
           "kind": 2048,
           "kindString": "Method",
@@ -550,7 +550,7 @@
           },
           "signatures": [
             {
-              "id": 94,
+              "id": 101,
               "name": "useDefaults",
               "kind": 4096,
               "kindString": "Call signature",
@@ -567,14 +567,14 @@
               "type": {
                 "type": "reference",
                 "name": "DialogConfiguration",
-                "id": 89,
+                "id": 96,
                 "moduleName": "\"aurelia-dialog\""
               }
             }
           ]
         },
         {
-          "id": 98,
+          "id": 105,
           "name": "useRenderer",
           "kind": 2048,
           "kindString": "Method",
@@ -583,7 +583,7 @@
           },
           "signatures": [
             {
-              "id": 99,
+              "id": 106,
               "name": "useRenderer",
               "kind": 4096,
               "kindString": "Call signature",
@@ -599,7 +599,7 @@
               },
               "parameters": [
                 {
-                  "id": 100,
+                  "id": 107,
                   "name": "renderer",
                   "kind": 32768,
                   "kindString": "Parameter",
@@ -610,12 +610,12 @@
                   "type": {
                     "type": "reference",
                     "name": "Renderer",
-                    "id": 58,
+                    "id": 65,
                     "moduleName": "\"aurelia-dialog\""
                   }
                 },
                 {
-                  "id": 101,
+                  "id": 108,
                   "name": "settings",
                   "kind": 32768,
                   "kindString": "Parameter",
@@ -634,14 +634,14 @@
               "type": {
                 "type": "reference",
                 "name": "DialogConfiguration",
-                "id": 89,
+                "id": 96,
                 "moduleName": "\"aurelia-dialog\""
               }
             }
           ]
         },
         {
-          "id": 95,
+          "id": 102,
           "name": "useResource",
           "kind": 2048,
           "kindString": "Method",
@@ -650,7 +650,7 @@
           },
           "signatures": [
             {
-              "id": 96,
+              "id": 103,
               "name": "useResource",
               "kind": 4096,
               "kindString": "Call signature",
@@ -666,7 +666,7 @@
               },
               "parameters": [
                 {
-                  "id": 97,
+                  "id": 104,
                   "name": "resourceName",
                   "kind": 32768,
                   "kindString": "Parameter",
@@ -683,7 +683,7 @@
               "type": {
                 "type": "reference",
                 "name": "DialogConfiguration",
-                "id": 89,
+                "id": 96,
                 "moduleName": "\"aurelia-dialog\""
               }
             }
@@ -695,16 +695,16 @@
           "title": "Constructors",
           "kind": 512,
           "children": [
-            90
+            97
           ]
         },
         {
           "title": "Methods",
           "kind": 2048,
           "children": [
-            93,
-            98,
-            95
+            100,
+            105,
+            102
           ]
         }
       ]
@@ -752,7 +752,7 @@
                   "type": {
                     "type": "reference",
                     "name": "DialogRenderer",
-                    "id": 67,
+                    "id": 74,
                     "moduleName": "\"aurelia-dialog\""
                   }
                 },
@@ -1021,7 +1021,7 @@
       ]
     },
     {
-      "id": 67,
+      "id": 74,
       "name": "DialogRenderer",
       "kind": 128,
       "kindString": "Class",
@@ -1030,7 +1030,7 @@
       },
       "children": [
         {
-          "id": 70,
+          "id": 77,
           "name": "constructor",
           "kind": 512,
           "kindString": "Constructor",
@@ -1039,7 +1039,7 @@
           },
           "signatures": [
             {
-              "id": 71,
+              "id": 78,
               "name": "new DialogRenderer",
               "kind": 16384,
               "kindString": "Constructor signature",
@@ -1047,14 +1047,14 @@
               "type": {
                 "type": "reference",
                 "name": "DialogRenderer",
-                "id": 67,
+                "id": 74,
                 "moduleName": "\"aurelia-dialog\""
               }
             }
           ]
         },
         {
-          "id": 68,
+          "id": 75,
           "name": "dialogControllers",
           "kind": 1024,
           "kindString": "Property",
@@ -1067,7 +1067,7 @@
           }
         },
         {
-          "id": 69,
+          "id": 76,
           "name": "escapeKeyEvent",
           "kind": 1024,
           "kindString": "Property",
@@ -1080,7 +1080,7 @@
           }
         },
         {
-          "id": 72,
+          "id": 79,
           "name": "getDialogContainer",
           "kind": 2048,
           "kindString": "Method",
@@ -1089,7 +1089,7 @@
           },
           "signatures": [
             {
-              "id": 73,
+              "id": 80,
               "name": "getDialogContainer",
               "kind": 4096,
               "kindString": "Call signature",
@@ -1102,7 +1102,7 @@
           ]
         },
         {
-          "id": 77,
+          "id": 84,
           "name": "hideDialog",
           "kind": 2048,
           "kindString": "Method",
@@ -1111,14 +1111,14 @@
           },
           "signatures": [
             {
-              "id": 78,
+              "id": 85,
               "name": "hideDialog",
               "kind": 4096,
               "kindString": "Call signature",
               "flags": {},
               "parameters": [
                 {
-                  "id": 79,
+                  "id": 86,
                   "name": "dialogController",
                   "kind": 32768,
                   "kindString": "Parameter",
@@ -1139,7 +1139,7 @@
           ]
         },
         {
-          "id": 74,
+          "id": 81,
           "name": "showDialog",
           "kind": 2048,
           "kindString": "Method",
@@ -1148,14 +1148,14 @@
           },
           "signatures": [
             {
-              "id": 75,
+              "id": 82,
               "name": "showDialog",
               "kind": 4096,
               "kindString": "Call signature",
               "flags": {},
               "parameters": [
                 {
-                  "id": 76,
+                  "id": 83,
                   "name": "dialogController",
                   "kind": 32768,
                   "kindString": "Parameter",
@@ -1181,30 +1181,132 @@
           "title": "Constructors",
           "kind": 512,
           "children": [
-            70
+            77
           ]
         },
         {
           "title": "Properties",
           "kind": 1024,
           "children": [
-            68,
-            69
+            75,
+            76
           ]
         },
         {
           "title": "Methods",
           "kind": 2048,
           "children": [
-            72,
-            77,
-            74
+            79,
+            84,
+            81
           ]
         }
       ]
     },
     {
-      "id": 80,
+      "id": 58,
+      "name": "DialogResult",
+      "kind": 128,
+      "kindString": "Class",
+      "flags": {
+        "isExported": true
+      },
+      "children": [
+        {
+          "id": 61,
+          "name": "constructor",
+          "kind": 512,
+          "kindString": "Constructor",
+          "flags": {
+            "isExported": true
+          },
+          "signatures": [
+            {
+              "id": 62,
+              "name": "new DialogResult",
+              "kind": 16384,
+              "kindString": "Constructor signature",
+              "flags": {},
+              "parameters": [
+                {
+                  "id": 63,
+                  "name": "cancelled",
+                  "kind": 32768,
+                  "kindString": "Parameter",
+                  "flags": {},
+                  "type": {
+                    "type": "instrinct",
+                    "name": "boolean"
+                  }
+                },
+                {
+                  "id": 64,
+                  "name": "result",
+                  "kind": 32768,
+                  "kindString": "Parameter",
+                  "flags": {},
+                  "type": {
+                    "type": "instrinct",
+                    "name": "any"
+                  }
+                }
+              ],
+              "type": {
+                "type": "reference",
+                "name": "DialogResult",
+                "id": 58,
+                "moduleName": "\"aurelia-dialog\""
+              }
+            }
+          ]
+        },
+        {
+          "id": 60,
+          "name": "output",
+          "kind": 1024,
+          "kindString": "Property",
+          "flags": {
+            "isExported": true
+          },
+          "type": {
+            "type": "instrinct",
+            "name": "any"
+          }
+        },
+        {
+          "id": 59,
+          "name": "wasCancelled",
+          "kind": 1024,
+          "kindString": "Property",
+          "flags": {
+            "isExported": true
+          },
+          "type": {
+            "type": "instrinct",
+            "name": "boolean"
+          }
+        }
+      ],
+      "groups": [
+        {
+          "title": "Constructors",
+          "kind": 512,
+          "children": [
+            61
+          ]
+        },
+        {
+          "title": "Properties",
+          "kind": 1024,
+          "children": [
+            60,
+            59
+          ]
+        }
+      ]
+    },
+    {
+      "id": 87,
       "name": "DialogService",
       "kind": 128,
       "kindString": "Class",
@@ -1222,7 +1324,7 @@
       },
       "children": [
         {
-          "id": 82,
+          "id": 89,
           "name": "constructor",
           "kind": 512,
           "kindString": "Constructor",
@@ -1231,14 +1333,14 @@
           },
           "signatures": [
             {
-              "id": 83,
+              "id": 90,
               "name": "new DialogService",
               "kind": 16384,
               "kindString": "Constructor signature",
               "flags": {},
               "parameters": [
                 {
-                  "id": 84,
+                  "id": 91,
                   "name": "container",
                   "kind": 32768,
                   "kindString": "Parameter",
@@ -1246,12 +1348,12 @@
                   "type": {
                     "type": "reference",
                     "name": "Container",
-                    "id": 534,
+                    "id": 541,
                     "moduleName": "\"aurelia-dependency-injection\""
                   }
                 },
                 {
-                  "id": 85,
+                  "id": 92,
                   "name": "compositionEngine",
                   "kind": 32768,
                   "kindString": "Parameter",
@@ -1265,14 +1367,14 @@
               "type": {
                 "type": "reference",
                 "name": "DialogService",
-                "id": 80,
+                "id": 87,
                 "moduleName": "\"aurelia-dialog\""
               }
             }
           ]
         },
         {
-          "id": 81,
+          "id": 88,
           "name": "inject",
           "kind": 1024,
           "kindString": "Property",
@@ -1286,7 +1388,7 @@
           }
         },
         {
-          "id": 86,
+          "id": 93,
           "name": "open",
           "kind": 2048,
           "kindString": "Method",
@@ -1295,7 +1397,7 @@
           },
           "signatures": [
             {
-              "id": 87,
+              "id": 94,
               "name": "open",
               "kind": 4096,
               "kindString": "Call signature",
@@ -1306,7 +1408,7 @@
               },
               "parameters": [
                 {
-                  "id": 88,
+                  "id": 95,
                   "name": "settings",
                   "kind": 32768,
                   "kindString": "Parameter",
@@ -1335,27 +1437,27 @@
           "title": "Constructors",
           "kind": 512,
           "children": [
-            82
+            89
           ]
         },
         {
           "title": "Properties",
           "kind": 1024,
           "children": [
-            81
+            88
           ]
         },
         {
           "title": "Methods",
           "kind": 2048,
           "children": [
-            86
+            93
           ]
         }
       ]
     },
     {
-      "id": 58,
+      "id": 65,
       "name": "Renderer",
       "kind": 128,
       "kindString": "Class",
@@ -1367,7 +1469,7 @@
       },
       "children": [
         {
-          "id": 59,
+          "id": 66,
           "name": "getDialogContainer",
           "kind": 2048,
           "kindString": "Method",
@@ -1376,7 +1478,7 @@
           },
           "signatures": [
             {
-              "id": 60,
+              "id": 67,
               "name": "getDialogContainer",
               "kind": 4096,
               "kindString": "Call signature",
@@ -1393,7 +1495,7 @@
           ]
         },
         {
-          "id": 64,
+          "id": 71,
           "name": "hideDialog",
           "kind": 2048,
           "kindString": "Method",
@@ -1402,7 +1504,7 @@
           },
           "signatures": [
             {
-              "id": 65,
+              "id": 72,
               "name": "hideDialog",
               "kind": 4096,
               "kindString": "Call signature",
@@ -1413,7 +1515,7 @@
               },
               "parameters": [
                 {
-                  "id": 66,
+                  "id": 73,
                   "name": "dialogController",
                   "kind": 32768,
                   "kindString": "Parameter",
@@ -1440,7 +1542,7 @@
           ]
         },
         {
-          "id": 61,
+          "id": 68,
           "name": "showDialog",
           "kind": 2048,
           "kindString": "Method",
@@ -1449,7 +1551,7 @@
           },
           "signatures": [
             {
-              "id": 62,
+              "id": 69,
               "name": "showDialog",
               "kind": 4096,
               "kindString": "Call signature",
@@ -1460,7 +1562,7 @@
               },
               "parameters": [
                 {
-                  "id": 63,
+                  "id": 70,
                   "name": "dialogController",
                   "kind": 32768,
                   "kindString": "Parameter",
@@ -1492,15 +1594,15 @@
           "title": "Methods",
           "kind": 2048,
           "children": [
-            59,
-            64,
-            61
+            66,
+            71,
+            68
           ]
         }
       ]
     },
     {
-      "id": 102,
+      "id": 109,
       "name": "dialogOptions",
       "kind": 32,
       "kindString": "Variable",
@@ -1513,7 +1615,7 @@
       }
     },
     {
-      "id": 103,
+      "id": 110,
       "name": "invokeLifecycle",
       "kind": 64,
       "kindString": "Function",
@@ -1522,7 +1624,7 @@
       },
       "signatures": [
         {
-          "id": 104,
+          "id": 111,
           "name": "invokeLifecycle",
           "kind": 4096,
           "kindString": "Call signature",
@@ -1539,7 +1641,7 @@
           },
           "parameters": [
             {
-              "id": 105,
+              "id": 112,
               "name": "instance",
               "kind": 32768,
               "kindString": "Parameter",
@@ -1553,7 +1655,7 @@
               }
             },
             {
-              "id": 106,
+              "id": 113,
               "name": "name",
               "kind": 32768,
               "kindString": "Parameter",
@@ -1567,7 +1669,7 @@
               }
             },
             {
-              "id": 107,
+              "id": 114,
               "name": "model",
               "kind": 32768,
               "kindString": "Parameter",
@@ -1599,25 +1701,26 @@
         4,
         20,
         26,
-        89,
+        96,
         37,
-        67,
-        80,
-        58
+        74,
+        58,
+        87,
+        65
       ]
     },
     {
       "title": "Variables",
       "kind": 32,
       "children": [
-        102
+        109
       ]
     },
     {
       "title": "Functions",
       "kind": 64,
       "children": [
-        103
+        110
       ]
     }
   ]

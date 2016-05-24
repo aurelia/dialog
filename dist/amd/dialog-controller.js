@@ -4,7 +4,7 @@ define(['exports', './lifecycle'], function (exports, _lifecycle) {
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.DialogController = undefined;
+  exports.DialogResult = exports.DialogController = undefined;
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -60,7 +60,7 @@ define(['exports', './lifecycle'], function (exports, _lifecycle) {
     return DialogController;
   }();
 
-  var DialogResult = function DialogResult(cancelled, result) {
+  var DialogResult = exports.DialogResult = function DialogResult(cancelled, result) {
     _classCallCheck(this, DialogResult);
 
     this.wasCancelled = false;

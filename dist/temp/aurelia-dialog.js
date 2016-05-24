@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.DialogConfiguration = exports.DialogService = exports.DialogRenderer = exports.Renderer = exports.DialogController = exports.AttachFocus = exports.AiDialog = exports.AiDialogHeader = exports.AiDialogFooter = exports.AiDialogBody = exports.dialogOptions = undefined;
+exports.DialogConfiguration = exports.DialogService = exports.DialogRenderer = exports.Renderer = exports.DialogResult = exports.DialogController = exports.AttachFocus = exports.AiDialog = exports.AiDialogHeader = exports.AiDialogFooter = exports.AiDialogBody = exports.dialogOptions = undefined;
 
 var _dec, _class, _dec2, _class2, _desc, _value, _class3, _descriptor, _descriptor2, _class4, _temp, _dec3, _class5, _class6, _temp2, _dec4, _class7, _dec5, _class8, _class9, _temp3, _dec6, _class12, _class14, _temp4;
 
@@ -207,7 +207,7 @@ var DialogController = exports.DialogController = function () {
   return DialogController;
 }();
 
-var DialogResult = function DialogResult(cancelled, result) {
+var DialogResult = exports.DialogResult = function DialogResult(cancelled, result) {
   _classCallCheck(this, DialogResult);
 
   this.wasCancelled = false;
@@ -449,13 +449,15 @@ var DialogService = exports.DialogService = (_temp4 = _class14 = function () {
       var childContainer = _this5.container.createChild();
       dialogController = new DialogController(childContainer.get(Renderer), settings, resolve, reject);
       childContainer.registerInstance(DialogController, dialogController);
+      var host = dialogController._renderer.getDialogContainer();
 
       var instruction = {
         container: _this5.container,
         childContainer: childContainer,
         model: dialogController.settings.model,
         viewModel: dialogController.settings.viewModel,
-        viewSlot: new _aureliaTemplating.ViewSlot(dialogController._renderer.getDialogContainer(), true)
+        viewSlot: new _aureliaTemplating.ViewSlot(host, true),
+        host: host
       };
 
       return _getViewModel(instruction, _this5.compositionEngine).then(function (returnedInstruction) {

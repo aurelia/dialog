@@ -55,13 +55,15 @@ System.register(['aurelia-metadata', 'aurelia-dependency-injection', 'aurelia-te
             var childContainer = _this.container.createChild();
             dialogController = new DialogController(childContainer.get(Renderer), settings, resolve, reject);
             childContainer.registerInstance(DialogController, dialogController);
+            var host = dialogController._renderer.getDialogContainer();
 
             var instruction = {
               container: _this.container,
               childContainer: childContainer,
               model: dialogController.settings.model,
               viewModel: dialogController.settings.viewModel,
-              viewSlot: new ViewSlot(dialogController._renderer.getDialogContainer(), true)
+              viewSlot: new ViewSlot(host, true),
+              host: host
             };
 
             return _getViewModel(instruction, _this.compositionEngine).then(function (returnedInstruction) {

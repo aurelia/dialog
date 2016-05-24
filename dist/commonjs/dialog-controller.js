@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.DialogController = undefined;
+exports.DialogResult = exports.DialogController = undefined;
 
 var _lifecycle = require('./lifecycle');
 
@@ -57,7 +57,7 @@ var DialogController = exports.DialogController = function () {
   return DialogController;
 }();
 
-var DialogResult = function DialogResult(cancelled, result) {
+var DialogResult = exports.DialogResult = function DialogResult(cancelled, result) {
   _classCallCheck(this, DialogResult);
 
   this.wasCancelled = false;

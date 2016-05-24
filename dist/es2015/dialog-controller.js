@@ -40,7 +40,7 @@ export let DialogController = class DialogController {
   }
 };
 
-let DialogResult = class DialogResult {
+export let DialogResult = class DialogResult {
   constructor(cancelled, result) {
     this.wasCancelled = false;
 
