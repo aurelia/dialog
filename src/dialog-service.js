@@ -37,6 +37,7 @@ export class DialogService {
         container: this.container,
         childContainer: childContainer,
         model: dialogController.settings.model,
+        view: dialogController.settings.view,
         viewModel: dialogController.settings.viewModel,
         viewSlot: new ViewSlot(host, true),
         host: host
@@ -53,8 +54,10 @@ export class DialogService {
 
             return this.compositionEngine.compose(returnedInstruction).then(controller => {
               dialogController.controller = controller;
-              dialogController.view = controller.view;
 
+              if (!dialogController.view) {
+                dialogController.view = controller.view;
+              }
               return dialogController._renderer.showDialog(dialogController);
             });
           }
