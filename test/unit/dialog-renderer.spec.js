@@ -50,7 +50,7 @@ describe('the Dialog Renderer', () => {
     let controller = new DialogController(renderer, settings, Function.prototype, Function.prototype);
     controller.slot = {
       attached: Function.prototype,
-      anchor: document.createElement('ai-dialog-container')
+      anchor: document.createElement('ai-dialog')
     };
 
     renderer.showDialog(controller);
