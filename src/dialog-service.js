@@ -54,10 +54,8 @@ export class DialogService {
 
             return this.compositionEngine.compose(returnedInstruction).then(controller => {
               dialogController.controller = controller;
+              dialogController.view = controller.view;
 
-              if (!dialogController.view) {
-                dialogController.view = controller.view;
-              }
               return dialogController._renderer.showDialog(dialogController);
             });
           }
