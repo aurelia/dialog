@@ -304,8 +304,8 @@ Dialog plugin uses `<require from="../dialog.css"></require>` statement to load 
 So we need just to exclude `dialog.css` for css-loader and use `raw-loader` instead:
 
 ```javascript
-{ test: /aurelia-dialog\/dist\/commonjs\/dialog\.css/, loader: 'raw'},
-{ test: /\.css$/, exclude: /aurelia-dialog\/dist\/commonjs\/dialog\.css/, loader: 'style!css' },
+{ test: /aurelia-dialog(\\|\/)dist(\\|\/)commonjs(\\|\/)dialog\.css/, loader: 'raw' },
+{ test: /\.css$/, exclude: /aurelia-dialog(\\|\/)dist(\\|\/)commonjs(\\|\/)dialog\.css/, loader: 'style!css' },
 ```
 
 There are two other options to solve `<require>` issue that are more universal but adding some restrictions to the application code:
