@@ -8,8 +8,10 @@ import {invokeLifecycle} from './lifecycle';
 export class DialogController {
   settings: any;
   constructor(renderer: DialogRenderer, settings: any, resolve: Function, reject: Function) {
+    let defaultSettings = renderer ? renderer.defaultSettings || {} : {};
+
     this._renderer = renderer;
-    this.settings = Object.assign({}, this._renderer.defaultSettings, settings);
+    this.settings = Object.assign({}, defaultSettings, settings);
     this._resolve = resolve;
     this._reject = reject;
   }
