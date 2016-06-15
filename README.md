@@ -3,6 +3,7 @@
 [![npm Version](https://img.shields.io/npm/v/aurelia-dialog.svg)](https://www.npmjs.com/package/aurelia-dialog)
 [![ZenHub](https://raw.githubusercontent.com/ZenHubIO/support/master/zenhub-badge.png)](https://zenhub.io)
 [![Join the chat at https://gitter.im/aurelia/discuss](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/aurelia/discuss?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![CircleCI](https://circleci.com/gh/aurelia/dialog.svg?style=shield)](https://circleci.com/gh/aurelia/dialog)
 
 This library is part of the [Aurelia](http://www.aurelia.io/) platform and contains a dialog plugin.
 
@@ -311,29 +312,29 @@ So we need just to exclude `dialog.css` for css-loader and use `raw-loader` inst
 There are two other options to solve `<require>` issue that are more universal but adding some restrictions to the application code:
 
 1. Always use `raw-loader` for css
-    
+
     ```
     { test: /\.css$/, loader: 'raw' }
     ```
 
     When importing css files in js disable `raw-loader` and use `css-loader`
-    
+
     ```
     import '-!style!css!../theme/assets/css/jquery-ui.css';
     ```
-    
+
 2. Always use `raw-loader` for css
- 
+
     ```
     { test: /\.css$/, loader: 'raw' }
     ```
-    
+
     Don't import css files in js, but use `less`
-    
+
     ```
     { test: /\.less$/, loader: "style!css!less"},
     ```
-    
+
 But that is not a silver bullet. Some of the webpack plugins can still require `css` files by default in js code (font-awesome-webpack, bootstrap-webpack) and you will need to add some exclusions for loaders too.
 
 ### TypeError: Cannot read property 'canActivate' issue
@@ -354,7 +355,7 @@ submit(){
         console.log(response.output);
       });
     }
-``` 
+```
 
 Use module name string instead:
 
