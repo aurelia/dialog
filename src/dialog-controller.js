@@ -20,7 +20,7 @@ export class DialogController {
    * Closes the dialog with a successful result.
    * @param result The returned success result.
    */
-  ok(result: any) {
+  ok(result?: any) {
     this.close(true, result);
   }
 
@@ -28,7 +28,7 @@ export class DialogController {
    * Closes the dialog with a cancel result.
    * @param result The returned cancel result.
    */
-  cancel(result: any) {
+  cancel(result?: any) {
     this.close(false, result);
   }
 
@@ -53,8 +53,7 @@ export class DialogController {
    * @param result The specified result.
    * @returns Promise An empty promise object.
    */
-  close(ok: boolean, result: any) {
-    let returnResult = new DialogResult(!ok, result);
+  close(ok: boolean, result?: any) {
     return invokeLifecycle(this.viewModel, 'canDeactivate').then(canDeactivate => {
       if (canDeactivate) {
         return invokeLifecycle(this.viewModel, 'deactivate')
@@ -62,7 +61,7 @@ export class DialogController {
             return this._renderer.hideDialog(this);
           }).then(() => {
             this.controller.unbind();
-            this._resolve(returnResult);
+            this._resolve(new DialogResult(!ok, result));
           });
       }
     });
