@@ -5,7 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.DialogResult = exports.DialogController = exports.DialogService = exports.DialogConfiguration = exports.AttachFocus = exports.AiDialogFooter = exports.AiDialogBody = exports.AiDialogHeader = exports.AiDialog = undefined;
 
-var _aiDialog = require('./resources/ai-dialog');
+var _aiDialog = require('./ai-dialog');
 
 Object.defineProperty(exports, 'AiDialog', {
   enumerable: true,
@@ -14,7 +14,7 @@ Object.defineProperty(exports, 'AiDialog', {
   }
 });
 
-var _aiDialogHeader = require('./resources/ai-dialog-header');
+var _aiDialogHeader = require('./ai-dialog-header');
 
 Object.defineProperty(exports, 'AiDialogHeader', {
   enumerable: true,
@@ -23,7 +23,7 @@ Object.defineProperty(exports, 'AiDialogHeader', {
   }
 });
 
-var _aiDialogBody = require('./resources/ai-dialog-body');
+var _aiDialogBody = require('./ai-dialog-body');
 
 Object.defineProperty(exports, 'AiDialogBody', {
   enumerable: true,
@@ -32,7 +32,7 @@ Object.defineProperty(exports, 'AiDialogBody', {
   }
 });
 
-var _aiDialogFooter = require('./resources/ai-dialog-footer');
+var _aiDialogFooter = require('./ai-dialog-footer');
 
 Object.defineProperty(exports, 'AiDialogFooter', {
   enumerable: true,
@@ -41,7 +41,7 @@ Object.defineProperty(exports, 'AiDialogFooter', {
   }
 });
 
-var _attachFocus = require('./resources/attach-focus');
+var _attachFocus = require('./attach-focus');
 
 Object.defineProperty(exports, 'AttachFocus', {
   enumerable: true,
@@ -77,10 +77,13 @@ Object.defineProperty(exports, 'DialogController', {
     return _dialogController.DialogController;
   }
 });
+
+var _dialogResult = require('./dialog-result');
+
 Object.defineProperty(exports, 'DialogResult', {
   enumerable: true,
   get: function get() {
-    return _dialogController.DialogResult;
+    return _dialogResult.DialogResult;
   }
 });
 function configure(aurelia, callback) {
@@ -88,8 +91,9 @@ function configure(aurelia, callback) {
 
   if (typeof callback === 'function') {
     callback(config);
-    return;
+  } else {
+    config.useDefaults();
   }
 
-  config.useDefaults();
+  config._apply();
 }

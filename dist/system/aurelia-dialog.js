@@ -1,6 +1,8 @@
 'use strict';
 
-System.register(['./dialog-configuration', './resources/ai-dialog', './resources/ai-dialog-header', './resources/ai-dialog-body', './resources/ai-dialog-footer', './resources/attach-focus', './dialog-service', './dialog-controller'], function (_export, _context) {
+System.register(['./dialog-configuration', './ai-dialog', './ai-dialog-header', './ai-dialog-body', './ai-dialog-footer', './attach-focus', './dialog-service', './dialog-controller', './dialog-result'], function (_export, _context) {
+  "use strict";
+
   var DialogConfiguration;
   return {
     setters: [function (_dialogConfiguration) {
@@ -9,29 +11,29 @@ System.register(['./dialog-configuration', './resources/ai-dialog', './resources
       _exportObj.DialogConfiguration = _dialogConfiguration.DialogConfiguration;
 
       _export(_exportObj);
-    }, function (_resourcesAiDialog) {
+    }, function (_aiDialog) {
       var _exportObj2 = {};
-      _exportObj2.AiDialog = _resourcesAiDialog.AiDialog;
+      _exportObj2.AiDialog = _aiDialog.AiDialog;
 
       _export(_exportObj2);
-    }, function (_resourcesAiDialogHeader) {
+    }, function (_aiDialogHeader) {
       var _exportObj3 = {};
-      _exportObj3.AiDialogHeader = _resourcesAiDialogHeader.AiDialogHeader;
+      _exportObj3.AiDialogHeader = _aiDialogHeader.AiDialogHeader;
 
       _export(_exportObj3);
-    }, function (_resourcesAiDialogBody) {
+    }, function (_aiDialogBody) {
       var _exportObj4 = {};
-      _exportObj4.AiDialogBody = _resourcesAiDialogBody.AiDialogBody;
+      _exportObj4.AiDialogBody = _aiDialogBody.AiDialogBody;
 
       _export(_exportObj4);
-    }, function (_resourcesAiDialogFooter) {
+    }, function (_aiDialogFooter) {
       var _exportObj5 = {};
-      _exportObj5.AiDialogFooter = _resourcesAiDialogFooter.AiDialogFooter;
+      _exportObj5.AiDialogFooter = _aiDialogFooter.AiDialogFooter;
 
       _export(_exportObj5);
-    }, function (_resourcesAttachFocus) {
+    }, function (_attachFocus) {
       var _exportObj6 = {};
-      _exportObj6.AttachFocus = _resourcesAttachFocus.AttachFocus;
+      _exportObj6.AttachFocus = _attachFocus.AttachFocus;
 
       _export(_exportObj6);
     }, function (_dialogService) {
@@ -42,9 +44,13 @@ System.register(['./dialog-configuration', './resources/ai-dialog', './resources
     }, function (_dialogController) {
       var _exportObj8 = {};
       _exportObj8.DialogController = _dialogController.DialogController;
-      _exportObj8.DialogResult = _dialogController.DialogResult;
 
       _export(_exportObj8);
+    }, function (_dialogResult) {
+      var _exportObj9 = {};
+      _exportObj9.DialogResult = _dialogResult.DialogResult;
+
+      _export(_exportObj9);
     }],
     execute: function () {
       function configure(aurelia, callback) {
@@ -52,10 +58,11 @@ System.register(['./dialog-configuration', './resources/ai-dialog', './resources
 
         if (typeof callback === 'function') {
           callback(config);
-          return;
+        } else {
+          config.useDefaults();
         }
 
-        config.useDefaults();
+        config._apply();
       }
 
       _export('configure', configure);

@@ -1,4 +1,4 @@
-define(['exports', './resources/ai-dialog', './resources/ai-dialog-header', './resources/ai-dialog-body', './resources/ai-dialog-footer', './resources/attach-focus', './dialog-configuration', './dialog-service', './dialog-controller'], function (exports, _aiDialog, _aiDialogHeader, _aiDialogBody, _aiDialogFooter, _attachFocus, _dialogConfiguration, _dialogService, _dialogController) {
+define(['exports', './ai-dialog', './ai-dialog-header', './ai-dialog-body', './ai-dialog-footer', './attach-focus', './dialog-configuration', './dialog-service', './dialog-controller', './dialog-result'], function (exports, _aiDialog, _aiDialogHeader, _aiDialogBody, _aiDialogFooter, _attachFocus, _dialogConfiguration, _dialogService, _dialogController, _dialogResult) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -57,7 +57,7 @@ define(['exports', './resources/ai-dialog', './resources/ai-dialog-header', './r
   Object.defineProperty(exports, 'DialogResult', {
     enumerable: true,
     get: function () {
-      return _dialogController.DialogResult;
+      return _dialogResult.DialogResult;
     }
   });
   function configure(aurelia, callback) {
@@ -65,9 +65,10 @@ define(['exports', './resources/ai-dialog', './resources/ai-dialog-header', './r
 
     if (typeof callback === 'function') {
       callback(config);
-      return;
+    } else {
+      config.useDefaults();
     }
 
-    config.useDefaults();
+    config._apply();
   }
 });

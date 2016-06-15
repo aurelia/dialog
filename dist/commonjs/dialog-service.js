@@ -15,15 +15,17 @@ var _aureliaTemplating = require('aurelia-templating');
 
 var _dialogController = require('./dialog-controller');
 
-var _renderer = require('./renderers/renderer');
+var _renderer = require('./renderer');
 
 var _lifecycle = require('./lifecycle');
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+var _dialogResult = require('./dialog-result');
+
+
 
 var DialogService = exports.DialogService = (_temp = _class = function () {
   function DialogService(container, compositionEngine) {
-    _classCallCheck(this, DialogService);
+    
 
     this.container = container;
     this.compositionEngine = compositionEngine;
@@ -40,7 +42,7 @@ var DialogService = exports.DialogService = (_temp = _class = function () {
       var childContainer = _this.container.createChild();
       dialogController = new _dialogController.DialogController(childContainer.get(_renderer.Renderer), settings, resolve, reject);
       childContainer.registerInstance(_dialogController.DialogController, dialogController);
-      var host = dialogController._renderer.getDialogContainer();
+      var host = dialogController.renderer.getDialogContainer();
 
       var instruction = {
         container: _this.container,
@@ -64,7 +66,7 @@ var DialogService = exports.DialogService = (_temp = _class = function () {
               dialogController.controller = controller;
               dialogController.view = controller.view;
 
-              return dialogController._renderer.showDialog(dialogController);
+              return dialogController.renderer.showDialog(dialogController);
             });
           }
         });

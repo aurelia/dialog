@@ -1,53 +1,75 @@
 'use strict';
 
-System.register(['./renderers/renderer', './renderers/dialog-renderer', './dialog-options'], function (_export, _context) {
-  var Renderer, DialogRenderer, dialogOptions, defaultRenderer, resources, DialogConfiguration;
+System.register(['./renderer', './dialog-renderer', './dialog-options', 'aurelia-pal'], function (_export, _context) {
+  "use strict";
 
-  function _classCallCheck(instance, Constructor) {
-    if (!(instance instanceof Constructor)) {
-      throw new TypeError("Cannot call a class as a function");
-    }
-  }
+  var Renderer, DialogRenderer, dialogOptions, DOM, defaultRenderer, resources, defaultCSSText, DialogConfiguration;
+
+  
 
   return {
-    setters: [function (_renderersRenderer) {
-      Renderer = _renderersRenderer.Renderer;
-    }, function (_renderersDialogRenderer) {
-      DialogRenderer = _renderersDialogRenderer.DialogRenderer;
+    setters: [function (_renderer) {
+      Renderer = _renderer.Renderer;
+    }, function (_dialogRenderer) {
+      DialogRenderer = _dialogRenderer.DialogRenderer;
     }, function (_dialogOptions) {
       dialogOptions = _dialogOptions.dialogOptions;
+    }, function (_aureliaPal) {
+      DOM = _aureliaPal.DOM;
     }],
     execute: function () {
       defaultRenderer = DialogRenderer;
       resources = {
-        'ai-dialog': './resources/ai-dialog',
-        'ai-dialog-header': './resources/ai-dialog-header',
-        'ai-dialog-body': './resources/ai-dialog-body',
-        'ai-dialog-footer': './resources/ai-dialog-footer',
-        'attach-focus': './resources/attach-focus'
+        'ai-dialog': './ai-dialog',
+        'ai-dialog-header': './ai-dialog-header',
+        'ai-dialog-body': './ai-dialog-body',
+        'ai-dialog-footer': './ai-dialog-footer',
+        'attach-focus': './attach-focus'
       };
+      defaultCSSText = 'ai-dialog-container,ai-dialog-overlay{position:fixed;top:0;right:0;bottom:0;left:0}ai-dialog,ai-dialog-container>div>div{min-width:300px;margin:auto;display:block}ai-dialog-overlay{opacity:0}ai-dialog-overlay.active{opacity:1}ai-dialog-container{display:block;transition:opacity .2s linear;opacity:0;overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch}ai-dialog-container.active{opacity:1}ai-dialog-container>div{padding:30px}ai-dialog-container>div>div{width:-moz-fit-content;width:-webkit-fit-content;width:fit-content;height:-moz-fit-content;height:-webkit-fit-content;height:fit-content}ai-dialog-container,ai-dialog-container>div,ai-dialog-container>div>div{outline:0}ai-dialog{box-shadow:0 5px 15px rgba(0,0,0,.5);border:1px solid rgba(0,0,0,.2);border-radius:5px;padding:3;width:-moz-fit-content;width:-webkit-fit-content;width:fit-content;height:-moz-fit-content;height:-webkit-fit-content;height:fit-content;border-image-source:initial;border-image-slice:initial;border-image-width:initial;border-image-outset:initial;border-image-repeat:initial;background:#fff}ai-dialog>ai-dialog-header{display:block;padding:16px;border-bottom:1px solid #e5e5e5}ai-dialog>ai-dialog-header>button{float:right;border:none;display:block;width:32px;height:32px;background:0 0;font-size:22px;line-height:16px;margin:-14px -16px 0 0;padding:0;cursor:pointer}ai-dialog>ai-dialog-body{display:block;padding:16px}ai-dialog>ai-dialog-footer{display:block;padding:6px;border-top:1px solid #e5e5e5;text-align:right}ai-dialog>ai-dialog-footer button{color:#333;background-color:#fff;padding:6px 12px;font-size:14px;text-align:center;white-space:nowrap;vertical-align:middle;-ms-touch-action:manipulation;touch-action:manipulation;cursor:pointer;background-image:none;border:1px solid #ccc;border-radius:4px;margin:5px 0 5px 5px}ai-dialog>ai-dialog-footer button:disabled{cursor:default;opacity:.45}ai-dialog>ai-dialog-footer button:hover:enabled{color:#333;background-color:#e6e6e6;border-color:#adadad}.ai-dialog-open{overflow:hidden}';
 
       _export('DialogConfiguration', DialogConfiguration = function () {
         function DialogConfiguration(aurelia) {
-          _classCallCheck(this, DialogConfiguration);
+          
 
           this.aurelia = aurelia;
           this.settings = dialogOptions;
+          this.resources = [];
+          this.cssText = defaultCSSText;
         }
 
         DialogConfiguration.prototype.useDefaults = function useDefaults() {
-          return this.useRenderer(defaultRenderer).useResource('ai-dialog').useResource('ai-dialog-header').useResource('ai-dialog-body').useResource('ai-dialog-footer').useResource('attach-focus');
+          return this.useRenderer(defaultRenderer).useCSS(defaultCSSText).useStandardResources();
+        };
+
+        DialogConfiguration.prototype.useStandardResources = function useStandardResources() {
+          return this.useResource('ai-dialog').useResource('ai-dialog-header').useResource('ai-dialog-body').useResource('ai-dialog-footer').useResource('attach-focus');
         };
 
         DialogConfiguration.prototype.useResource = function useResource(resourceName) {
-          this.aurelia.globalResources(resources[resourceName]);
+          this.resources.push(resourceName);
           return this;
         };
 
         DialogConfiguration.prototype.useRenderer = function useRenderer(renderer, settings) {
-          this.aurelia.singleton(Renderer, renderer);
-          this.settings = Object.assign(dialogOptions, settings);
+          this.renderer = renderer;
+          this.settings = Object.assign(this.settings, settings || {});
           return this;
+        };
+
+        DialogConfiguration.prototype.useCSS = function useCSS(cssText) {
+          this.cssText = cssText;
+          return this;
+        };
+
+        DialogConfiguration.prototype._apply = function _apply() {
+          var _this = this;
+
+          this.aurelia.singleton(Renderer, this.renderer);
+          this.resources.forEach(function (resourceName) {
+            return _this.aurelia.globalResources(resources[resourceName]);
+          });
+          DOM.injectStyles(this.cssText);
         };
 
         return DialogConfiguration;
