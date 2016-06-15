@@ -132,6 +132,15 @@
           "href": "doc/CHANGELOG.md"
         }
       ]
+    },
+    "build": {
+      "resources": [
+        "aurelia-dialog/ai-dialog",
+        "aurelia-dialog/ai-dialog-header",
+        "aurelia-dialog/ai-dialog-body",
+        "aurelia-dialog/ai-dialog-footer",
+        "aurelia-dialog/attach-focus"
+      ]
     }
   }
 }
