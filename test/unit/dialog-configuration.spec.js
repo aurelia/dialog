@@ -1,10 +1,7 @@
 import {DialogConfiguration} from '../../src/dialog-configuration';
 import {dialogOptions} from '../../src/dialog-options';
 import {DialogRenderer} from '../../src/dialog-renderer';
-import {initialize} from 'aurelia-pal-browser';
 import {Renderer} from '../../src/renderer';
-
-initialize();
 
 let defaultDialogOptions = Object.assign({}, dialogOptions);
 
@@ -16,8 +13,6 @@ let aurelia = {
 describe('DialogConfiguration', () => {
   let configuration;
   beforeEach(() => {
-    initialize();
-
     configuration = new DialogConfiguration(aurelia);
 
     Object.keys(dialogOptions).forEach((key) => {
@@ -32,6 +27,7 @@ describe('DialogConfiguration', () => {
       let renderer = {};
       spyOn(aurelia, 'singleton');
       configuration.useRenderer(renderer);
+      configuration._apply();
       expect(aurelia.singleton).toHaveBeenCalledWith(Renderer, renderer);
     });
 
@@ -39,6 +35,7 @@ describe('DialogConfiguration', () => {
       let renderer = {};
       let settings = { first: 'first', second: 'second' };
       configuration.useRenderer(renderer, settings);
+      configuration._apply();
       expect(dialogOptions.first).toBe(settings.first);
       expect(dialogOptions.second).toBe(settings.second);
     });
@@ -48,6 +45,7 @@ describe('DialogConfiguration', () => {
     it('should call globalResources', () => {
       spyOn(aurelia, 'globalResources');
       configuration.useResource('ai-dialog');
+      configuration._apply();
       expect(aurelia.globalResources).toHaveBeenCalled();
     });
   });
@@ -58,6 +56,7 @@ describe('DialogConfiguration', () => {
       spyOn(configuration, 'useResource').and.callThrough();
 
       configuration.useDefaults();
+      configuration._apply();
       expect(configuration.useRenderer).toHaveBeenCalledWith(DialogRenderer);
       expect(configuration.useResource).toHaveBeenCalledWith('ai-dialog');
       expect(configuration.useResource).toHaveBeenCalledWith('ai-dialog-header');

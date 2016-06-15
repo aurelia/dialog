@@ -2,10 +2,7 @@ import {DialogController} from '../../src/dialog-controller';
 import {DialogRenderer} from '../../src/dialog-renderer';
 import {dialogOptions} from '../../src/dialog-options';
 import {configure} from '../../src/aurelia-dialog';
-import {initialize} from 'aurelia-pal-browser';
 import {TestElement} from '../fixtures/test-element';
-
-initialize();
 
 let defaultSettings = {
   lock: true,
@@ -19,6 +16,7 @@ let newSettings = {
 };
 
 let frameworkConfig = {
+  singleton: () => {},
   globalResources: () => {},
   container: {
     registerInstance: (Type, callback) => {},
@@ -27,10 +25,6 @@ let frameworkConfig = {
 };
 
 describe('the Dialog Renderer', () => {
-  beforeEach(() => {
-    initialize();
-  });
-
   it('uses the default settings', () => {
     let renderer = new DialogRenderer();
     expect(renderer.defaultSettings).toEqual(defaultSettings);

@@ -1,7 +1,4 @@
 import {configure} from '../../src/aurelia-dialog';
-import {initialize} from 'aurelia-pal-browser';
-
-initialize();
 
 describe('testing aurelia configure routine', () => {
   let frameworkConfig = {

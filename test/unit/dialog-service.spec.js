@@ -3,12 +3,9 @@ import {Renderer} from '../../src/renderer';
 import {Container} from 'aurelia-dependency-injection';
 import {CompositionEngine, BindingLanguage} from 'aurelia-templating';
 import {TestElement} from '../fixtures/test-element';
-import {initialize} from 'aurelia-pal-browser';
 import {Loader} from 'aurelia-loader';
 import {DefaultLoader} from 'aurelia-loader-default';
 import {TemplatingBindingLanguage} from 'aurelia-templating-binding';
-
-initialize();
 
 describe('the Dialog Service', () => {
   let dialogService;
@@ -17,8 +14,6 @@ describe('the Dialog Service', () => {
   let renderer;
 
   beforeEach(() => {
-    initialize();
-
     renderer = {
       showDialog: function() {
         return Promise.resolve();
