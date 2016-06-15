@@ -1,5 +1,5 @@
 import {customElement, inlineView} from 'aurelia-templating';
-import {DialogController} from '../dialog-controller';
+import {DialogController} from './dialog-controller';
 
 @customElement('ai-dialog-header')
 @inlineView(`

@@ -1,19 +1,20 @@
 import {DialogConfiguration} from './dialog-configuration';
-export {AiDialog} from './resources/ai-dialog';
-export {AiDialogHeader} from './resources/ai-dialog-header';
-export {AiDialogBody} from './resources/ai-dialog-body';
-export {AiDialogFooter} from './resources/ai-dialog-footer';
-export {AttachFocus} from './resources/attach-focus';
+export {AiDialog} from './ai-dialog';
+export {AiDialogHeader} from './ai-dialog-header';
+export {AiDialogBody} from './ai-dialog-body';
+export {AiDialogFooter} from './ai-dialog-footer';
+export {AttachFocus} from './attach-focus';
 
 export function configure(aurelia, callback) {
   let config = new DialogConfiguration(aurelia);
 
   if (typeof callback === 'function') {
     callback(config);
-    return;
+  } else {
+    config.useDefaults();
   }
 
-  config.useDefaults();
+  config._apply();
 }
 
 export {DialogConfiguration} from './dialog-configuration';

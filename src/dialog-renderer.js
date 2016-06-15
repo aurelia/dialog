@@ -1,4 +1,4 @@
-import {dialogOptions} from '../dialog-options';
+import {dialogOptions} from './dialog-options';
 import {DOM} from 'aurelia-pal';
 import {transient} from 'aurelia-dependency-injection';
 

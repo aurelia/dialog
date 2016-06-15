@@ -2,7 +2,7 @@ import {Origin} from 'aurelia-metadata';
 import {Container} from 'aurelia-dependency-injection';
 import {CompositionEngine, ViewSlot} from 'aurelia-templating';
 import {DialogController} from './dialog-controller';
-import {Renderer} from './renderers/renderer';
+import {Renderer} from './renderer';
 import {invokeLifecycle} from './lifecycle';
 
 /**
