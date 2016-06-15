@@ -199,7 +199,7 @@ There are a few ways you can take advantage of the Aurelia dialog.
       </ai-dialog-body>
 
       <ai-dialog-footer>
-        <button click.trigger="controller.cancel()">Cancel</button>
+        <button click.trigger="controller.cancel(person)">Cancel</button>
         <button click.trigger="controller.ok(person)">Ok</button>
       </ai-dialog-footer>
     </ai-dialog>
