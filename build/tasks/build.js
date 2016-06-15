@@ -104,31 +104,11 @@ gulp.task('build-dts', function(){
 });
 
 gulp.task('build-css', function () {
-  var lessSettings = { paths: [paths.root] };
-
-  return gulp.src(paths.less)
-    .pipe(less(lessSettings))
-    .pipe(gulp.dest(paths.styleFolder));
-});
-
-gulp.task('minifyCSS', function () {
-    var amdCSS = gulp.src(paths.style)
-     .pipe(minifyCSS({ keepBreaks: false }))
-     .pipe(gulp.dest(paths.output+"amd"));
-
-    var sysCSS = gulp.src(paths.style)
-     .pipe(minifyCSS({ keepBreaks: false }))
-     .pipe(gulp.dest(paths.output+"system"));
-
-    var commonCSS = gulp.src(paths.style)
-     .pipe(minifyCSS({ keepBreaks: false }))
-     .pipe(gulp.dest(paths.output+"commonjs"));
-
-     var es2015CSS = gulp.src(paths.style)
-     .pipe(minifyCSS({ keepBreaks: false }))
-     .pipe(gulp.dest(paths.output+"es2015"));
-
-    return es.concat(amdCSS,sysCSS,commonCSS,es2015CSS);
+  return gulp.src(paths.styleSource)
+    .pipe(less())
+    .pipe(minifyCSS({ keepBreaks: false }))
+    .pipe(rename('output.css'))
+    .pipe(gulp.dest(paths.styleOutput));
 });
 
 gulp.task('build', function(callback) {
@@ -136,7 +116,6 @@ gulp.task('build', function(callback) {
     'clean',
     'build-index',
     ['build-es2015-temp', 'build-commonjs', 'build-amd', 'build-system', 'build-es2015', 'build-css'],
-    'minifyCSS',
     'build-dts',
     callback
   );

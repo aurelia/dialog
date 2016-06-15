@@ -8,8 +8,6 @@ module.exports = {
   root: appRoot,
   source: appRoot + '**/*.js',
   html: appRoot + '**/*.html',
-  style: 'styles/**/*.css',
-  less: appRoot + 'styles/**/*.less',
   tests: 'test/**/*.js',
   output: 'dist/',
   sample: 'sample',
@@ -17,5 +15,6 @@ module.exports = {
   e2eSpecsSrc: 'test/e2e/src/*.js',
   e2eSpecsDist: 'test/e2e/dist/',
   packageName: pkg.name,
-  styleFolder: './styles',
+  styleSource: 'styles/input.less',
+  styleOutput: 'styles'
 };
