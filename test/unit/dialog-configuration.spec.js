@@ -1,8 +1,8 @@
 import {DialogConfiguration} from '../../src/dialog-configuration';
 import {dialogOptions} from '../../src/dialog-options';
-import {DialogRenderer} from '../../src/renderers/dialog-renderer';
+import {DialogRenderer} from '../../src/dialog-renderer';
 import {initialize} from 'aurelia-pal-browser';
-import {Renderer} from '../../src/renderers/renderer';
+import {Renderer} from '../../src/renderer';
 
 initialize();
 

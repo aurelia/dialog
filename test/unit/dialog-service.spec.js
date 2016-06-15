@@ -1,5 +1,5 @@
 import {DialogService} from '../../src/dialog-service';
-import {Renderer} from '../../src/renderers/renderer';
+import {Renderer} from '../../src/renderer';
 import {Container} from 'aurelia-dependency-injection';
 import {CompositionEngine, BindingLanguage} from 'aurelia-templating';
 import {TestElement} from '../fixtures/test-element';

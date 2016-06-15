@@ -1,4 +1,4 @@
-import {AttachFocus} from '../../src/resources/attach-focus';
+import {AttachFocus} from '../../src/attach-focus';
 import {Container} from 'aurelia-dependency-injection';
 import {TemplatingEngine} from 'aurelia-templating';
 import {initialize} from 'aurelia-pal-browser';
