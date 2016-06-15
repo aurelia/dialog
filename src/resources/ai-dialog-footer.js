@@ -1,10 +1,19 @@
-import {customElement, bindable} from 'aurelia-templating';
+import {customElement, bindable, inlineView} from 'aurelia-templating';
 import {DialogController} from '../dialog-controller';
 
 /**
  * * View-model for footer of Dialog.
  * */
 @customElement('ai-dialog-footer')
+@inlineView(`
+  <template>
+    <slot></slot>
+
+    <template if.bind="buttons.length > 0">
+      <button type="button" class="btn btn-default" repeat.for="button of buttons" click.trigger="close(button)">\${button}</button>
+    </template>
+  </template>
+`)
 export class AiDialogFooter {
   static inject = [DialogController];
 
@@ -33,4 +42,3 @@ export class AiDialogFooter {
     return value === 'Cancel';
   }
 }
-

@@ -63,53 +63,33 @@ gulp.task('build-index', function(){
     .pipe(gulp.dest(paths.output));
 });
 
-gulp.task('build-html-es2015', function () {
-  return gulp.src(paths.html)
-    .pipe(gulp.dest(paths.output + 'es2015'));
-});
-
 gulp.task('build-es2015-temp', function () {
   return gulp.src(paths.output + jsName)
     .pipe(to5(assign({}, compilerOptions.commonjs())))
     .pipe(gulp.dest(paths.output + 'temp'));
 });
 
-gulp.task('build-es2015', ['build-html-es2015'], function () {
+gulp.task('build-es2015', function () {
   return gulp.src(paths.source)
     .pipe(to5(assign({}, removeDTSPlugin(compilerOptions.es2015()))))
     .pipe(gulp.dest(paths.output + 'es2015'));
 });
 
-gulp.task('build-commonjs', ['build-html-commonjs'], function () {
+gulp.task('build-commonjs', function () {
   return gulp.src(paths.source)
     .pipe(to5(assign({}, removeDTSPlugin(compilerOptions.commonjs()))))
     .pipe(gulp.dest(paths.output + 'commonjs'));
 });
 
-gulp.task('build-amd', ['build-html-amd'], function () {
+gulp.task('build-amd', function () {
   return gulp.src(paths.source)
     .pipe(to5(assign({}, removeDTSPlugin(compilerOptions.amd()))))
     .pipe(gulp.dest(paths.output + 'amd'));
 });
 
-gulp.task('build-system', ['build-html-system'], function () {
+gulp.task('build-system', function () {
   return gulp.src(paths.source)
     .pipe(to5(assign({}, removeDTSPlugin(compilerOptions.system()))))
-    .pipe(gulp.dest(paths.output + 'system'));
-});
-
-gulp.task('build-html-commonjs', function () {
-  return gulp.src(paths.html)
-    .pipe(gulp.dest(paths.output + 'commonjs'));
-});
-
-gulp.task('build-html-amd', function () {
-  return gulp.src(paths.html)
-    .pipe(gulp.dest(paths.output + 'amd'));
-});
-
-gulp.task('build-html-system', function () {
-  return gulp.src(paths.html)
     .pipe(gulp.dest(paths.output + 'system'));
 });
 
