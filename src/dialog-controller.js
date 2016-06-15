@@ -1,35 +1,41 @@
 import {invokeLifecycle} from './lifecycle';
-
+import {DialogResult} from './dialog-result';
 
 /**
  * A controller object for a Dialog instance.
- * @constructor
  */
 export class DialogController {
+  /**
+   * The settings used by this controller.
+   */
   settings: any;
+
+  /**
+   * Creates an instance of DialogController.
+   */
   constructor(renderer: DialogRenderer, settings: any, resolve: Function, reject: Function) {
     let defaultSettings = renderer ? renderer.defaultSettings || {} : {};
 
-    this._renderer = renderer;
+    this.renderer = renderer;
     this.settings = Object.assign({}, defaultSettings, settings);
     this._resolve = resolve;
     this._reject = reject;
   }
 
   /**
-   * Closes the dialog with a successful result.
-   * @param result The returned success result.
+   * Closes the dialog with a successful output.
+   * @param output The returned success output.
    */
-  ok(result?: any) {
-    this.close(true, result);
+  ok(output?: any): Promise<DialogResult> {
+    return this.close(true, output);
   }
 
   /**
-   * Closes the dialog with a cancel result.
-   * @param result The returned cancel result.
+   * Closes the dialog with a cancel output.
+   * @param output The returned cancel output.
    */
-  cancel(result?: any) {
-    this.close(false, result);
+  cancel(output?: any): Promise<DialogResult> {
+    return this.close(false, output);
   }
 
   /**
@@ -37,10 +43,10 @@ export class DialogController {
    * @param message An error message.
    * @returns Promise An empty promise object.
    */
-  error(message: any) {
+  error(message: any): Promise<void> {
     return invokeLifecycle(this.viewModel, 'deactivate')
       .then(() => {
-        return this._renderer.hideDialog(this);
+        return this.renderer.hideDialog(this);
       }).then(() => {
         this.controller.unbind();
         this._reject(message);
@@ -50,29 +56,24 @@ export class DialogController {
   /**
    * Closes the dialog.
    * @param ok Whether or not the user input signified success.
-   * @param result The specified result.
+   * @param output The specified output.
    * @returns Promise An empty promise object.
    */
-  close(ok: boolean, result?: any) {
+  close(ok: boolean, output?: any): Promise<DialogResult> {
     return invokeLifecycle(this.viewModel, 'canDeactivate').then(canDeactivate => {
       if (canDeactivate) {
         return invokeLifecycle(this.viewModel, 'deactivate')
           .then(() => {
-            return this._renderer.hideDialog(this);
+            return this.renderer.hideDialog(this);
           }).then(() => {
+            let result = new DialogResult(!ok, output);
             this.controller.unbind();
-            this._resolve(new DialogResult(!ok, result));
+            this._resolve(result);
+            return result;
           });
       }
-    });
-  }
-}
 
-export class DialogResult {
-  wasCancelled: boolean = false;
-  output: any;
-  constructor(cancelled: boolean, result: any) {
-    this.wasCancelled = cancelled;
-    this.output = result;
+      return Promise.resolve();
+    });
   }
 }

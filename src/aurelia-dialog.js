@@ -19,4 +19,5 @@ export function configure(aurelia, callback) {
 
 export {DialogConfiguration} from './dialog-configuration';
 export {DialogService} from './dialog-service';
-export {DialogController, DialogResult} from './dialog-controller';
+export {DialogController} from './dialog-controller';
+export {DialogResult} from './dialog-result';

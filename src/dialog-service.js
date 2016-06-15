@@ -4,15 +4,15 @@ import {CompositionEngine, ViewSlot} from 'aurelia-templating';
 import {DialogController} from './dialog-controller';
 import {Renderer} from './renderer';
 import {invokeLifecycle} from './lifecycle';
+import {DialogResult} from './dialog-result';
 
 /**
  * A service allowing for the creation of dialogs.
- * @constructor
  */
 export class DialogService {
   static inject = [Container, CompositionEngine];
 
-  constructor(container: Container, compositionEngine) {
+  constructor(container: Container, compositionEngine: CompositionEngine) {
     this.container = container;
     this.compositionEngine = compositionEngine;
     this.controllers = [];
@@ -24,14 +24,14 @@ export class DialogService {
    * @param settings Dialog settings for this dialog instance.
    * @return Promise A promise that settles when the dialog is closed.
    */
-  open(settings?: Object) {
+  open(settings?: Object): Promise<DialogResult> {
     let dialogController;
 
     let promise = new Promise((resolve, reject) => {
       let childContainer = this.container.createChild();
       dialogController = new DialogController(childContainer.get(Renderer), settings, resolve, reject);
       childContainer.registerInstance(DialogController, dialogController);
-      let host = dialogController._renderer.getDialogContainer();
+      let host = dialogController.renderer.getDialogContainer();
 
       let instruction = {
         container: this.container,
@@ -55,7 +55,7 @@ export class DialogService {
               dialogController.controller = controller;
               dialogController.view = controller.view;
 
-              return dialogController._renderer.showDialog(dialogController);
+              return dialogController.renderer.showDialog(dialogController);
             });
           }
         });

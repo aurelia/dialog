@@ -33,15 +33,16 @@ gulp.task('build-index', function(){
   var importsToAdd = [];
   var files = [
     'dialog-options.js',
-    'resources/ai-dialog-body.js',
-    'resources/ai-dialog-footer.js',
-    'resources/ai-dialog-header.js',
-    'resources/ai-dialog.js',
-    'resources/attach-focus.js',
+    'dialog-result.js',
+    'ai-dialog-body.js',
+    'ai-dialog-footer.js',
+    'ai-dialog-header.js',
+    'ai-dialog.js',
+    'attach-focus.js',
     'lifecycle.js',
     'dialog-controller.js',
-    'renderers/renderer.js',
-    'renderers/dialog-renderer.js',
+    'renderer.js',
+    'dialog-renderer.js',
     'dialog-service.js',
     'dialog-configuration.js',
     'aurelia-dialog.js'
