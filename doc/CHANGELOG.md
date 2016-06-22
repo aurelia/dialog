@@ -1,3 +1,8 @@
+<a name="1.0.0-beta.1.1.0"></a>
+# [1.0.0-beta.1.1.0](https://github.com/aurelia/dialog/compare/1.0.0-beta.1.0.2...v1.0.0-beta.1.1.0) (2016-06-22)
+
+
+
 ### 0.6.2 (2016-05-24)
 
 
