@@ -135,7 +135,6 @@ export declare class DialogRenderer {
   getDialogContainer(): any;
   showDialog(dialogController: DialogController): any;
   hideDialog(dialogController: DialogController): any;
-  _createDialogHost(dialogController: DialogController): any;
 }
 
 /**
@@ -209,5 +208,4 @@ export declare class DialogConfiguration {
      * @return This instance.
      */
   useCSS(cssText: string): DialogConfiguration;
-  _apply(): any;
 }
