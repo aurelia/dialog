@@ -64,7 +64,7 @@ export class DialogConfiguration {
    * @param settings Global settings for the renderer.
    * @return This instance.
    */
-  useRenderer(renderer: Renderer, settings?: Object): DialogConfiguration {
+  useRenderer(renderer: typeof Renderer, settings?: Object): DialogConfiguration {
     this.renderer = renderer;
     this.settings = Object.assign(this.settings, settings || {});
     return this;
