@@ -104,7 +104,15 @@ export class DialogRenderer {
 
     return new Promise((resolve) => {
       let renderer = this;
-      this.modalContainer.addEventListener(transitionEvent(), onTransitionEnd);
+      if (settings.ignoreTransitions) {
+        resolve();
+      } else {
+        this.modalContainer.addEventListener(transitionEvent(), onTransitionEnd);
+      }
+
+      this.modalOverlay.classList.add('active');
+      this.modalContainer.classList.add('active');
+      body.classList.add('ai-dialog-open');
 
       function onTransitionEnd(e) {
         if (e.target !== renderer.modalContainer) {
@@ -113,14 +121,11 @@ export class DialogRenderer {
         renderer.modalContainer.removeEventListener(transitionEvent(), onTransitionEnd);
         resolve();
       }
-
-      this.modalOverlay.classList.add('active');
-      this.modalContainer.classList.add('active');
-      body.classList.add('ai-dialog-open');
     });
   }
 
   hideDialog(dialogController: DialogController) {
+    let settings = Object.assign({}, this.defaultSettings, dialogController.settings);
     let body = DOM.querySelectorAll('body')[0];
 
     this.modalContainer.removeEventListener('click', this.closeModalClick);
@@ -137,15 +142,19 @@ export class DialogRenderer {
 
     return new Promise((resolve) => {
       let renderer = this;
-      this.modalContainer.addEventListener(transitionEvent(), onTransitionEnd);
+      if (settings.ignoreTransitions) {
+        resolve();
+      } else {
+        this.modalContainer.addEventListener(transitionEvent(), onTransitionEnd);
+      }
+
+      this.modalOverlay.classList.remove('active');
+      this.modalContainer.classList.remove('active');
 
       function onTransitionEnd() {
         renderer.modalContainer.removeEventListener(transitionEvent(), onTransitionEnd);
         resolve();
       }
-
-      this.modalOverlay.classList.remove('active');
-      this.modalContainer.classList.remove('active');
     })
       .then(() => {
         body.removeChild(this.modalOverlay);
