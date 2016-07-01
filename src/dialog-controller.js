@@ -14,10 +14,8 @@ export class DialogController {
    * Creates an instance of DialogController.
    */
   constructor(renderer: DialogRenderer, settings: any, resolve: Function, reject: Function) {
-    let defaultSettings = renderer ? renderer.defaultSettings || {} : {};
-
     this.renderer = renderer;
-    this.settings = Object.assign({}, defaultSettings, settings);
+    this.settings = settings;
     this._resolve = resolve;
     this._reject = reject;
   }

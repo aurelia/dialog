@@ -48,7 +48,7 @@ export class DialogRenderer {
   }
 
   showDialog(dialogController: DialogController) {
-    let settings = dialogController.settings;
+    let settings = Object.assign({}, this.defaultSettings, dialogController.settings);
     let body = DOM.querySelectorAll('body')[0];
     let wrapper = document.createElement('div');
 
