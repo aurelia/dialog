@@ -49,6 +49,7 @@ export class DialogRenderer {
 
   showDialog(dialogController: DialogController) {
     let settings = dialogController.settings;
+    let body = DOM.querySelectorAll('body')[0];
     let wrapper = document.createElement('div');
 
     this.modalOverlay = DOM.createElement(overlayTagName);
@@ -56,7 +57,8 @@ export class DialogRenderer {
     this.anchor = dialogController.slot.anchor;
     wrapper.appendChild(this.anchor);
     this.modalContainer.appendChild(wrapper);
-    let body = DOM.querySelectorAll('body')[0];
+
+    this.stopPropagation = (e) => { e._aureliaDialogHostClicked = true; };
     this.closeModalClick = (e) => {
       if (!settings.lock && !e._aureliaDialogHostClicked) {
         dialogController.cancel();
@@ -64,13 +66,6 @@ export class DialogRenderer {
         return false;
       }
     };
-
-    this.stopPropagation = (e) => { e._aureliaDialogHostClicked = true; };
-
-    dialogController.showDialog = Function.prototype;
-
-    dialogController.hideDialog = Function.prototype;
-    dialogController.destroyDialogHost = Function.prototype;
 
     dialogController.centerDialog = () => {
       if (settings.centerHorizontalOnly) return;
@@ -108,13 +103,14 @@ export class DialogRenderer {
     this.anchor.addEventListener('click', this.stopPropagation);
 
     return new Promise((resolve) => {
+      let renderer = this;
       this.modalContainer.addEventListener(transitionEvent(), onTransitionEnd);
 
       function onTransitionEnd(e) {
-        if (e.target !== this.modalContainer) {
+        if (e.target !== renderer.modalContainer) {
           return;
         }
-        this.modalContainer.removeEventListener(transitionEvent(), onTransitionEnd);
+        renderer.modalContainer.removeEventListener(transitionEvent(), onTransitionEnd);
         resolve();
       }
 
@@ -140,12 +136,13 @@ export class DialogRenderer {
     }
 
     return new Promise((resolve) => {
+      let renderer = this;
       this.modalContainer.addEventListener(transitionEvent(), onTransitionEnd);
 
-      (function onTransitionEnd() {
-        this.modalContainer.removeEventListener(transitionEvent(), onTransitionEnd);
+      function onTransitionEnd() {
+        renderer.modalContainer.removeEventListener(transitionEvent(), onTransitionEnd);
         resolve();
-      }).bind(this);
+      }
 
       this.modalOverlay.classList.remove('active');
       this.modalContainer.classList.remove('active');
