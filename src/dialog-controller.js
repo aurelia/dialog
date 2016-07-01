@@ -60,7 +60,9 @@ export class DialogController {
    * @returns Promise An empty promise object.
    */
   close(ok: boolean, output?: any): Promise<DialogResult> {
-    return invokeLifecycle(this.viewModel, 'canDeactivate').then(canDeactivate => {
+    if (this._closePromise) return this._closePromise;
+
+    this._closePromise = invokeLifecycle(this.viewModel, 'canDeactivate').then(canDeactivate => {
       if (canDeactivate) {
         return invokeLifecycle(this.viewModel, 'deactivate')
           .then(() => {
@@ -75,5 +77,7 @@ export class DialogController {
 
       return Promise.resolve();
     });
+
+    return this._closePromise;
   }
 }
