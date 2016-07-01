@@ -48,30 +48,16 @@ export class DialogRenderer {
   }
 
   showDialog(dialogController: DialogController) {
-    if (!dialogController.showDialog) {
-      return this._createDialogHost(dialogController).then(() => {
-        return dialogController.showDialog();
-      });
-    }
-    return dialogController.showDialog();
-  }
-
-  hideDialog(dialogController: DialogController) {
-    return dialogController.hideDialog().then(() => {
-      return dialogController.destroyDialogHost();
-    });
-  }
-
-  _createDialogHost(dialogController: DialogController) {
     let settings = dialogController.settings;
-    let modalOverlay = DOM.createElement(overlayTagName);
-    let modalContainer = DOM.createElement(containerTagName);
     let wrapper = document.createElement('div');
-    let anchor = dialogController.slot.anchor;
-    wrapper.appendChild(anchor);
-    modalContainer.appendChild(wrapper);
+
+    this.modalOverlay = DOM.createElement(overlayTagName);
+    this.modalContainer = DOM.createElement(containerTagName);
+    this.anchor = dialogController.slot.anchor;
+    wrapper.appendChild(this.anchor);
+    this.modalContainer.appendChild(wrapper);
     let body = DOM.querySelectorAll('body')[0];
-    let closeModalClick = (e) => {
+    this.closeModalClick = (e) => {
       if (!settings.lock && !e._aureliaDialogHostClicked) {
         dialogController.cancel();
       } else {
@@ -79,121 +65,102 @@ export class DialogRenderer {
       }
     };
 
-    let stopPropagation = (e) => { e._aureliaDialogHostClicked = true; };
+    this.stopPropagation = (e) => { e._aureliaDialogHostClicked = true; };
 
-    dialogController.showDialog = (() => {
-      let promise;
+    dialogController.showDialog = Function.prototype;
 
-      return () => {
-        if (promise) return promise;
-
-        if (!this.dialogControllers.length) {
-          DOM.addEventListener('keyup', this.escapeKeyEvent);
-        }
-
-        this.dialogControllers.push(dialogController);
-
-        dialogController.slot.attached();
-
-        if (typeof settings.position === 'function') {
-          settings.position(modalContainer, modalOverlay);
-        } else {
-          dialogController.centerDialog();
-        }
-
-        modalContainer.addEventListener('click', closeModalClick);
-        anchor.addEventListener('click', stopPropagation);
-
-        promise = new Promise((resolve) => {
-          modalContainer.addEventListener(transitionEvent(), onTransitionEnd);
-
-          function onTransitionEnd(e) {
-            if (e.target !== modalContainer) {
-              return;
-            }
-            modalContainer.removeEventListener(transitionEvent(), onTransitionEnd);
-            resolve();
-          }
-
-          modalOverlay.classList.add('active');
-          modalContainer.classList.add('active');
-          body.classList.add('ai-dialog-open');
-        });
-
-        return promise;
-      };
-    })();
-
-    dialogController.hideDialog = (() => {
-      let promise;
-
-      return () => {
-        modalContainer.removeEventListener('click', closeModalClick);
-        anchor.removeEventListener('click', stopPropagation);
-
-        let i = this.dialogControllers.indexOf(dialogController);
-        if (i !== -1) {
-          this.dialogControllers.splice(i, 1);
-        }
-
-        if (!this.dialogControllers.length) {
-          DOM.removeEventListener('keyup', this.escapeKeyEvent);
-        }
-
-        promise = new Promise((resolve) => {
-          modalContainer.addEventListener(transitionEvent(), onTransitionEnd);
-
-          function onTransitionEnd() {
-            modalContainer.removeEventListener(transitionEvent(), onTransitionEnd);
-            resolve();
-          }
-
-          modalOverlay.classList.remove('active');
-          modalContainer.classList.remove('active');
-
-          if (!this.dialogControllers.length) {
-            body.classList.remove('ai-dialog-open');
-          }
-        });
-
-        return promise;
-      };
-    })();
+    dialogController.hideDialog = Function.prototype;
+    dialogController.destroyDialogHost = Function.prototype;
 
     dialogController.centerDialog = () => {
       if (settings.centerHorizontalOnly) return;
-      centerDialog(modalContainer);
+      centerDialog(this.modalContainer);
     };
 
-    dialogController.destroyDialogHost = (() => {
-      let promise;
-
-      return () => {
-        if (promise) return promise;
-
-        body.removeChild(modalOverlay);
-        body.removeChild(modalContainer);
-        dialogController.slot.detached();
-        promise = Promise.resolve();
-
-        return promise;
-      };
-    })();
-
-    modalOverlay.style.zIndex = this.defaultSettings.startingZIndex;
-    modalContainer.style.zIndex = this.defaultSettings.startingZIndex;
+    this.modalOverlay.style.zIndex = this.defaultSettings.startingZIndex;
+    this.modalContainer.style.zIndex = this.defaultSettings.startingZIndex;
 
     let lastContainer = Array.from(body.querySelectorAll(containerTagName)).pop();
 
     if (lastContainer) {
-      lastContainer.parentNode.insertBefore(modalContainer, lastContainer.nextSibling);
-      lastContainer.parentNode.insertBefore(modalOverlay, lastContainer.nextSibling);
+      lastContainer.parentNode.insertBefore(this.modalContainer, lastContainer.nextSibling);
+      lastContainer.parentNode.insertBefore(this.modalOverlay, lastContainer.nextSibling);
     } else {
-      body.insertBefore(modalContainer, body.firstChild);
-      body.insertBefore(modalOverlay, body.firstChild);
+      body.insertBefore(this.modalContainer, body.firstChild);
+      body.insertBefore(this.modalOverlay, body.firstChild);
     }
 
-    return Promise.resolve();
+    if (!this.dialogControllers.length) {
+      DOM.addEventListener('keyup', this.escapeKeyEvent);
+    }
+
+    this.dialogControllers.push(dialogController);
+
+    dialogController.slot.attached();
+
+    if (typeof settings.position === 'function') {
+      settings.position(this.modalContainer, this.modalOverlay);
+    } else {
+      dialogController.centerDialog();
+    }
+
+    this.modalContainer.addEventListener('click', this.closeModalClick);
+    this.anchor.addEventListener('click', this.stopPropagation);
+
+    return new Promise((resolve) => {
+      this.modalContainer.addEventListener(transitionEvent(), onTransitionEnd);
+
+      function onTransitionEnd(e) {
+        if (e.target !== this.modalContainer) {
+          return;
+        }
+        this.modalContainer.removeEventListener(transitionEvent(), onTransitionEnd);
+        resolve();
+      }
+
+      this.modalOverlay.classList.add('active');
+      this.modalContainer.classList.add('active');
+      body.classList.add('ai-dialog-open');
+    });
+  }
+
+  hideDialog(dialogController: DialogController) {
+    let body = DOM.querySelectorAll('body')[0];
+
+    this.modalContainer.removeEventListener('click', this.closeModalClick);
+    this.anchor.removeEventListener('click', this.stopPropagation);
+
+    let i = this.dialogControllers.indexOf(dialogController);
+    if (i !== -1) {
+      this.dialogControllers.splice(i, 1);
+    }
+
+    if (!this.dialogControllers.length) {
+      DOM.removeEventListener('keyup', this.escapeKeyEvent);
+    }
+
+    return new Promise((resolve) => {
+      this.modalContainer.addEventListener(transitionEvent(), onTransitionEnd);
+
+      (function onTransitionEnd() {
+        this.modalContainer.removeEventListener(transitionEvent(), onTransitionEnd);
+        resolve();
+      }).bind(this);
+
+      this.modalOverlay.classList.remove('active');
+      this.modalContainer.classList.remove('active');
+    })
+      .then(() => {
+        body.removeChild(this.modalOverlay);
+        body.removeChild(this.modalContainer);
+        dialogController.slot.detached();
+
+        if (!this.dialogControllers.length) {
+          body.classList.remove('ai-dialog-open');
+        }
+
+        return Promise.resolve();
+      });
   }
 }
 
