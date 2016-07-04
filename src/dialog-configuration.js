@@ -24,6 +24,7 @@ export class DialogConfiguration {
     this.settings = dialogOptions;
     this.resources = [];
     this.cssText = defaultCSSText;
+    this.renderer = defaultRenderer;
   }
 
   /**
