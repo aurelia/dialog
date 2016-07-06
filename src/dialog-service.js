@@ -12,6 +12,15 @@ import {DialogResult} from './dialog-result';
 export class DialogService {
   static inject = [Container, CompositionEngine];
 
+  /**
+   * The current dialog controllers
+   */
+  controllers: DialogController[];
+  /**
+   * Is there an active dialog
+   */
+  hasActiveDialog: boolean;
+  
   constructor(container: Container, compositionEngine: CompositionEngine) {
     this.container = container;
     this.compositionEngine = compositionEngine;
