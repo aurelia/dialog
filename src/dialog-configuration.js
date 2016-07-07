@@ -3,6 +3,11 @@ import {DialogRenderer} from './dialog-renderer';
 import {dialogOptions} from './dialog-options';
 import {DOM} from 'aurelia-pal';
 
+/**
+ * An abstract base class for implementors of the basic Renderer API.
+ */
+export class RendererBase extends Renderer { }
+
 let defaultRenderer = DialogRenderer;
 
 let resources = {
@@ -61,11 +66,11 @@ export class DialogConfiguration {
 
   /**
    * Configures the plugin to use a specific dialog renderer.
-   * @param renderer An object with a Renderer interface.
+   * @param renderer A class implementing the Renderer interface.
    * @param settings Global settings for the renderer.
    * @return This instance.
    */
-  useRenderer(renderer: Renderer, settings?: Object): DialogConfiguration {
+  useRenderer(renderer: RendererBase, settings?: Object): DialogConfiguration {
     this.renderer = renderer;
     this.settings = Object.assign(this.settings, settings || {});
     return this;
