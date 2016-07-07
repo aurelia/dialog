@@ -66,7 +66,7 @@ export class DialogConfiguration {
 
   /**
    * Configures the plugin to use a specific dialog renderer.
-   * @param renderer A class implementing the interface Renderer interface.
+   * @param renderer A class implementing the Renderer interface.
    * @param settings Global settings for the renderer.
    * @return This instance.
    */
