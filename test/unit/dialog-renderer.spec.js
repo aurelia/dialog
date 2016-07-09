@@ -7,12 +7,14 @@ import {TestElement} from '../fixtures/test-element';
 let defaultSettings = {
   lock: true,
   centerHorizontalOnly: false,
-  startingZIndex: 1000
+  startingZIndex: 1000,
+  ignoreTransitions: false
 };
 let newSettings = {
   lock: false,
   centerHorizontalOnly: true,
-  startingZIndex: 1
+  startingZIndex: 1,
+  ignoreTransitions: false
 };
 
 let frameworkConfig = {

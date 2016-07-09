@@ -14,10 +14,8 @@ export class DialogController {
    * Creates an instance of DialogController.
    */
   constructor(renderer: DialogRenderer, settings: any, resolve: Function, reject: Function) {
-    let defaultSettings = renderer ? renderer.defaultSettings || {} : {};
-
     this.renderer = renderer;
-    this.settings = Object.assign({}, defaultSettings, settings);
+    this.settings = settings;
     this._resolve = resolve;
     this._reject = reject;
   }
@@ -60,7 +58,9 @@ export class DialogController {
    * @returns Promise An empty promise object.
    */
   close(ok: boolean, output?: any): Promise<DialogResult> {
-    return invokeLifecycle(this.viewModel, 'canDeactivate').then(canDeactivate => {
+    if (this._closePromise) return this._closePromise;
+
+    this._closePromise = invokeLifecycle(this.viewModel, 'canDeactivate').then(canDeactivate => {
       if (canDeactivate) {
         return invokeLifecycle(this.viewModel, 'deactivate')
           .then(() => {
@@ -75,5 +75,7 @@ export class DialogController {
 
       return Promise.resolve();
     });
+
+    return this._closePromise;
   }
 }

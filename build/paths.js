@@ -45,4 +45,6 @@ paths.files = [
   return paths.root + file;
 });
 
+paths.sample = 'sample';
+
 module.exports = paths;
