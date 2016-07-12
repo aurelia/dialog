@@ -25,6 +25,7 @@ export var DialogConfiguration = function () {
     this.settings = dialogOptions;
     this.resources = [];
     this.cssText = defaultCSSText;
+    this.renderer = defaultRenderer;
   }
 
   DialogConfiguration.prototype.useDefaults = function useDefaults() {

@@ -7,10 +7,8 @@ export var DialogController = function () {
   function DialogController(renderer, settings, resolve, reject) {
     
 
-    var defaultSettings = renderer ? renderer.defaultSettings || {} : {};
-
     this.renderer = renderer;
-    this.settings = Object.assign({}, defaultSettings, settings);
+    this.settings = settings;
     this._resolve = resolve;
     this._reject = reject;
   }
@@ -37,7 +35,9 @@ export var DialogController = function () {
   DialogController.prototype.close = function close(ok, output) {
     var _this2 = this;
 
-    return invokeLifecycle(this.viewModel, 'canDeactivate').then(function (canDeactivate) {
+    if (this._closePromise) return this._closePromise;
+
+    this._closePromise = invokeLifecycle(this.viewModel, 'canDeactivate').then(function (canDeactivate) {
       if (canDeactivate) {
         return invokeLifecycle(_this2.viewModel, 'deactivate').then(function () {
           return _this2.renderer.hideDialog(_this2);
@@ -51,6 +51,8 @@ export var DialogController = function () {
 
       return Promise.resolve();
     });
+
+    return this._closePromise;
   };
 
   return DialogController;

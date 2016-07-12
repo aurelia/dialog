@@ -3,10 +3,8 @@ import { DialogResult } from './dialog-result';
 
 export let DialogController = class DialogController {
   constructor(renderer, settings, resolve, reject) {
-    let defaultSettings = renderer ? renderer.defaultSettings || {} : {};
-
     this.renderer = renderer;
-    this.settings = Object.assign({}, defaultSettings, settings);
+    this.settings = settings;
     this._resolve = resolve;
     this._reject = reject;
   }
@@ -29,7 +27,9 @@ export let DialogController = class DialogController {
   }
 
   close(ok, output) {
-    return invokeLifecycle(this.viewModel, 'canDeactivate').then(canDeactivate => {
+    if (this._closePromise) return this._closePromise;
+
+    this._closePromise = invokeLifecycle(this.viewModel, 'canDeactivate').then(canDeactivate => {
       if (canDeactivate) {
         return invokeLifecycle(this.viewModel, 'deactivate').then(() => {
           return this.renderer.hideDialog(this);
@@ -43,5 +43,7 @@ export let DialogController = class DialogController {
 
       return Promise.resolve();
     });
+
+    return this._closePromise;
   }
 };

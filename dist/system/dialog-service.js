@@ -61,6 +61,7 @@ System.register(['aurelia-metadata', 'aurelia-dependency-injection', 'aurelia-te
               container: _this.container,
               childContainer: childContainer,
               model: dialogController.settings.model,
+              view: dialogController.settings.view,
               viewModel: dialogController.settings.viewModel,
               viewSlot: new ViewSlot(host, true),
               host: host

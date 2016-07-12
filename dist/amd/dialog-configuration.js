@@ -28,6 +28,7 @@ define(['exports', './renderer', './dialog-renderer', './dialog-options', 'aurel
       this.settings = _dialogOptions.dialogOptions;
       this.resources = [];
       this.cssText = defaultCSSText;
+      this.renderer = defaultRenderer;
     }
 
     DialogConfiguration.prototype.useDefaults = function useDefaults() {

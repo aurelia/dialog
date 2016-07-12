@@ -56,32 +56,22 @@ export var DialogRenderer = (_dec = transient(), _dec(_class = function () {
   };
 
   DialogRenderer.prototype.showDialog = function showDialog(dialogController) {
-    if (!dialogController.showDialog) {
-      return this._createDialogHost(dialogController).then(function () {
-        return dialogController.showDialog();
-      });
-    }
-    return dialogController.showDialog();
-  };
-
-  DialogRenderer.prototype.hideDialog = function hideDialog(dialogController) {
-    return dialogController.hideDialog().then(function () {
-      return dialogController.destroyDialogHost();
-    });
-  };
-
-  DialogRenderer.prototype._createDialogHost = function _createDialogHost(dialogController) {
     var _this2 = this;
 
-    var settings = dialogController.settings;
-    var modalOverlay = DOM.createElement(overlayTagName);
-    var modalContainer = DOM.createElement(containerTagName);
-    var wrapper = document.createElement('div');
-    var anchor = dialogController.slot.anchor;
-    wrapper.appendChild(anchor);
-    modalContainer.appendChild(wrapper);
+    var settings = Object.assign({}, this.defaultSettings, dialogController.settings);
     var body = DOM.querySelectorAll('body')[0];
-    var closeModalClick = function closeModalClick(e) {
+    var wrapper = document.createElement('div');
+
+    this.modalOverlay = DOM.createElement(overlayTagName);
+    this.modalContainer = DOM.createElement(containerTagName);
+    this.anchor = dialogController.slot.anchor;
+    wrapper.appendChild(this.anchor);
+    this.modalContainer.appendChild(wrapper);
+
+    this.stopPropagation = function (e) {
+      e._aureliaDialogHostClicked = true;
+    };
+    this.closeModalClick = function (e) {
       if (!settings.lock && !e._aureliaDialogHostClicked) {
         dialogController.cancel();
       } else {
@@ -89,123 +79,107 @@ export var DialogRenderer = (_dec = transient(), _dec(_class = function () {
       }
     };
 
-    var stopPropagation = function stopPropagation(e) {
-      e._aureliaDialogHostClicked = true;
-    };
-
-    dialogController.showDialog = function () {
-      var promise = void 0;
-
-      return function () {
-        if (promise) return promise;
-
-        if (!_this2.dialogControllers.length) {
-          DOM.addEventListener('keyup', _this2.escapeKeyEvent);
-        }
-
-        _this2.dialogControllers.push(dialogController);
-
-        dialogController.slot.attached();
-
-        if (typeof settings.position === 'function') {
-          settings.position(modalContainer, modalOverlay);
-        } else {
-          dialogController.centerDialog();
-        }
-
-        modalContainer.addEventListener('click', closeModalClick);
-        anchor.addEventListener('click', stopPropagation);
-
-        promise = new Promise(function (resolve) {
-          modalContainer.addEventListener(transitionEvent(), onTransitionEnd);
-
-          function onTransitionEnd(e) {
-            if (e.target !== modalContainer) {
-              return;
-            }
-            modalContainer.removeEventListener(transitionEvent(), onTransitionEnd);
-            resolve();
-          }
-
-          modalOverlay.classList.add('active');
-          modalContainer.classList.add('active');
-          body.classList.add('ai-dialog-open');
-        });
-
-        return promise;
-      };
-    }();
-
-    dialogController.hideDialog = function () {
-      var promise = void 0;
-
-      return function () {
-        modalContainer.removeEventListener('click', closeModalClick);
-        anchor.removeEventListener('click', stopPropagation);
-
-        var i = _this2.dialogControllers.indexOf(dialogController);
-        if (i !== -1) {
-          _this2.dialogControllers.splice(i, 1);
-        }
-
-        if (!_this2.dialogControllers.length) {
-          DOM.removeEventListener('keyup', _this2.escapeKeyEvent);
-        }
-
-        promise = new Promise(function (resolve) {
-          modalContainer.addEventListener(transitionEvent(), onTransitionEnd);
-
-          function onTransitionEnd() {
-            modalContainer.removeEventListener(transitionEvent(), onTransitionEnd);
-            resolve();
-          }
-
-          modalOverlay.classList.remove('active');
-          modalContainer.classList.remove('active');
-
-          if (!_this2.dialogControllers.length) {
-            body.classList.remove('ai-dialog-open');
-          }
-        });
-
-        return promise;
-      };
-    }();
-
     dialogController.centerDialog = function () {
       if (settings.centerHorizontalOnly) return;
-      centerDialog(modalContainer);
+      centerDialog(_this2.modalContainer);
     };
 
-    dialogController.destroyDialogHost = function () {
-      var promise = void 0;
-
-      return function () {
-        if (promise) return promise;
-
-        body.removeChild(modalOverlay);
-        body.removeChild(modalContainer);
-        dialogController.slot.detached();
-        promise = Promise.resolve();
-
-        return promise;
-      };
-    }();
-
-    modalOverlay.style.zIndex = this.defaultSettings.startingZIndex;
-    modalContainer.style.zIndex = this.defaultSettings.startingZIndex;
+    this.modalOverlay.style.zIndex = this.defaultSettings.startingZIndex;
+    this.modalContainer.style.zIndex = this.defaultSettings.startingZIndex;
 
     var lastContainer = Array.from(body.querySelectorAll(containerTagName)).pop();
 
     if (lastContainer) {
-      lastContainer.parentNode.insertBefore(modalContainer, lastContainer.nextSibling);
-      lastContainer.parentNode.insertBefore(modalOverlay, lastContainer.nextSibling);
+      lastContainer.parentNode.insertBefore(this.modalContainer, lastContainer.nextSibling);
+      lastContainer.parentNode.insertBefore(this.modalOverlay, lastContainer.nextSibling);
     } else {
-      body.insertBefore(modalContainer, body.firstChild);
-      body.insertBefore(modalOverlay, body.firstChild);
+      body.insertBefore(this.modalContainer, body.firstChild);
+      body.insertBefore(this.modalOverlay, body.firstChild);
     }
 
-    return Promise.resolve();
+    if (!this.dialogControllers.length) {
+      DOM.addEventListener('keyup', this.escapeKeyEvent);
+    }
+
+    this.dialogControllers.push(dialogController);
+
+    dialogController.slot.attached();
+
+    if (typeof settings.position === 'function') {
+      settings.position(this.modalContainer, this.modalOverlay);
+    } else {
+      dialogController.centerDialog();
+    }
+
+    this.modalContainer.addEventListener('click', this.closeModalClick);
+    this.anchor.addEventListener('click', this.stopPropagation);
+
+    return new Promise(function (resolve) {
+      var renderer = _this2;
+      if (settings.ignoreTransitions) {
+        resolve();
+      } else {
+        _this2.modalContainer.addEventListener(transitionEvent(), onTransitionEnd);
+      }
+
+      _this2.modalOverlay.classList.add('active');
+      _this2.modalContainer.classList.add('active');
+      body.classList.add('ai-dialog-open');
+
+      function onTransitionEnd(e) {
+        if (e.target !== renderer.modalContainer) {
+          return;
+        }
+        renderer.modalContainer.removeEventListener(transitionEvent(), onTransitionEnd);
+        resolve();
+      }
+    });
+  };
+
+  DialogRenderer.prototype.hideDialog = function hideDialog(dialogController) {
+    var _this3 = this;
+
+    var settings = Object.assign({}, this.defaultSettings, dialogController.settings);
+    var body = DOM.querySelectorAll('body')[0];
+
+    this.modalContainer.removeEventListener('click', this.closeModalClick);
+    this.anchor.removeEventListener('click', this.stopPropagation);
+
+    var i = this.dialogControllers.indexOf(dialogController);
+    if (i !== -1) {
+      this.dialogControllers.splice(i, 1);
+    }
+
+    if (!this.dialogControllers.length) {
+      DOM.removeEventListener('keyup', this.escapeKeyEvent);
+    }
+
+    return new Promise(function (resolve) {
+      var renderer = _this3;
+      if (settings.ignoreTransitions) {
+        resolve();
+      } else {
+        _this3.modalContainer.addEventListener(transitionEvent(), onTransitionEnd);
+      }
+
+      _this3.modalOverlay.classList.remove('active');
+      _this3.modalContainer.classList.remove('active');
+
+      function onTransitionEnd() {
+        renderer.modalContainer.removeEventListener(transitionEvent(), onTransitionEnd);
+        resolve();
+      }
+    }).then(function () {
+      body.removeChild(_this3.modalOverlay);
+      body.removeChild(_this3.modalContainer);
+      dialogController.slot.detached();
+
+      if (!_this3.dialogControllers.length) {
+        body.classList.remove('ai-dialog-open');
+      }
+
+      return Promise.resolve();
+    });
   };
 
   return DialogRenderer;

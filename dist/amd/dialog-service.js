@@ -35,6 +35,7 @@ define(['exports', 'aurelia-metadata', 'aurelia-dependency-injection', 'aurelia-
           container: _this.container,
           childContainer: childContainer,
           model: dialogController.settings.model,
+          view: dialogController.settings.view,
           viewModel: dialogController.settings.viewModel,
           viewSlot: new _aureliaTemplating.ViewSlot(host, true),
           host: host

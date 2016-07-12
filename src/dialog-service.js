@@ -20,7 +20,7 @@ export class DialogService {
    * Is there an active dialog
    */
   hasActiveDialog: boolean;
-  
+
   constructor(container: Container, compositionEngine: CompositionEngine) {
     this.container = container;
     this.compositionEngine = compositionEngine;

@@ -1,3 +1,13 @@
+<a name="1.0.0-beta.2.0.0"></a>
+# [1.0.0-beta.2.0.0](https://github.com/aurelia/dialog/compare/1.0.0-beta.1.1.0...v1.0.0-beta.2.0.0) (2016-07-12)
+
+
+### Bug Fixes
+
+* **dialog-configuration:** setup default renderer ([2c4c1fb](https://github.com/aurelia/dialog/commit/2c4c1fb)), closes [#129](https://github.com/aurelia/dialog/issues/129)
+
+
+
 <a name="1.0.0-beta.1.1.0"></a>
 # [1.0.0-beta.1.1.0](https://github.com/aurelia/dialog/compare/1.0.0-beta.1.0.2...v1.0.0-beta.1.1.0) (2016-06-22)
 

@@ -159,6 +159,16 @@ export declare class AiDialogHeader {
  */
 export declare class DialogService {
   static inject: any;
+  
+  /**
+     * The current dialog controllers
+     */
+  controllers: DialogController[];
+  
+  /**
+     * Is there an active dialog
+     */
+  hasActiveDialog: boolean;
   constructor(container: Container, compositionEngine: CompositionEngine);
   
   /**

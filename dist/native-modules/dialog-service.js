@@ -35,6 +35,7 @@ export var DialogService = (_temp = _class = function () {
         container: _this.container,
         childContainer: childContainer,
         model: dialogController.settings.model,
+        view: dialogController.settings.view,
         viewModel: dialogController.settings.viewModel,
         viewSlot: new ViewSlot(host, true),
         host: host

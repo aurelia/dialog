@@ -7,6 +7,7 @@ define(["exports"], function (exports) {
   var dialogOptions = exports.dialogOptions = {
     lock: true,
     centerHorizontalOnly: false,
-    startingZIndex: 1000
+    startingZIndex: 1000,
+    ignoreTransitions: false
   };
 });
