@@ -84,7 +84,8 @@ export class DialogConfiguration {
   _apply() {
     this.aurelia.singleton(Renderer, this.renderer);
     this.resources.forEach(resourceName => this.aurelia.globalResources(resources[resourceName]));
-    if (this.cssText !== null && this.cssText.length > 0) {
+    
+    if (this.cssText) {
       DOM.injectStyles(this.cssText);
     }
   }

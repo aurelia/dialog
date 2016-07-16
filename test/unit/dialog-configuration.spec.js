@@ -2,6 +2,7 @@ import {DialogConfiguration} from '../../src/dialog-configuration';
 import {dialogOptions} from '../../src/dialog-options';
 import {DialogRenderer} from '../../src/dialog-renderer';
 import {Renderer} from '../../src/renderer';
+import {DOM} from 'aurelia-pal';
 
 let defaultDialogOptions = Object.assign({}, dialogOptions);
 
@@ -63,6 +64,35 @@ describe('DialogConfiguration', () => {
       expect(configuration.useResource).toHaveBeenCalledWith('ai-dialog-footer');
       expect(configuration.useResource).toHaveBeenCalledWith('ai-dialog-body');
       expect(configuration.useResource).toHaveBeenCalledWith('attach-focus');
+    });
+    
+    it('should inject default style', () => {
+      spyOn(DOM, 'injectStyles').and.callThrough();
+      
+      configuration.useDefaults();
+      configuration._apply();
+      expect(DOM.injectStyles.calls.any()).toEqual(true);
+    });
+  });
+  
+  describe('useCSS', () => {
+    it('should skip injecting empty style', () => {
+      spyOn(DOM, 'injectStyles').and.callThrough();
+      
+      // Undefined css
+      configuration.useCSS(undefined);
+      configuration._apply();
+      expect(DOM.injectStyles.calls.any()).toEqual(false);
+      
+      // Null css
+      configuration.useCSS(null);
+      configuration._apply();
+      expect(DOM.injectStyles.calls.any()).toEqual(false);
+      
+      // Empty string
+      configuration.useCSS('');
+      configuration._apply();
+      expect(DOM.injectStyles.calls.any()).toEqual(false);
     });
   });
 });
