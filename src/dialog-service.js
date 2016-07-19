@@ -40,36 +40,7 @@ export class DialogService {
       let childContainer = this.container.createChild();
       dialogController = new DialogController(childContainer.get(Renderer), settings, resolve, reject);
       childContainer.registerInstance(DialogController, dialogController);
-      let host = dialogController.renderer.getDialogContainer();
-
-      let instruction = {
-        container: this.container,
-        childContainer: childContainer,
-        model: dialogController.settings.model,
-        view: dialogController.settings.view,
-        viewModel: dialogController.settings.viewModel,
-        viewSlot: new ViewSlot(host, true),
-        host: host
-      };
-
-      return _getViewModel(instruction, this.compositionEngine).then(returnedInstruction => {
-        dialogController.viewModel = returnedInstruction.viewModel;
-        dialogController.slot = returnedInstruction.viewSlot;
-
-        return invokeLifecycle(dialogController.viewModel, 'canActivate', dialogController.settings.model).then(canActivate => {
-          if (canActivate) {
-            this.controllers.push(dialogController);
-            this.hasActiveDialog = !!this.controllers.length;
-
-            return this.compositionEngine.compose(returnedInstruction).then(controller => {
-              dialogController.controller = controller;
-              dialogController.view = controller.view;
-
-              return dialogController.renderer.showDialog(dialogController);
-            });
-          }
-        });
-      });
+      return _openDialog(this, childContainer, dialogController);
     });
 
     return promise.then((result) => {
@@ -82,6 +53,68 @@ export class DialogService {
       return result;
     });
   }
+  
+  openc(settings?: Object): Promise<DialogController> {
+    
+    let childContainer = this.container.createChild();
+    let dialogController = new DialogController(childContainer.get(Renderer), settings, null, null);
+    childContainer.registerInstance(DialogController, dialogController);
+    
+    dialogController.result = (new Promise((resolve, reject) => {
+      
+      dialogController._resolve = resolve;
+      dialogController._reject = reject;
+      
+    })).then((result) => {
+      let i = this.controllers.indexOf(dialogController);
+      if (i !== -1) {
+        this.controllers.splice(i, 1);
+        this.hasActiveDialog = !!this.controllers.length;
+      }
+      return result;
+    });
+
+    return _openDialog(this, childContainer, dialogController).then(() => {
+      return dialogController;
+    });
+
+  }
+
+}
+
+function _openDialog(service, childContainer, dialogController) {
+  
+  let host = dialogController.renderer.getDialogContainer();
+
+  let instruction = {
+    container: service.container,
+    childContainer: childContainer,
+    model: dialogController.settings.model,
+    view: dialogController.settings.view,
+    viewModel: dialogController.settings.viewModel,
+    viewSlot: new ViewSlot(host, true),
+    host: host
+  };
+
+  return _getViewModel(instruction, service.compositionEngine).then(returnedInstruction => {
+    dialogController.viewModel = returnedInstruction.viewModel;
+    dialogController.slot = returnedInstruction.viewSlot;
+
+    return invokeLifecycle(dialogController.viewModel, 'canActivate', dialogController.settings.model).then(canActivate => {
+      if (canActivate) {
+        service.controllers.push(dialogController);
+        service.hasActiveDialog = !!service.controllers.length;
+
+        return service.compositionEngine.compose(returnedInstruction).then(controller => {
+          dialogController.controller = controller;
+          dialogController.view = controller.view;
+
+          return dialogController.renderer.showDialog(dialogController);
+        });
+      }
+    });
+  });
+  
 }
 
 function _getViewModel(instruction, compositionEngine) {
