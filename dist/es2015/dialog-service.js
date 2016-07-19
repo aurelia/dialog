@@ -4,8 +4,9 @@ import { Origin } from 'aurelia-metadata';
 import { Container } from 'aurelia-dependency-injection';
 import { CompositionEngine, ViewSlot } from 'aurelia-templating';
 import { DialogController } from './dialog-controller';
-import { Renderer } from './renderers/renderer';
+import { Renderer } from './renderer';
 import { invokeLifecycle } from './lifecycle';
+import { DialogResult } from './dialog-result';
 
 export let DialogService = (_temp = _class = class DialogService {
 
@@ -23,13 +24,16 @@ export let DialogService = (_temp = _class = class DialogService {
       let childContainer = this.container.createChild();
       dialogController = new DialogController(childContainer.get(Renderer), settings, resolve, reject);
       childContainer.registerInstance(DialogController, dialogController);
+      let host = dialogController.renderer.getDialogContainer();
 
       let instruction = {
         container: this.container,
         childContainer: childContainer,
         model: dialogController.settings.model,
+        view: dialogController.settings.view,
         viewModel: dialogController.settings.viewModel,
-        viewSlot: new ViewSlot(dialogController._renderer.getDialogContainer(), true)
+        viewSlot: new ViewSlot(host, true),
+        host: host
       };
 
       return _getViewModel(instruction, this.compositionEngine).then(returnedInstruction => {
@@ -45,7 +49,7 @@ export let DialogService = (_temp = _class = class DialogService {
               dialogController.controller = controller;
               dialogController.view = controller.view;
 
-              return dialogController._renderer.showDialog(dialogController);
+              return dialogController.renderer.showDialog(dialogController);
             });
           }
         });

@@ -1,50 +1,49 @@
 import { invokeLifecycle } from './lifecycle';
+import { DialogResult } from './dialog-result';
 
 export let DialogController = class DialogController {
   constructor(renderer, settings, resolve, reject) {
-    this._renderer = renderer;
-    this.settings = Object.assign({}, this._renderer.defaultSettings, settings);
+    this.renderer = renderer;
+    this.settings = settings;
     this._resolve = resolve;
     this._reject = reject;
   }
 
-  ok(result) {
-    this.close(true, result);
+  ok(output) {
+    return this.close(true, output);
   }
 
-  cancel(result) {
-    this.close(false, result);
+  cancel(output) {
+    return this.close(false, output);
   }
 
   error(message) {
     return invokeLifecycle(this.viewModel, 'deactivate').then(() => {
-      return this._renderer.hideDialog(this);
+      return this.renderer.hideDialog(this);
     }).then(() => {
       this.controller.unbind();
       this._reject(message);
     });
   }
 
-  close(ok, result) {
-    let returnResult = new DialogResult(!ok, result);
-    return invokeLifecycle(this.viewModel, 'canDeactivate').then(canDeactivate => {
+  close(ok, output) {
+    if (this._closePromise) return this._closePromise;
+
+    this._closePromise = invokeLifecycle(this.viewModel, 'canDeactivate').then(canDeactivate => {
       if (canDeactivate) {
         return invokeLifecycle(this.viewModel, 'deactivate').then(() => {
-          return this._renderer.hideDialog(this);
+          return this.renderer.hideDialog(this);
         }).then(() => {
+          let result = new DialogResult(!ok, output);
           this.controller.unbind();
-          this._resolve(returnResult);
+          this._resolve(result);
+          return result;
         });
       }
+
+      return Promise.resolve();
     });
-  }
-};
 
-let DialogResult = class DialogResult {
-  constructor(cancelled, result) {
-    this.wasCancelled = false;
-
-    this.wasCancelled = cancelled;
-    this.output = result;
+    return this._closePromise;
   }
 };

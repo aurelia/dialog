@@ -1,8 +1,5 @@
 import {DialogController} from '../../src/dialog-controller';
 import {Container} from 'aurelia-dependency-injection';
-import {initialize} from 'aurelia-pal-browser';
-
-initialize();
 
 describe('the Dialog Controller', () => {
   let dialogController;
@@ -12,7 +9,6 @@ describe('the Dialog Controller', () => {
   let settings;
 
   beforeEach(() => {
-    initialize();
     new Container().makeGlobal();
     settings = { name: 'Test' };
     dialogController = new DialogController(renderer, settings);
@@ -36,4 +32,3 @@ describe('the Dialog Controller', () => {
     expect(dialogController.close).toHaveBeenCalledWith(false, calledValue);
   });
 });
-

@@ -1,0 +1,10 @@
+{
+  "name": "aurelia-dialog",
+  "main": "dist/aurelia-dialog.d.ts",
+  "dependencies": {
+      "aurelia-dependency-injection": "github:aurelia/dependency-injection",
+      "aurelia-metadata": "github:aurelia/metadata",
+      "aurelia-pal": "github:aurelia/pal",
+      "aurelia-templating": "github:aurelia/templating"    
+  }
+}

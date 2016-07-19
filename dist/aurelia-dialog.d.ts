@@ -1,173 +1,221 @@
-declare module 'aurelia-dialog' {
-  import {
-    customElement,
-    bindable,
-    customAttribute,
-    CompositionEngine,
-    ViewSlot
-  } from 'aurelia-templating';
-  import {
-    DOM
-  } from 'aurelia-pal';
-  import {
-    transient,
-    Container
-  } from 'aurelia-dependency-injection';
-  import {
-    Origin
-  } from 'aurelia-metadata';
-  export let dialogOptions: any;
-  export class AiDialogBody {
-  
-  }
-  
-  /**
-   * * View-model for footer of Dialog.
-   * */
-  export class AiDialogFooter {
-    static inject: any;
-    buttons: any[];
-    useDefaultButtons: boolean;
-    constructor(controller: DialogController);
-    close(buttonValue: string): any;
-    useDefaultButtonsChanged(newValue: boolean): any;
-    static isCancelButton(value: string): any;
-  }
-  export class AiDialogHeader {
-    static inject: any;
-    constructor(controller: any);
-  }
-  export class AiDialog {
-  
-  }
-  export class AttachFocus {
-    static inject: any;
-    value: any;
-    constructor(element: any);
-    attached(): any;
-    valueChanged(newValue: any): any;
-  }
+import {
+  customAttribute,
+  customElement,
+  inlineView,
+  bindable,
+  CompositionEngine,
+  ViewSlot
+} from 'aurelia-templating';
+import {
+  DOM
+} from 'aurelia-pal';
+import {
+  transient,
+  Container
+} from 'aurelia-dependency-injection';
+import {
+  Origin
+} from 'aurelia-metadata';
+
+/**
+ * An abstract base class for implementors of the basic Renderer API.
+ */
+export declare class Renderer {
   
   /**
-   * Call a lifecycle method on a viewModel if it exists.
-   * @function
-   * @param instance The viewModel instance.
-   * @param name The lifecycle method name.
-   * @param model The model to pass to the lifecycle method.
-   * @returns Promise The result of the lifecycle method.
-   */
-  export function invokeLifecycle(instance: any, name: string, model: any): any;
+     * Gets an anchor for the ViewSlot to insert a view into.
+     * @returns A DOM element.
+     */
+  getDialogContainer(): any;
   
   /**
-   * A controller object for a Dialog instance.
-   * @constructor
-   */
-  export class DialogController {
-    settings: any;
-    constructor(renderer: DialogRenderer, settings: any, resolve: Function, reject: Function);
-    
-    /**
-       * Closes the dialog with a successful result.
-       * @param result The returned success result.
-       */
-    ok(result: any): any;
-    
-    /**
-       * Closes the dialog with a cancel result.
-       * @param result The returned cancel result.
-       */
-    cancel(result: any): any;
-    
-    /**
-       * Closes the dialog with an error result.
-       * @param message An error message.
-       * @returns Promise An empty promise object.
-       */
-    error(message: any): any;
-    
-    /**
-       * Closes the dialog.
-       * @param ok Whether or not the user input signified success.
-       * @param result The specified result.
-       * @returns Promise An empty promise object.
-       */
-    close(ok: boolean, result: any): any;
-  }
+     * Displays the dialog.
+     * @returns Promise A promise that resolves when the dialog has been displayed.
+     */
+  showDialog(dialogController: DialogController): Promise<any>;
   
   /**
-   * An abstract base class for implementors of the basic Renderer API.
-   */
-  export class Renderer {
-    
-    /**
-       * Gets an anchor for the ViewSlot to insert a view into.
-       * @returns A DOM element.
-       */
-    getDialogContainer(): any;
-    
-    /**
-       * Displays the dialog.
-       * @returns Promise A promise that resolves when the dialog has been displayed.
-       */
-    showDialog(dialogController: DialogController): Promise<any>;
-    
-    /**
-       * Hides the dialog.
-       * @returns Promise A promise that resolves when the dialog has been hidden.
-       */
-    hideDialog(dialogController: DialogController): Promise<any>;
-  }
-  export class DialogRenderer {
-    dialogControllers: any;
-    escapeKeyEvent: any;
-    constructor();
-    getDialogContainer(): any;
-    showDialog(dialogController: DialogController): any;
-    hideDialog(dialogController: DialogController): any;
-  }
+     * Hides the dialog.
+     * @returns Promise A promise that resolves when the dialog has been hidden.
+     */
+  hideDialog(dialogController: DialogController): Promise<any>;
+}
+
+/**
+ * Call a lifecycle method on a viewModel if it exists.
+ * @function
+ * @param instance The viewModel instance.
+ * @param name The lifecycle method name.
+ * @param model The model to pass to the lifecycle method.
+ * @returns Promise The result of the lifecycle method.
+ */
+export declare function invokeLifecycle(instance: any, name: string, model: any): any;
+export declare class AttachFocus {
+  static inject: any;
+  value: any;
+  constructor(element?: any);
+  attached(): any;
+  valueChanged(newValue?: any): any;
+}
+export declare class AiDialog {
+
+}
+export declare class AiDialogBody {
+
+}
+
+/**
+ * The result of a dialog open operation.
+ */
+export declare class DialogResult {
   
   /**
-   * A service allowing for the creation of dialogs.
-   * @constructor
-   */
-  export class DialogService {
-    static inject: any;
-    constructor(container: Container, compositionEngine: any);
-    
-    /**
-       * Opens a new dialog.
-       * @param settings Dialog settings for this dialog instance.
-       * @return Promise A promise that settles when the dialog is closed.
-       */
-    open(settings?: Object): any;
-  }
+     * Indicates whether or not the dialog was cancelled.
+     */
+  wasCancelled: boolean;
   
   /**
-   * A configuration builder for the dialog plugin.
-   * @constructor
-   */
-  export class DialogConfiguration {
-    constructor(aurelia: any);
-    
-    /**
-       * Selects the Aurelia conventional defaults for the dialog plugin.
-       * @chainable
-       */
-    useDefaults(): DialogConfiguration;
-    
-    /**
-       * Exports the chosen dialog element or view to Aurelia's global resources.
-       * @param resourceName The name of the dialog resource to export.
-       * @chainable
-       */
-    useResource(resourceName: string): DialogConfiguration;
-    
-    /**
-       * Configures the plugin to use a specific dialog renderer.
-       * @param renderer An object with a Renderer interface.
-       * @param settings Global settings for the renderer.
-       * @chainable
-       */
-    useRenderer(renderer: Renderer, settings?: Object): DialogConfiguration;
-  }
+     * The data returned from the dialog.
+     */
+  output: any;
+  
+  /**
+     * Creates an instance of DialogResult (Used Internally)
+     */
+  constructor(cancelled: boolean, output: any);
+}
+export declare let dialogOptions: any;
+
+/**
+ * A controller object for a Dialog instance.
+ */
+export declare class DialogController {
+  
+  /**
+     * The settings used by this controller.
+     */
+  settings: any;
+  
+  /**
+     * Creates an instance of DialogController.
+     */
+  constructor(renderer: DialogRenderer, settings: any, resolve: Function, reject: Function);
+  
+  /**
+     * Closes the dialog with a successful output.
+     * @param output The returned success output.
+     */
+  ok(output?: any): Promise<DialogResult>;
+  
+  /**
+     * Closes the dialog with a cancel output.
+     * @param output The returned cancel output.
+     */
+  cancel(output?: any): Promise<DialogResult>;
+  
+  /**
+     * Closes the dialog with an error result.
+     * @param message An error message.
+     * @returns Promise An empty promise object.
+     */
+  error(message: any): Promise<void>;
+  
+  /**
+     * Closes the dialog.
+     * @param ok Whether or not the user input signified success.
+     * @param output The specified output.
+     * @returns Promise An empty promise object.
+     */
+  close(ok: boolean, output?: any): Promise<DialogResult>;
+}
+export declare class DialogRenderer {
+  dialogControllers: any;
+  escapeKeyEvent: any;
+  constructor();
+  getDialogContainer(): any;
+  showDialog(dialogController: DialogController): any;
+  hideDialog(dialogController: DialogController): any;
+}
+
+/**
+ * * View-model for footer of Dialog.
+ * */
+export declare class AiDialogFooter {
+  static inject: any;
+  buttons: any[];
+  useDefaultButtons: boolean;
+  constructor(controller: DialogController);
+  close(buttonValue: string): any;
+  useDefaultButtonsChanged(newValue: boolean): any;
+  static isCancelButton(value: string): any;
+}
+export declare class AiDialogHeader {
+  static inject: any;
+  constructor(controller?: any);
+}
+
+/**
+ * A service allowing for the creation of dialogs.
+ */
+export declare class DialogService {
+  static inject: any;
+  
+  /**
+     * The current dialog controllers
+     */
+  controllers: DialogController[];
+  
+  /**
+     * Is there an active dialog
+     */
+  hasActiveDialog: boolean;
+  constructor(container: Container, compositionEngine: CompositionEngine);
+  
+  /**
+     * Opens a new dialog.
+     * @param settings Dialog settings for this dialog instance.
+     * @return Promise A promise that settles when the dialog is closed.
+     */
+  open(settings?: Object): Promise<DialogResult>;
+}
+
+/**
+ * A configuration builder for the dialog plugin.
+ */
+export declare class DialogConfiguration {
+  constructor(aurelia?: any);
+  
+  /**
+     * Selects the Aurelia conventional defaults for the dialog plugin.
+     * @return This instance.
+     */
+  useDefaults(): DialogConfiguration;
+  
+  /**
+     * Exports the standard set of dialog behaviors to Aurelia's global resources.
+     * @return This instance.
+     */
+  useStandardResources(): DialogConfiguration;
+  
+  /**
+     * Exports the chosen dialog element or view to Aurelia's global resources.
+     * @param resourceName The name of the dialog resource to export.
+     * @return This instance.
+     */
+  useResource(resourceName: string): DialogConfiguration;
+  
+  /**
+     * Configures the plugin to use a specific dialog renderer.
+     * @param renderer An object with a Renderer interface.
+     * @param settings Global settings for the renderer.
+     * @return This instance.
+     */
+  useRenderer(renderer: Renderer, settings?: Object): DialogConfiguration;
+  
+  /**
+     * Configures the plugin to use specific css.
+     * @param cssText The css to use in place of the default styles.
+     * @return This instance.
+     */
+  useCSS(cssText: string): DialogConfiguration;
 }

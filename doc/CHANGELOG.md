@@ -1,3 +1,27 @@
+<a name="1.0.0-beta.2.0.0"></a>
+# [1.0.0-beta.2.0.0](https://github.com/aurelia/dialog/compare/1.0.0-beta.1.1.0...v1.0.0-beta.2.0.0) (2016-07-12)
+
+
+### Bug Fixes
+
+* **dialog-configuration:** setup default renderer ([2c4c1fb](https://github.com/aurelia/dialog/commit/2c4c1fb)), closes [#129](https://github.com/aurelia/dialog/issues/129)
+
+
+
+<a name="1.0.0-beta.1.1.0"></a>
+# [1.0.0-beta.1.1.0](https://github.com/aurelia/dialog/compare/1.0.0-beta.1.0.2...v1.0.0-beta.1.1.0) (2016-06-22)
+
+
+
+### 0.6.2 (2016-05-24)
+
+
+#### Bug Fixes
+
+* **dialog-service:** add host element to container (#152) ([bcd24532](https://github.com/aurelia/dialog/commit/bcd2453248eada5c6595a53083bcc9dfacbec9e6), closes [#150](https://github.com/aurelia/dialog/issues/150))
+* **dialogResult:** export DialogResult for dts (#153) ([736f6fa1](https://github.com/aurelia/dialog/commit/736f6fa1eacc612d65c80ce66b577ef034c67f7b), closes [#134](https://github.com/aurelia/dialog/issues/134))
+
+
 ### 0.6.1 (2016-05-17)
 
 

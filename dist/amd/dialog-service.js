@@ -1,4 +1,4 @@
-define(['exports', 'aurelia-metadata', 'aurelia-dependency-injection', 'aurelia-templating', './dialog-controller', './renderers/renderer', './lifecycle'], function (exports, _aureliaMetadata, _aureliaDependencyInjection, _aureliaTemplating, _dialogController, _renderer, _lifecycle) {
+define(['exports', 'aurelia-metadata', 'aurelia-dependency-injection', 'aurelia-templating', './dialog-controller', './renderer', './lifecycle', './dialog-result'], function (exports, _aureliaMetadata, _aureliaDependencyInjection, _aureliaTemplating, _dialogController, _renderer, _lifecycle, _dialogResult) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -6,17 +6,13 @@ define(['exports', 'aurelia-metadata', 'aurelia-dependency-injection', 'aurelia-
   });
   exports.DialogService = undefined;
 
-  function _classCallCheck(instance, Constructor) {
-    if (!(instance instanceof Constructor)) {
-      throw new TypeError("Cannot call a class as a function");
-    }
-  }
+  
 
   var _class, _temp;
 
   var DialogService = exports.DialogService = (_temp = _class = function () {
     function DialogService(container, compositionEngine) {
-      _classCallCheck(this, DialogService);
+      
 
       this.container = container;
       this.compositionEngine = compositionEngine;
@@ -33,13 +29,16 @@ define(['exports', 'aurelia-metadata', 'aurelia-dependency-injection', 'aurelia-
         var childContainer = _this.container.createChild();
         dialogController = new _dialogController.DialogController(childContainer.get(_renderer.Renderer), settings, resolve, reject);
         childContainer.registerInstance(_dialogController.DialogController, dialogController);
+        var host = dialogController.renderer.getDialogContainer();
 
         var instruction = {
           container: _this.container,
           childContainer: childContainer,
           model: dialogController.settings.model,
+          view: dialogController.settings.view,
           viewModel: dialogController.settings.viewModel,
-          viewSlot: new _aureliaTemplating.ViewSlot(dialogController._renderer.getDialogContainer(), true)
+          viewSlot: new _aureliaTemplating.ViewSlot(host, true),
+          host: host
         };
 
         return _getViewModel(instruction, _this.compositionEngine).then(function (returnedInstruction) {
@@ -55,7 +54,7 @@ define(['exports', 'aurelia-metadata', 'aurelia-dependency-injection', 'aurelia-
                 dialogController.controller = controller;
                 dialogController.view = controller.view;
 
-                return dialogController._renderer.showDialog(dialogController);
+                return dialogController.renderer.showDialog(dialogController);
               });
             }
           });

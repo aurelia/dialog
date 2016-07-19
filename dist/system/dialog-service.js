@@ -1,13 +1,11 @@
 'use strict';
 
-System.register(['aurelia-metadata', 'aurelia-dependency-injection', 'aurelia-templating', './dialog-controller', './renderers/renderer', './lifecycle'], function (_export, _context) {
-  var Origin, Container, CompositionEngine, ViewSlot, DialogController, Renderer, invokeLifecycle, _class, _temp, DialogService;
+System.register(['aurelia-metadata', 'aurelia-dependency-injection', 'aurelia-templating', './dialog-controller', './renderer', './lifecycle', './dialog-result'], function (_export, _context) {
+  "use strict";
 
-  function _classCallCheck(instance, Constructor) {
-    if (!(instance instanceof Constructor)) {
-      throw new TypeError("Cannot call a class as a function");
-    }
-  }
+  var Origin, Container, CompositionEngine, ViewSlot, DialogController, Renderer, invokeLifecycle, DialogResult, _class, _temp, DialogService;
+
+  
 
   function _getViewModel(instruction, compositionEngine) {
     if (typeof instruction.viewModel === 'function') {
@@ -30,15 +28,17 @@ System.register(['aurelia-metadata', 'aurelia-dependency-injection', 'aurelia-te
       ViewSlot = _aureliaTemplating.ViewSlot;
     }, function (_dialogController) {
       DialogController = _dialogController.DialogController;
-    }, function (_renderersRenderer) {
-      Renderer = _renderersRenderer.Renderer;
+    }, function (_renderer) {
+      Renderer = _renderer.Renderer;
     }, function (_lifecycle) {
       invokeLifecycle = _lifecycle.invokeLifecycle;
+    }, function (_dialogResult) {
+      DialogResult = _dialogResult.DialogResult;
     }],
     execute: function () {
       _export('DialogService', DialogService = (_temp = _class = function () {
         function DialogService(container, compositionEngine) {
-          _classCallCheck(this, DialogService);
+          
 
           this.container = container;
           this.compositionEngine = compositionEngine;
@@ -55,13 +55,16 @@ System.register(['aurelia-metadata', 'aurelia-dependency-injection', 'aurelia-te
             var childContainer = _this.container.createChild();
             dialogController = new DialogController(childContainer.get(Renderer), settings, resolve, reject);
             childContainer.registerInstance(DialogController, dialogController);
+            var host = dialogController.renderer.getDialogContainer();
 
             var instruction = {
               container: _this.container,
               childContainer: childContainer,
               model: dialogController.settings.model,
+              view: dialogController.settings.view,
               viewModel: dialogController.settings.viewModel,
-              viewSlot: new ViewSlot(dialogController._renderer.getDialogContainer(), true)
+              viewSlot: new ViewSlot(host, true),
+              host: host
             };
 
             return _getViewModel(instruction, _this.compositionEngine).then(function (returnedInstruction) {
@@ -77,7 +80,7 @@ System.register(['aurelia-metadata', 'aurelia-dependency-injection', 'aurelia-te
                     dialogController.controller = controller;
                     dialogController.view = controller.view;
 
-                    return dialogController._renderer.showDialog(dialogController);
+                    return dialogController.renderer.showDialog(dialogController);
                   });
                 }
               });

@@ -7,61 +7,61 @@ exports.DialogController = undefined;
 
 var _lifecycle = require('./lifecycle');
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+var _dialogResult = require('./dialog-result');
+
+
 
 var DialogController = exports.DialogController = function () {
   function DialogController(renderer, settings, resolve, reject) {
-    _classCallCheck(this, DialogController);
+    
 
-    this._renderer = renderer;
-    this.settings = Object.assign({}, this._renderer.defaultSettings, settings);
+    this.renderer = renderer;
+    this.settings = settings;
     this._resolve = resolve;
     this._reject = reject;
   }
 
-  DialogController.prototype.ok = function ok(result) {
-    this.close(true, result);
+  DialogController.prototype.ok = function ok(output) {
+    return this.close(true, output);
   };
 
-  DialogController.prototype.cancel = function cancel(result) {
-    this.close(false, result);
+  DialogController.prototype.cancel = function cancel(output) {
+    return this.close(false, output);
   };
 
   DialogController.prototype.error = function error(message) {
     var _this = this;
 
     return (0, _lifecycle.invokeLifecycle)(this.viewModel, 'deactivate').then(function () {
-      return _this._renderer.hideDialog(_this);
+      return _this.renderer.hideDialog(_this);
     }).then(function () {
       _this.controller.unbind();
       _this._reject(message);
     });
   };
 
-  DialogController.prototype.close = function close(ok, result) {
+  DialogController.prototype.close = function close(ok, output) {
     var _this2 = this;
 
-    var returnResult = new DialogResult(!ok, result);
-    return (0, _lifecycle.invokeLifecycle)(this.viewModel, 'canDeactivate').then(function (canDeactivate) {
+    if (this._closePromise) return this._closePromise;
+
+    this._closePromise = (0, _lifecycle.invokeLifecycle)(this.viewModel, 'canDeactivate').then(function (canDeactivate) {
       if (canDeactivate) {
         return (0, _lifecycle.invokeLifecycle)(_this2.viewModel, 'deactivate').then(function () {
-          return _this2._renderer.hideDialog(_this2);
+          return _this2.renderer.hideDialog(_this2);
         }).then(function () {
+          var result = new _dialogResult.DialogResult(!ok, output);
           _this2.controller.unbind();
-          _this2._resolve(returnResult);
+          _this2._resolve(result);
+          return result;
         });
       }
+
+      return Promise.resolve();
     });
+
+    return this._closePromise;
   };
 
   return DialogController;
 }();
-
-var DialogResult = function DialogResult(cancelled, result) {
-  _classCallCheck(this, DialogResult);
-
-  this.wasCancelled = false;
-
-  this.wasCancelled = cancelled;
-  this.output = result;
-};
