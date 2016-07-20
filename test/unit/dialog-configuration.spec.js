@@ -8,7 +8,7 @@ let defaultDialogOptions = Object.assign({}, dialogOptions);
 
 let aurelia = {
   globalResources: () => {},
-  singleton: () => {}
+  transient: () => {}
 };
 
 describe('DialogConfiguration', () => {
@@ -24,12 +24,12 @@ describe('DialogConfiguration', () => {
   });
 
   describe('useRenderer', () => {
-    it('should register a renderer as a singleton', () => {
+    it('should register a renderer as a transient', () => {
       let renderer = {};
-      spyOn(aurelia, 'singleton');
+      spyOn(aurelia, 'transient');
       configuration.useRenderer(renderer);
       configuration._apply();
-      expect(aurelia.singleton).toHaveBeenCalledWith(Renderer, renderer);
+      expect(aurelia.transient).toHaveBeenCalledWith(Renderer, renderer);
     });
 
     it('should export settings', () => {
