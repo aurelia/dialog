@@ -18,7 +18,7 @@ let newSettings = {
 };
 
 let frameworkConfig = {
-  singleton: () => {},
+  transient: () => {},
   globalResources: () => {},
   container: {
     registerInstance: (Type, callback) => {},
