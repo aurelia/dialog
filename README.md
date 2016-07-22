@@ -92,11 +92,18 @@ To run the sample code using this plugin proceed with these additional steps:
 
 ## How to install this plugin?
 
-1. In your project install the plugin via `jspm` with following command
+1. In your JSPM-based project install the plugin via `jspm` with following command
 
   ```shell
 jspm install aurelia-dialog
   ```
+
+If you use Webpack, install the plugin with the following command
+
+  ```shell
+npm install aurelia-dialog --save
+  ```
+
 2. Make sure you use [manual bootstrapping](http://aurelia.io/docs#startup-and-configuration). In order to do so open your `index.html` and locate the element with the attribute aurelia-app. Change it to look like this:
 
   ```html
@@ -278,94 +285,4 @@ ai-dialog-overlay.active {
   background-color: black;
   opacity: .5;
 }
-```
-
-## Configuring and using with Webpack
-
-
-### Configure Aurelia Webpack plugin
-
-```javascript
-// webpack.config.js
-plugins: [
-    new AureliaWebpackPlugin({
-      includeSubModules: [
-        ...
-        { moduleId: "aurelia-dialog" }
-      ]
-    })
-    ...
-],
-```
-
-### Solving dialog.css issue
-
-Dialog plugin uses `<require from="../dialog.css"></require>` statement to load css stylesheet. It works great with jspm, but when using webpack you can get runtime error when trying to load `aurelia-dialog/dialog.css`. The reason is that `require` statement included in html template assumes `dialog.css` to be loaded as raw text but usually webpack is configured to load css files with css-loader: `{ test: /\.css$/, loader: 'style!css' }`
-
-So we need just to exclude `dialog.css` for css-loader and use `raw-loader` instead:
-
-```javascript
-{ test: /aurelia-dialog(\\|\/)dist(\\|\/)commonjs(\\|\/)dialog\.css/, loader: 'raw' },
-{ test: /\.css$/, exclude: /aurelia-dialog(\\|\/)dist(\\|\/)commonjs(\\|\/)dialog\.css/, loader: 'style!css' },
-```
-
-There are two other options to solve `<require>` issue that are more universal but adding some restrictions to the application code:
-
-1. Always use `raw-loader` for css
-
-    ```
-    { test: /\.css$/, loader: 'raw' }
-    ```
-
-    When importing css files in js disable `raw-loader` and use `css-loader`
-
-    ```
-    import '-!style!css!../theme/assets/css/jquery-ui.css';
-    ```
-
-2. Always use `raw-loader` for css
-
-    ```
-    { test: /\.css$/, loader: 'raw' }
-    ```
-
-    Don't import css files in js, but use `less`
-
-    ```
-    { test: /\.less$/, loader: "style!css!less"},
-    ```
-
-But that is not a silver bullet. Some of the webpack plugins can still require `css` files by default in js code (font-awesome-webpack, bootstrap-webpack) and you will need to add some exclusions for loaders too.
-
-### TypeError: Cannot read property 'canActivate' issue
-
-You get `TypeError: Cannot read property 'canActivate'` at runtime when referencing `viewModel` by class:
-
-```javascript
-import {EditPerson} from './edit-person';
-...
-submit(){
-      // throws error when using webpack
-      this.dialogService.open({ viewModel: EditPerson, model: this.person}).then(response => {
-        if (!response.wasCancelled) {
-          console.log('good - ', response.output);
-        } else {
-          console.log('bad');
-        }
-        console.log(response.output);
-      });
-    }
-```
-
-Use module name string instead:
-
-```javascript
-this.dialogService.open({ viewModel: 'resolved/path/to/edit-person', model: this.person}).then(response => {
-    if (!response.wasCancelled) {
-      console.log('good - ', response.output);
-    } else {
-      console.log('bad');
-    }
-    console.log(response.output);
-  });
 ```
