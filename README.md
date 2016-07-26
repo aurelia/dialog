@@ -104,6 +104,12 @@ If you use Webpack, install the plugin with the following command
 npm install aurelia-dialog --save
   ```
 
+If you use TypeScript, install the plugin's typings with the following command
+
+```shell
+typings install github:aurelia/dialog --save
+  ```
+
 2. Make sure you use [manual bootstrapping](http://aurelia.io/docs#startup-and-configuration). In order to do so open your `index.html` and locate the element with the attribute aurelia-app. Change it to look like this:
 
   ```html
