@@ -481,36 +481,7 @@ export class DialogService {
       let childContainer = this.container.createChild();
       dialogController = new DialogController(childContainer.get(Renderer), settings, resolve, reject);
       childContainer.registerInstance(DialogController, dialogController);
-      let host = dialogController.renderer.getDialogContainer();
-
-      let instruction = {
-        container: this.container,
-        childContainer: childContainer,
-        model: dialogController.settings.model,
-        view: dialogController.settings.view,
-        viewModel: dialogController.settings.viewModel,
-        viewSlot: new ViewSlot(host, true),
-        host: host
-      };
-
-      return _getViewModel(instruction, this.compositionEngine).then(returnedInstruction => {
-        dialogController.viewModel = returnedInstruction.viewModel;
-        dialogController.slot = returnedInstruction.viewSlot;
-
-        return invokeLifecycle(dialogController.viewModel, 'canActivate', dialogController.settings.model).then(canActivate => {
-          if (canActivate) {
-            this.controllers.push(dialogController);
-            this.hasActiveDialog = !!this.controllers.length;
-
-            return this.compositionEngine.compose(returnedInstruction).then(controller => {
-              dialogController.controller = controller;
-              dialogController.view = controller.view;
-
-              return dialogController.renderer.showDialog(dialogController);
-            });
-          }
-        });
-      });
+      return _openDialog(this, childContainer, dialogController);
     });
 
     return promise.then((result) => {
@@ -523,6 +494,60 @@ export class DialogService {
       return result;
     });
   }
+
+  openAndYieldController(settings?: Object): Promise<DialogController> {
+    let childContainer = this.container.createChild();
+    let dialogController = new DialogController(childContainer.get(Renderer), settings, null, null);
+    childContainer.registerInstance(DialogController, dialogController);
+
+    dialogController.result = new Promise((resolve, reject) => {
+      dialogController._resolve = resolve;
+      dialogController._reject = reject;
+    }).then((result) => {
+      let i = this.controllers.indexOf(dialogController);
+      if (i !== -1) {
+        this.controllers.splice(i, 1);
+        this.hasActiveDialog = !!this.controllers.length;
+      }
+      return result;
+    });
+
+    return _openDialog(this, childContainer, dialogController).then(() => {
+      return dialogController;
+    });
+  }
+}
+
+function _openDialog(service, childContainer, dialogController) {
+  let host = dialogController.renderer.getDialogContainer();
+  let instruction = {
+    container: service.container,
+    childContainer: childContainer,
+    model: dialogController.settings.model,
+    view: dialogController.settings.view,
+    viewModel: dialogController.settings.viewModel,
+    viewSlot: new ViewSlot(host, true),
+    host: host
+  };
+
+  return _getViewModel(instruction, service.compositionEngine).then(returnedInstruction => {
+    dialogController.viewModel = returnedInstruction.viewModel;
+    dialogController.slot = returnedInstruction.viewSlot;
+
+    return invokeLifecycle(dialogController.viewModel, 'canActivate', dialogController.settings.model).then(canActivate => {
+      if (canActivate) {
+        service.controllers.push(dialogController);
+        service.hasActiveDialog = !!service.controllers.length;
+
+        return service.compositionEngine.compose(returnedInstruction).then(controller => {
+          dialogController.controller = controller;
+          dialogController.view = controller.view;
+
+          return dialogController.renderer.showDialog(dialogController);
+        });
+      }
+    });
+  });
 }
 
 function _getViewModel(instruction, compositionEngine) {
@@ -553,6 +578,11 @@ let defaultCSSText = `ai-dialog-container,ai-dialog-overlay{position:fixed;top:0
  * A configuration builder for the dialog plugin.
  */
 export class DialogConfiguration {
+  /**
+   * The configuration settings.
+   */
+  settings: any;
+
   constructor(aurelia) {
     this.aurelia = aurelia;
     this.settings = dialogOptions;
@@ -595,11 +625,11 @@ export class DialogConfiguration {
 
   /**
    * Configures the plugin to use a specific dialog renderer.
-   * @param renderer An object with a Renderer interface.
+   * @param renderer A type that implements the Renderer interface.
    * @param settings Global settings for the renderer.
    * @return This instance.
    */
-  useRenderer(renderer: Renderer, settings?: Object): DialogConfiguration {
+  useRenderer(renderer: Function, settings?: Object): DialogConfiguration {
     this.renderer = renderer;
     this.settings = Object.assign(this.settings, settings || {});
     return this;
@@ -616,8 +646,11 @@ export class DialogConfiguration {
   }
 
   _apply() {
-    this.aurelia.singleton(Renderer, this.renderer);
+    this.aurelia.transient(Renderer, this.renderer);
     this.resources.forEach(resourceName => this.aurelia.globalResources(resources[resourceName]));
-    DOM.injectStyles(this.cssText);
+
+    if (this.cssText) {
+      DOM.injectStyles(this.cssText);
+    }
   }
 }

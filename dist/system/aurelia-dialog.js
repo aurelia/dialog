@@ -4,6 +4,20 @@ System.register(['./dialog-configuration', './ai-dialog', './ai-dialog-header', 
   "use strict";
 
   var DialogConfiguration;
+  function configure(aurelia, callback) {
+    var config = new DialogConfiguration(aurelia);
+
+    if (typeof callback === 'function') {
+      callback(config);
+    } else {
+      config.useDefaults();
+    }
+
+    config._apply();
+  }
+
+  _export('configure', configure);
+
   return {
     setters: [function (_dialogConfiguration) {
       DialogConfiguration = _dialogConfiguration.DialogConfiguration;
@@ -52,20 +66,6 @@ System.register(['./dialog-configuration', './ai-dialog', './ai-dialog-header', 
 
       _export(_exportObj9);
     }],
-    execute: function () {
-      function configure(aurelia, callback) {
-        var config = new DialogConfiguration(aurelia);
-
-        if (typeof callback === 'function') {
-          callback(config);
-        } else {
-          config.useDefaults();
-        }
-
-        config._apply();
-      }
-
-      _export('configure', configure);
-    }
+    execute: function () {}
   };
 });

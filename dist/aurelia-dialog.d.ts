@@ -177,12 +177,18 @@ export declare class DialogService {
      * @return Promise A promise that settles when the dialog is closed.
      */
   open(settings?: Object): Promise<DialogResult>;
+  openAndYieldController(settings?: Object): Promise<DialogController>;
 }
 
 /**
  * A configuration builder for the dialog plugin.
  */
 export declare class DialogConfiguration {
+  
+  /**
+     * The configuration settings.
+     */
+  settings: any;
   constructor(aurelia?: any);
   
   /**
@@ -206,11 +212,11 @@ export declare class DialogConfiguration {
   
   /**
      * Configures the plugin to use a specific dialog renderer.
-     * @param renderer An object with a Renderer interface.
+     * @param renderer A type that implements the Renderer interface.
      * @param settings Global settings for the renderer.
      * @return This instance.
      */
-  useRenderer(renderer: Renderer, settings?: Object): DialogConfiguration;
+  useRenderer(renderer: Function, settings?: Object): DialogConfiguration;
   
   /**
      * Configures the plugin to use specific css.

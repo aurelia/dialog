@@ -8,7 +8,7 @@ System.register(['./aurelia-dialog'], function (_export, _context) {
       var _exportObj = {};
 
       for (var _key in _aureliaDialog) {
-        if (_key !== "default") _exportObj[_key] = _aureliaDialog[_key];
+        if (_key !== "default" && key !== "__esModule") _exportObj[_key] = _aureliaDialog[_key];
       }
 
       _export(_exportObj);

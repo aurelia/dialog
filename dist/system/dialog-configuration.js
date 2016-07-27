@@ -66,11 +66,14 @@ System.register(['./renderer', './dialog-renderer', './dialog-options', 'aurelia
         DialogConfiguration.prototype._apply = function _apply() {
           var _this = this;
 
-          this.aurelia.singleton(Renderer, this.renderer);
+          this.aurelia.transient(Renderer, this.renderer);
           this.resources.forEach(function (resourceName) {
             return _this.aurelia.globalResources(resources[resourceName]);
           });
-          DOM.injectStyles(this.cssText);
+
+          if (this.cssText) {
+            DOM.injectStyles(this.cssText);
+          }
         };
 
         return DialogConfiguration;

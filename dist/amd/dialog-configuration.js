@@ -58,11 +58,14 @@ define(['exports', './renderer', './dialog-renderer', './dialog-options', 'aurel
     DialogConfiguration.prototype._apply = function _apply() {
       var _this = this;
 
-      this.aurelia.singleton(_renderer.Renderer, this.renderer);
+      this.aurelia.transient(_renderer.Renderer, this.renderer);
       this.resources.forEach(function (resourceName) {
         return _this.aurelia.globalResources(resources[resourceName]);
       });
-      _aureliaPal.DOM.injectStyles(this.cssText);
+
+      if (this.cssText) {
+        _aureliaPal.DOM.injectStyles(this.cssText);
+      }
     };
 
     return DialogConfiguration;
