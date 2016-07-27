@@ -66,11 +66,11 @@ export class DialogConfiguration {
 
   /**
    * Configures the plugin to use a specific dialog renderer.
-   * @param renderer An object with a Renderer interface.
+   * @param renderer A type that implements the Renderer interface.
    * @param settings Global settings for the renderer.
    * @return This instance.
    */
-  useRenderer(renderer: typeof Renderer, settings?: Object): DialogConfiguration {
+  useRenderer(renderer: Function, settings?: Object): DialogConfiguration {
     this.renderer = renderer;
     this.settings = Object.assign(this.settings, settings || {});
     return this;
