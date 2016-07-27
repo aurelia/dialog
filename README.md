@@ -282,6 +282,44 @@ export class Prompt {
 }
 ```
 
+###Getting access to DialogController API outside
+It is possible to resolve and close (using cancel/ok/error methods) dialog in the same context where you open it.   
+
+```javascript
+  import {EditPerson} from './edit-person';
+  import {DialogService} from 'aurelia-dialog';
+  export class Welcome {
+    static inject = [DialogService];
+    constructor(dialogService) {
+      this.dialogService = dialogService;
+    }
+    person = { firstName: 'Wade', middleName: 'Owen', lastName: 'Watts' };
+    submit(){
+      // Note that "openc" method is used, that means "open and return Controller"
+      this.dialogService.openc({viewModel: EditPerson, model: this.person}).then(controller => {
+        // Note you get here when the dialog is opened, and you are able to close dialog  
+        // Promise for the result is stored in controller.result property
+        controller.result.then((response) => {
+          
+          if (!response.wasCancelled) {
+            console.log('good');
+          } else {
+            console.log('bad');
+          }
+          
+          console.log(response);
+          
+        })
+     
+        setTimeout(() => {
+          controller.cancel('canceled outside after 3 sec')
+        }, 3000)
+        
+      });
+    }
+  }
+  ```
+
 ## Overlay with 50% opacity
 
 Bootstrap adds 50% opacity and a background color of black to the modal.  To achieve this in dialog you can simply add the following CSS -
