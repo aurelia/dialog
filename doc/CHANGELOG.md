@@ -1,3 +1,22 @@
+<a name="1.0.0-beta.3.0.0"></a>
+# [1.0.0-beta.3.0.0](https://github.com/aurelia/dialog/compare/1.0.0-beta.2.0.0...v1.0.0-beta.3.0.0) (2016-07-27)
+
+
+### Bug Fixes
+
+* **dialog-configuration:** Add settings to configuration types and docs. ([7d5f6b8](https://github.com/aurelia/dialog/commit/7d5f6b8))
+* **dialog-configuration:** correct typings ([541cd8e](https://github.com/aurelia/dialog/commit/541cd8e))
+* **dialog-configuration:** do not inject empty styling ([6c48a8c](https://github.com/aurelia/dialog/commit/6c48a8c))
+* **dialog-configuration:** Fix useRenderer typing ([451cd2c](https://github.com/aurelia/dialog/commit/451cd2c))
+* **dialog-configuration:** register renderer as transient ([901a004](https://github.com/aurelia/dialog/commit/901a004)), closes [aurelia/dialog#180](https://github.com/aurelia/dialog/issues/180)
+
+
+### Features
+
+* **dialog-service:** rename openc to openAndYieldController ([d21458d](https://github.com/aurelia/dialog/commit/d21458d))
+
+
+
 <a name="1.0.0-beta.2.0.0"></a>
 # [1.0.0-beta.2.0.0](https://github.com/aurelia/dialog/compare/1.0.0-beta.1.1.0...v1.0.0-beta.2.0.0) (2016-07-12)
 
