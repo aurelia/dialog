@@ -53,19 +53,16 @@ export class DialogService {
       return result;
     });
   }
-  
-  openc(settings?: Object): Promise<DialogController> {
-    
+
+  openAndYieldController(settings?: Object): Promise<DialogController> {
     let childContainer = this.container.createChild();
     let dialogController = new DialogController(childContainer.get(Renderer), settings, null, null);
     childContainer.registerInstance(DialogController, dialogController);
-    
-    dialogController.result = (new Promise((resolve, reject) => {
-      
+
+    dialogController.result = new Promise((resolve, reject) => {
       dialogController._resolve = resolve;
       dialogController._reject = reject;
-      
-    })).then((result) => {
+    }).then((result) => {
       let i = this.controllers.indexOf(dialogController);
       if (i !== -1) {
         this.controllers.splice(i, 1);
@@ -77,15 +74,11 @@ export class DialogService {
     return _openDialog(this, childContainer, dialogController).then(() => {
       return dialogController;
     });
-
   }
-
 }
 
 function _openDialog(service, childContainer, dialogController) {
-  
   let host = dialogController.renderer.getDialogContainer();
-
   let instruction = {
     container: service.container,
     childContainer: childContainer,
@@ -114,7 +107,6 @@ function _openDialog(service, childContainer, dialogController) {
       }
     });
   });
-  
 }
 
 function _getViewModel(instruction, compositionEngine) {

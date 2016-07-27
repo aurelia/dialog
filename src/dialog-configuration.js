@@ -19,10 +19,9 @@ let defaultCSSText = `ai-dialog-container,ai-dialog-overlay{position:fixed;top:0
  * A configuration builder for the dialog plugin.
  */
 export class DialogConfiguration {
-
-  /** 
+  /**
    * The configuration settings.
-   */ 
+   */
   settings: any;
 
   constructor(aurelia) {
@@ -90,7 +89,7 @@ export class DialogConfiguration {
   _apply() {
     this.aurelia.transient(Renderer, this.renderer);
     this.resources.forEach(resourceName => this.aurelia.globalResources(resources[resourceName]));
-    
+
     if (this.cssText) {
       DOM.injectStyles(this.cssText);
     }
