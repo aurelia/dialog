@@ -34,26 +34,27 @@ export class DialogService {
    * @return Promise A promise that settles when the dialog is closed.
    */
   open(settings?: Object): Promise<DialogResult> {
+    let childContainer = this.container.createChild();
     let dialogController;
-
     let promise = new Promise((resolve, reject) => {
-      let childContainer = this.container.createChild();
       dialogController = new DialogController(childContainer.get(Renderer), settings, resolve, reject);
-      childContainer.registerInstance(DialogController, dialogController);
-      return _openDialog(this, childContainer, dialogController);
     });
+    childContainer.registerInstance(DialogController, dialogController);
 
-    return promise.then((result) => {
-      let i = this.controllers.indexOf(dialogController);
-      if (i !== -1) {
-        this.controllers.splice(i, 1);
-        this.hasActiveDialog = !!this.controllers.length;
-      }
-
-      return result;
-    });
+    return _openDialog(this, childContainer, dialogController)
+      .then(() => promise)
+      .then((result) => {
+        _removeController(this, dialogController);
+        return result;
+      });
   }
 
+  /**
+   * Opens a new dialog.
+   * @param settings Dialog settings for this dialog instance.
+   * @return Promise A promise that settles when the dialog is opened.
+   * Resolves to the controller of the dialog.
+   */
   openAndYieldController(settings?: Object): Promise<DialogController> {
     let childContainer = this.container.createChild();
     let dialogController = new DialogController(childContainer.get(Renderer), settings, null, null);
@@ -63,11 +64,7 @@ export class DialogService {
       dialogController._resolve = resolve;
       dialogController._reject = reject;
     }).then((result) => {
-      let i = this.controllers.indexOf(dialogController);
-      if (i !== -1) {
-        this.controllers.splice(i, 1);
-        this.hasActiveDialog = !!this.controllers.length;
-      }
+      _removeController(this, dialogController);
       return result;
     });
 
@@ -119,4 +116,12 @@ function _getViewModel(instruction, compositionEngine) {
   }
 
   return Promise.resolve(instruction);
+}
+
+function _removeController(service, controller) {
+  let i = service.controllers.indexOf(controller);
+  if (i !== -1) {
+    service.controllers.splice(i, 1);
+    service.hasActiveDialog = !!service.controllers.length;
+  }
 }

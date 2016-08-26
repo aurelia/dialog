@@ -70,4 +70,12 @@ describe('the Dialog Service', () => {
 
     dialogService.open(settings);
   });
+
+  it('".open" properly propagates errors', (done) => {
+    dialogService.open({ viewModel: 'test/fixtures/non-existent' }).catch(done);
+  });
+
+  it('".openAndYieldController" properly propagates errors', (done) => {
+    dialogService.openAndYieldController({ viewModel: 'test/fixtures/non-existent' }).catch(done);
+  });
 });
