@@ -100,6 +100,9 @@ function _openDialog(service, childContainer, dialogController) {
           dialogController.view = controller.view;
 
           return dialogController.renderer.showDialog(dialogController);
+        }).catch(e => {
+          _removeController(service, dialogController);
+          return Promise.reject(e);
         });
       }
     });
