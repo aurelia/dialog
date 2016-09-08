@@ -76,11 +76,10 @@ describe('the Dialog Service', () => {
     let promise = dialogService.open({ viewModel: 'test/fixtures/non-existent' })
       .catch(() => {
         catchWasCalled = true;
+      }).then(() => {
+        expect(catchWasCalled).toBe(true);
+        done();
       });
-    setTimeout(() => {
-      expect(catchWasCalled).toBe(true);
-      done();
-    }, 10);
   });
 
   it('".openAndYieldController" properly propagates errors', (done) => {
@@ -88,10 +87,9 @@ describe('the Dialog Service', () => {
     dialogService.openAndYieldController({ viewModel: 'test/fixtures/non-existent' })
       .catch(() => {
         catchWasCalled = true;
+      }).then(() => {
+        expect(catchWasCalled).toBe(true);
+        done();
       });
-    setTimeout(() => {
-      expect(catchWasCalled).toBe(true);
-      done();
-    }, 10);
   });
 });
