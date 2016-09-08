@@ -72,10 +72,26 @@ describe('the Dialog Service', () => {
   });
 
   it('".open" properly propagates errors', (done) => {
-    dialogService.open({ viewModel: 'test/fixtures/non-existent' }).catch(done);
+    let catchWasCalled = false;
+    let promise = dialogService.open({ viewModel: 'test/fixtures/non-existent' })
+      .catch(() => {
+        catchWasCalled = true;
+      });
+    setTimeout(() => {
+      expect(catchWasCalled).toBe(true);
+      done();
+    }, 10);
   });
 
   it('".openAndYieldController" properly propagates errors', (done) => {
-    dialogService.openAndYieldController({ viewModel: 'test/fixtures/non-existent' }).catch(done);
+    let catchWasCalled = false;
+    dialogService.openAndYieldController({ viewModel: 'test/fixtures/non-existent' })
+      .catch(() => {
+        catchWasCalled = true;
+      });
+    setTimeout(() => {
+      expect(catchWasCalled).toBe(true);
+      done();
+    }, 10);
   });
 });
