@@ -20,4 +20,3 @@ export class AttachFocus {
     this.value = newValue;
   }
 }
-
