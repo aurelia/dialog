@@ -1,4 +1,3 @@
-import {dialogOptions} from './dialog-options';
 import {DOM} from 'aurelia-pal';
 import {transient} from 'aurelia-dependency-injection';
 
@@ -39,16 +38,12 @@ export class DialogRenderer {
     }
   };
 
-  constructor() {
-    this.defaultSettings = dialogOptions;
-  }
-
   getDialogContainer() {
     return DOM.createElement('div');
   }
 
   showDialog(dialogController: DialogController) {
-    let settings = Object.assign({}, this.defaultSettings, dialogController.settings);
+    let settings = dialogController.settings;
     let body = DOM.querySelectorAll('body')[0];
     let wrapper = document.createElement('div');
 
@@ -72,8 +67,8 @@ export class DialogRenderer {
       centerDialog(this.modalContainer);
     };
 
-    this.modalOverlay.style.zIndex = this.defaultSettings.startingZIndex;
-    this.modalContainer.style.zIndex = this.defaultSettings.startingZIndex;
+    this.modalOverlay.style.zIndex = settings.startingZIndex;
+    this.modalContainer.style.zIndex = settings.startingZIndex;
 
     let lastContainer = Array.from(body.querySelectorAll(containerTagName)).pop();
 
@@ -125,7 +120,7 @@ export class DialogRenderer {
   }
 
   hideDialog(dialogController: DialogController) {
-    let settings = Object.assign({}, this.defaultSettings, dialogController.settings);
+    let settings = dialogController.settings;
     let body = DOM.querySelectorAll('body')[0];
 
     this.modalContainer.removeEventListener('click', this.closeModalClick);

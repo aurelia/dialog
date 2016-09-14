@@ -5,6 +5,7 @@ import {DialogController} from './dialog-controller';
 import {Renderer} from './renderer';
 import {invokeLifecycle} from './lifecycle';
 import {DialogResult} from './dialog-result';
+import {dialogOptions} from './dialog-options';
 
 /**
  * A service allowing for the creation of dialogs.
@@ -37,7 +38,7 @@ export class DialogService {
     let childContainer = this.container.createChild();
     let dialogController;
     let promise = new Promise((resolve, reject) => {
-      dialogController = new DialogController(childContainer.get(Renderer), settings, resolve, reject);
+      dialogController = new DialogController(childContainer.get(Renderer), _createSettings(settings), resolve, reject);
     });
     childContainer.registerInstance(DialogController, dialogController);
 
@@ -57,7 +58,7 @@ export class DialogService {
    */
   openAndYieldController(settings?: Object): Promise<DialogController> {
     let childContainer = this.container.createChild();
-    let dialogController = new DialogController(childContainer.get(Renderer), settings, null, null);
+    let dialogController = new DialogController(childContainer.get(Renderer), _createSettings(settings), null, null);
     childContainer.registerInstance(DialogController, dialogController);
 
     dialogController.result = new Promise((resolve, reject) => {
@@ -72,6 +73,12 @@ export class DialogService {
       return dialogController;
     });
   }
+}
+
+function _createSettings(settings) {
+  settings = Object.assign({}, dialogOptions, settings);
+  settings.startingZIndex = dialogOptions.startingZIndex; // should be set only when configuring the plugin
+  return settings;
 }
 
 function _openDialog(service, childContainer, dialogController) {

@@ -6,13 +6,14 @@ import {TestElement} from '../fixtures/test-element';
 import {Loader} from 'aurelia-loader';
 import {DefaultLoader} from 'aurelia-loader-default';
 import {TemplatingBindingLanguage} from 'aurelia-templating-binding';
+import {dialogOptions} from '../../src/dialog-options';
 
 describe('the Dialog Service', () => {
   let dialogService;
   let container;
   let compEng;
   let renderer;
-
+  
   beforeEach(() => {
     renderer = {
       showDialog: function() {
@@ -31,6 +32,40 @@ describe('the Dialog Service', () => {
 
     compEng = container.get(CompositionEngine);
     dialogService = new DialogService(container, compEng, renderer);
+  });
+
+  it('uses the default settings', (done) => {
+    spyOn(renderer, 'showDialog').and.callFake((dialogController) => {
+      expect(dialogController.settings).toEqual(jasmine.objectContaining(dialogOptions));
+      done();
+    });
+
+    dialogService.open({ viewModel: TestElement });
+  });
+
+  it('allows overriding the default settings', (done) => {
+    const newSettings = {
+      lock: !dialogOptions.lock,
+      centerHorizontalOnly: !dialogOptions.centerHorizontalOnly,
+      // startingZIndex: 1, // should be overrided only when configuring the plugin
+      ignoreTransitions: !dialogOptions.ignoreTransitions
+    };
+
+    spyOn(renderer, 'showDialog').and.callFake((dialogController) => {
+      expect(dialogController.settings).toEqual(jasmine.objectContaining(newSettings));
+      done();
+    });
+
+    dialogService.open(Object.assign({}, newSettings, { viewModel: TestElement }));
+  });
+
+  it('does not allow overriding "startingZIndex"', (done) => {
+    spyOn(renderer, 'showDialog').and.callFake((dialogController) => {
+      expect(dialogController.settings).toEqual(jasmine.objectContaining(dialogOptions));
+      done();
+    });
+
+    dialogService.open({ startingZIndex: 1, viewModel: TestElement });
   });
 
   it('open with a model settings applied', (done) => {
