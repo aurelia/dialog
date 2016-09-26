@@ -31,4 +31,29 @@ describe('the Dialog Controller', () => {
     dialogController.cancel(calledValue);
     expect(dialogController.close).toHaveBeenCalledWith(false, calledValue);
   });
+
+  it('should not be blocked from being closed if ".canDeactivate()" returns "false" once', (done) => {
+    dialogController.viewModel = {
+      canDeactivateCalls: 0,
+      canDeactivate() {
+        ++this.canDeactivateCalls;
+        return this.canDeactivateCalls > 1;
+      },
+      deactivate() { }
+    };
+    dialogController.controller = {
+      unbind() {}
+    };
+    dialogController._resolve = function () {};
+    dialogController.renderer.hideDialog = function () {};
+    
+    spyOn(dialogController.renderer, 'hideDialog');
+    dialogController.close(true).then(() => {
+      expect(dialogController.renderer.hideDialog).not.toHaveBeenCalled();
+      dialogController.close(true).then(() => {
+        expect(dialogController.renderer.hideDialog).toHaveBeenCalled();
+        done();
+      });
+    });
+  });
 });
