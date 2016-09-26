@@ -26,18 +26,19 @@ let transitionEvent = (function() {
   };
 }());
 
+let dialogControllers = [];
+
+function escapeKeyEvent(e) {
+  if (e.keyCode === 27) {
+    let top = dialogControllers[dialogControllers.length - 1];
+    if (top && top.settings.lock !== true) {
+      top.cancel();
+    }
+  }
+}
+
 @transient()
 export class DialogRenderer {
-  dialogControllers = [];
-  escapeKeyEvent = (e) => {
-    if (e.keyCode === 27) {
-      let top = this.dialogControllers[this.dialogControllers.length - 1];
-      if (top && top.settings.lock !== true) {
-        top.cancel();
-      }
-    }
-  };
-
   getDialogContainer() {
     return DOM.createElement('div');
   }
@@ -80,11 +81,11 @@ export class DialogRenderer {
       body.insertBefore(this.modalOverlay, body.firstChild);
     }
 
-    if (!this.dialogControllers.length) {
-      DOM.addEventListener('keyup', this.escapeKeyEvent);
+    if (!dialogControllers.length) {
+      DOM.addEventListener('keyup', escapeKeyEvent);
     }
 
-    this.dialogControllers.push(dialogController);
+    dialogControllers.push(dialogController);
 
     dialogController.slot.attached();
 
@@ -126,13 +127,13 @@ export class DialogRenderer {
     this.modalContainer.removeEventListener('click', this.closeModalClick);
     this.anchor.removeEventListener('click', this.stopPropagation);
 
-    let i = this.dialogControllers.indexOf(dialogController);
+    let i = dialogControllers.indexOf(dialogController);
     if (i !== -1) {
-      this.dialogControllers.splice(i, 1);
+      dialogControllers.splice(i, 1);
     }
 
-    if (!this.dialogControllers.length) {
-      DOM.removeEventListener('keyup', this.escapeKeyEvent);
+    if (!dialogControllers.length) {
+      DOM.removeEventListener('keyup', escapeKeyEvent);
     }
 
     return new Promise((resolve) => {
@@ -156,7 +157,7 @@ export class DialogRenderer {
         body.removeChild(this.modalContainer);
         dialogController.slot.detached();
 
-        if (!this.dialogControllers.length) {
+        if (!dialogControllers.length) {
           body.classList.remove('ai-dialog-open');
         }
 
