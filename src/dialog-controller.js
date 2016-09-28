@@ -58,7 +58,7 @@ export class DialogController {
    * @returns Promise An empty promise object.
    */
   close(ok: boolean, output?: any): Promise<DialogResult> {
-    if (this._closePromise) { 
+    if (this._closePromise) {
       return this._closePromise;
     }
 
