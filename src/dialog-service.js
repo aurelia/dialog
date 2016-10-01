@@ -35,19 +35,8 @@ export class DialogService {
    * @return Promise A promise that settles when the dialog is closed.
    */
   open(settings?: Object): Promise<DialogResult> {
-    let childContainer = this.container.createChild();
-    let dialogController;
-    let promise = new Promise((resolve, reject) => {
-      dialogController = new DialogController(childContainer.get(Renderer), _createSettings(settings), resolve, reject);
-    });
-    childContainer.registerInstance(DialogController, dialogController);
-
-    return _openDialog(this, childContainer, dialogController)
-      .then(() => promise)
-      .then((result) => {
-        _removeController(this, dialogController);
-        return result;
-      });
+    return this.openAndYieldController(settings)
+      .then((controller) => controller.result);
   }
 
   /**
@@ -58,20 +47,20 @@ export class DialogService {
    */
   openAndYieldController(settings?: Object): Promise<DialogController> {
     let childContainer = this.container.createChild();
-    let dialogController = new DialogController(childContainer.get(Renderer), _createSettings(settings), null, null);
+    let dialogController; 
+    let promise = new Promise((resolve, reject) => {
+      dialogController = new DialogController(childContainer.get(Renderer), _createSettings(settings), resolve, reject);
+    });
     childContainer.registerInstance(DialogController, dialogController);
-
-    dialogController.result = new Promise((resolve, reject) => {
-      dialogController._resolve = resolve;
-      dialogController._reject = reject;
-    }).then((result) => {
+    dialogController.result = promise;
+    dialogController.result.then(() => {
       _removeController(this, dialogController);
-      return result;
+    }).catch(() => {
+      _removeController(this, dialogController);
     });
 
-    return _openDialog(this, childContainer, dialogController).then(() => {
-      return dialogController;
-    });
+    return _openDialog(this, childContainer, dialogController)
+      .then(() => dialogController);
   }
 }
 
@@ -99,17 +88,13 @@ function _openDialog(service, childContainer, dialogController) {
 
     return invokeLifecycle(dialogController.viewModel, 'canActivate', dialogController.settings.model).then(canActivate => {
       if (canActivate) {
-        service.controllers.push(dialogController);
-        service.hasActiveDialog = !!service.controllers.length;
-
         return service.compositionEngine.compose(returnedInstruction).then(controller => {
+          service.controllers.push(dialogController);
+          service.hasActiveDialog = !!service.controllers.length;
           dialogController.controller = controller;
           dialogController.view = controller.view;
 
           return dialogController.renderer.showDialog(dialogController);
-        }).catch(e => {
-          _removeController(service, dialogController);
-          return Promise.reject(e);
         });
       }
     });

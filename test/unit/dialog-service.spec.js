@@ -13,13 +13,16 @@ describe('the Dialog Service', () => {
   let container;
   let compEng;
   let renderer;
-  
+
   beforeEach(() => {
     renderer = {
-      showDialog: function() {
+      showDialog: function () {
         return Promise.resolve();
       },
-      getDialogContainer: function() {
+      hideDialog: function () {
+        return Promise.resolve();
+      },
+      getDialogContainer: function () {
         return document.createElement('div');
       }
     };
@@ -78,12 +81,12 @@ describe('the Dialog Service', () => {
     dialogService.open(settings);
   });
 
-  it('reports no active dialog if no dialog is open', () => {
+  it('reports no active dialog if no dialog is open', (done) => {
     const settings = { viewModel: TestElement };
 
     spyOn(renderer, 'showDialog').and.callFake((dialogController) => {
+      expect(dialogService.hasActiveDialog).toBe(true);
       dialogController.cancel();
-      done();
     });
 
     expect(dialogService.hasActiveDialog).toBe(false);
@@ -103,7 +106,101 @@ describe('the Dialog Service', () => {
       done();
     });
 
+    expect(dialogService.hasActiveDialog).toBe(false);
     dialogService.open(settings);
+  });
+
+  it('reports an active dialog after it has been activated', (done) => {
+    // the cotroller should be added to .controllers after the result of .activate() has settled
+    // if there is activate
+    const viewModel = new TestElement();
+    viewModel.canActivate = function () { };
+    viewModel.activate = function () { };
+    const settings = { viewModel };
+
+    spyOn(viewModel, 'canActivate').and.callFake(() => {
+      expect(dialogService.controllers.length).toBe(0);
+    });
+
+    spyOn(viewModel, 'activate').and.callFake(() => {
+      expect(dialogService.controllers.length).toBe(0);
+    });
+
+    spyOn(renderer, 'showDialog').and.callFake((dialogController) => {
+      expect(dialogService.controllers.length).toBe(1);
+      done();
+    });
+
+    expect(dialogService.controllers.length).toBe(0);
+    dialogService.open(settings);
+  });
+
+  it('does not report an active dialog if it fails to activate', (done) => {
+    // the cotroller should be added to .controllers after the result of .activate() has settled
+    // if there is activate
+    const viewModel = new TestElement();
+    viewModel.activate = function () { };
+    const settings = { viewModel };
+
+    spyOn(viewModel, 'activate').and.returnValue(Promise.reject(new Error()));
+    spyOn(renderer, 'showDialog');
+
+    // we need a Promise to the point where the dialog will open
+    const controllerPromise = dialogService.openAndYieldController(settings);
+    spyOn(controllerPromise, 'catch');//.and.callThrough();
+    controllerPromise.then(() => {
+      expect(controllerPromise.catch).toHaveBeenCalled();
+      done();
+    }).catch(done).then(() => {
+      expect(renderer.showDialog).not.toHaveBeenCalled();
+      done()
+    });
+  });
+
+  it('properly tracks dialogs', (done) => {
+    const settings = { viewModel: TestElement };
+    const dialogsToOpen = 3;
+    const expectedEndCount = dialogsToOpen - 1;
+
+    spyOn(renderer, 'showDialog').and.callFake((dialogController) => {
+      if (renderer.showDialog.calls.count() === dialogsToOpen) {
+        expect(dialogService.controllers.length).toBe(dialogsToOpen);
+        dialogController.cancel();
+      }
+    });
+
+    expect(dialogService.controllers.length).toBe(0);
+    let i = dialogsToOpen - 1;
+    while (i--) {
+      dialogService.open(settings);
+    }
+
+    // the order in which DialogService.open is called does not match 
+    // the order DialogRendere.showDialog is called 
+    // with the respective DialogController instances
+    setTimeout(() => {
+      dialogService.open(settings).then(() => {
+        expect(dialogService.controllers.length).toBe(expectedEndCount);
+        done();
+      });
+    }, 60);
+  });
+
+  it('properly tracks dialogs closed with ".error()"', (done) => {
+    const settings = { viewModel: TestElement };
+    expect(dialogService.controllers.length).toBe(0); // start with 0
+    dialogService.openAndYieldController(settings).then((controller => {
+      expect(dialogService.controllers.length).toBe(1); // have 1 open
+      spyOn(controller.result, 'catch');
+      controller.result.then(() => {
+        expect(controller.result.catch).toHaveBeenCalled();
+        done();
+      }).catch(() => {
+        expect(dialogService.controllers.length).toBe(0); // the dialog has been closed with error
+        done();
+      });
+      controller.error(new Error());
+    }));
   });
 
   it('".open" properly propagates errors', (done) => {
