@@ -72,6 +72,14 @@ export class DialogService {
   closeAll(): Promise<void> {
     return Promise.all(this.controllers.map((controller) => controller.cancel().catch((reason) => reason)));
   }
+
+  /**
+   * Closes all open dialogs at the time of invocation.
+   * @return Promise A promise that settles when all dialogs have closed.
+   */
+  closeAll(): Promise<void> {
+    return Promise.all(this.controllers.map((controller) => controller.cancel().catch((reason) => reason)));
+  }
 }
 
 function _createSettings(settings) {

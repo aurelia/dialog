@@ -364,4 +364,49 @@ describe('the Dialog Service', function () {
       done();
     });
   });
+
+  it('".open" properly propagates errors', (done) => {
+    let catchWasCalled = false;
+    let promise = dialogService.open({ viewModel: 'test/fixtures/non-existent' })
+      .catch(() => {
+        catchWasCalled = true;
+      }).then(() => {
+        expect(catchWasCalled).toBe(true);
+        done();
+      });
+  });
+
+  it('reports no active dialog after ".closeAll" has been invoked', (done) => {
+    const settings = { viewModel: TestElement };
+    const dialogsToOpen = 6;
+    let i = dialogsToOpen;
+    let controllersPromises = [];
+    let controllers;
+    let catchWasCalled = false;
+
+    expect(dialogService.hasActiveDialog).toBe(false);
+    while (i--) { 
+      controllersPromises.push(dialogService.openAndYieldController(settings));
+    }
+    expect(dialogService.hasActiveDialog).toBe(false);
+    const closeAll = Promise.all(controllersPromises).then((ctrls) => {
+      controllers = ctrls;
+      ctrls.forEach((controller) => {
+        spyOn(controller, 'cancel').and.callThrough();
+      });
+      return dialogService.closeAll();
+    }).catch((reason => {
+      catchWasCalled = true;
+    })).then(() => {
+      expect(catchWasCalled).toBe(false);
+      if (catchWasCalled) {
+        return done();
+      }
+      controllers.forEach((controller) => {
+        expect(controller.cancel).toHaveBeenCalled();
+      });
+      expect(dialogService.controllers.length).toBe(0);
+      done();
+    });
+  });
 });
