@@ -141,19 +141,20 @@ describe('the Dialog Service', () => {
     const viewModel = new TestElement();
     viewModel.activate = function () { };
     const settings = { viewModel };
+    const activateError = new Error();
 
-    spyOn(viewModel, 'activate').and.returnValue(Promise.reject(new Error()));
-    spyOn(renderer, 'showDialog');
+    spyOn(viewModel, 'activate').and.returnValue(Promise.reject(activateError));
+    spyOn(renderer, 'showDialog').and.callThrough();
 
     // we need a Promise to the point where the dialog will open
-    const controllerPromise = dialogService.openAndYieldController(settings);
-    spyOn(controllerPromise, 'catch');//.and.callThrough();
-    controllerPromise.then(() => {
-      expect(controllerPromise.catch).toHaveBeenCalled();
-      done();
-    }).catch(done).then(() => {
+    let catchWasCalled = false;
+    dialogService.openAndYieldController(settings).catch((reason) => {
+      catchWasCalled = true; // the .activate() error has propagated
+      expect(reason).toBe(activateError);
+    }).then(() => {
+      expect(catchWasCalled).toBe(true);
       expect(renderer.showDialog).not.toHaveBeenCalled();
-      done()
+      done();
     });
   });
 
@@ -188,18 +189,20 @@ describe('the Dialog Service', () => {
 
   it('properly tracks dialogs closed with ".error()"', (done) => {
     const settings = { viewModel: TestElement };
+    const closeError = new Error();
+    let catchWasCalled = false;
     expect(dialogService.controllers.length).toBe(0); // start with 0
     dialogService.openAndYieldController(settings).then((controller => {
       expect(dialogService.controllers.length).toBe(1); // have 1 open
-      spyOn(controller.result, 'catch');
-      controller.result.then(() => {
-        expect(controller.result.catch).toHaveBeenCalled();
-        done();
-      }).catch(() => {
+      controller.result.catch((reason) => {
+        catchWasCalled = true;
         expect(dialogService.controllers.length).toBe(0); // the dialog has been closed with error
+        expect(reason).toBe(closeError);
+      }).then(() => {
+        expect(catchWasCalled).toBe(true);
         done();
       });
-      controller.error(new Error());
+      controller.error(closeError);
     }));
   });
 

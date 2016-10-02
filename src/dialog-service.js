@@ -55,10 +55,9 @@ export class DialogService {
     dialogController.result = promise;
     dialogController.result.then(() => {
       _removeController(this, dialogController);
-    }).catch(() => {
+    }, () => {
       _removeController(this, dialogController);
     });
-
     return _openDialog(this, childContainer, dialogController)
       .then(() => dialogController);
   }
