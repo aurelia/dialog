@@ -26,19 +26,17 @@ let transitionEvent = (function() {
   };
 }());
 
-let dialogControllers = [];
-
-function escapeKeyEvent(e) {
-  if (e.keyCode === 27) {
-    let top = dialogControllers[dialogControllers.length - 1];
-    if (top && top.settings.lock !== true) {
-      top.cancel();
-    }
-  }
-}
-
 @transient()
 export class DialogRenderer {
+  _escapeKeyEventHandler = (e) => {
+    if (e.keyCode === 27) {
+      let top = this._dialogControllers[this._dialogControllers.length - 1];
+      if (top && top.settings.lock !== true) {
+        top.cancel();
+      }
+    }
+  }
+
   getDialogContainer() {
     return DOM.createElement('div');
   }
@@ -81,11 +79,11 @@ export class DialogRenderer {
       body.insertBefore(this.modalOverlay, body.firstChild);
     }
 
-    if (!dialogControllers.length) {
-      DOM.addEventListener('keyup', escapeKeyEvent);
+    if (!this._dialogControllers.length) {
+      DOM.addEventListener('keyup', this._escapeKeyEventHandler);
     }
 
-    dialogControllers.push(dialogController);
+    this._dialogControllers.push(dialogController);
 
     dialogController.slot.attached();
 
@@ -127,13 +125,13 @@ export class DialogRenderer {
     this.modalContainer.removeEventListener('click', this.closeModalClick);
     this.anchor.removeEventListener('click', this.stopPropagation);
 
-    let i = dialogControllers.indexOf(dialogController);
+    let i = this._dialogControllers.indexOf(dialogController);
     if (i !== -1) {
-      dialogControllers.splice(i, 1);
+      this._dialogControllers.splice(i, 1);
     }
 
-    if (!dialogControllers.length) {
-      DOM.removeEventListener('keyup', escapeKeyEvent);
+    if (!this._dialogControllers.length) {
+      DOM.removeEventListener('keyup', this._escapeKeyEventHandler);
     }
 
     return new Promise((resolve) => {
@@ -157,7 +155,7 @@ export class DialogRenderer {
         body.removeChild(this.modalContainer);
         dialogController.slot.detached();
 
-        if (!dialogControllers.length) {
+        if (!this._dialogControllers.length) {
           body.classList.remove('ai-dialog-open');
         }
 
@@ -165,6 +163,8 @@ export class DialogRenderer {
       });
   }
 }
+
+DialogRenderer.prototype._dialogControllers = []; // will be shared by all instances
 
 function centerDialog(modalContainer) {
   const child = modalContainer.children[0];
