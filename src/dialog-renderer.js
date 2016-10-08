@@ -28,15 +28,14 @@ let transitionEvent = (function() {
 
 @transient()
 export class DialogRenderer {
-  dialogControllers = [];
-  escapeKeyEvent = (e) => {
+  _escapeKeyEventHandler = (e) => {
     if (e.keyCode === 27) {
-      let top = this.dialogControllers[this.dialogControllers.length - 1];
+      let top = this._dialogControllers[this._dialogControllers.length - 1];
       if (top && top.settings.lock !== true) {
         top.cancel();
       }
     }
-  };
+  }
 
   getDialogContainer() {
     return DOM.createElement('div');
@@ -80,11 +79,11 @@ export class DialogRenderer {
       body.insertBefore(this.modalOverlay, body.firstChild);
     }
 
-    if (!this.dialogControllers.length) {
-      DOM.addEventListener('keyup', this.escapeKeyEvent);
+    if (!this._dialogControllers.length) {
+      DOM.addEventListener('keyup', this._escapeKeyEventHandler);
     }
 
-    this.dialogControllers.push(dialogController);
+    this._dialogControllers.push(dialogController);
 
     dialogController.slot.attached();
 
@@ -126,13 +125,13 @@ export class DialogRenderer {
     this.modalContainer.removeEventListener('click', this.closeModalClick);
     this.anchor.removeEventListener('click', this.stopPropagation);
 
-    let i = this.dialogControllers.indexOf(dialogController);
+    let i = this._dialogControllers.indexOf(dialogController);
     if (i !== -1) {
-      this.dialogControllers.splice(i, 1);
+      this._dialogControllers.splice(i, 1);
     }
 
-    if (!this.dialogControllers.length) {
-      DOM.removeEventListener('keyup', this.escapeKeyEvent);
+    if (!this._dialogControllers.length) {
+      DOM.removeEventListener('keyup', this._escapeKeyEventHandler);
     }
 
     return new Promise((resolve) => {
@@ -156,7 +155,7 @@ export class DialogRenderer {
         body.removeChild(this.modalContainer);
         dialogController.slot.detached();
 
-        if (!this.dialogControllers.length) {
+        if (!this._dialogControllers.length) {
           body.classList.remove('ai-dialog-open');
         }
 
@@ -164,6 +163,8 @@ export class DialogRenderer {
       });
   }
 }
+
+DialogRenderer.prototype._dialogControllers = []; // will be shared by all instances
 
 function centerDialog(modalContainer) {
   const child = modalContainer.children[0];
