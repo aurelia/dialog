@@ -4,7 +4,7 @@
     </ai-dialog-header>
     <ai-dialog-body>
       <h2>Edit first name</h2>
-      <input value.bind="person.firstName" />
+      <input value.bind="person.firstName" attach-focus="true" />
       <br />
       <a click.delegate="testDelegate()" href="javascript:void(0)">Delegation testing</a>
       <div if.bind="person.testScrolling">
