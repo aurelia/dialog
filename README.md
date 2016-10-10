@@ -267,6 +267,7 @@ The settings available for the dialog are set on the dialog controller on a per-
 - `lock` makes the dialog modal, and removes the close button from the top-right hand corner. (defaults to true)
 - `centerHorizontalOnly` means that the dialog will be centered horizontally, and the vertical alignment is left up to you. (defaults to false)
 - `position` a callback that is called right before showing the modal with the signature: `(modalContainer: Element, modalOverlay: Element) => void`. This allows you to setup special classes, play with the position, etc... If specified, `centerHorizontalOnly` is ignored. (optional)
+- `ignoreTransitions` is a Boolean you must set to `true` if you disable css animation of your dialog. (optional, default to false)
 
 ```javascript
 export class Prompt {
