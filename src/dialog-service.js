@@ -47,7 +47,7 @@ export class DialogService {
    */
   openAndYieldController(settings?: Object): Promise<DialogController> {
     let childContainer = this.container.createChild();
-    let dialogController; 
+    let dialogController;
     let promise = new Promise((resolve, reject) => {
       dialogController = new DialogController(childContainer.get(Renderer), _createSettings(settings), resolve, reject);
     });
