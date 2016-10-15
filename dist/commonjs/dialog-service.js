@@ -21,6 +21,8 @@ var _lifecycle = require('./lifecycle');
 
 var _dialogResult = require('./dialog-result');
 
+var _dialogOptions = require('./dialog-options');
+
 
 
 var DialogService = exports.DialogService = (_temp = _class = function () {
@@ -34,47 +36,26 @@ var DialogService = exports.DialogService = (_temp = _class = function () {
   }
 
   DialogService.prototype.open = function open(settings) {
-    var _this = this;
-
-    var dialogController = void 0;
-
-    var promise = new Promise(function (resolve, reject) {
-      var childContainer = _this.container.createChild();
-      dialogController = new _dialogController.DialogController(childContainer.get(_renderer.Renderer), settings, resolve, reject);
-      childContainer.registerInstance(_dialogController.DialogController, dialogController);
-      return _openDialog(_this, childContainer, dialogController);
-    });
-
-    return promise.then(function (result) {
-      var i = _this.controllers.indexOf(dialogController);
-      if (i !== -1) {
-        _this.controllers.splice(i, 1);
-        _this.hasActiveDialog = !!_this.controllers.length;
-      }
-
-      return result;
+    return this.openAndYieldController(settings).then(function (controller) {
+      return controller.result;
     });
   };
 
   DialogService.prototype.openAndYieldController = function openAndYieldController(settings) {
-    var _this2 = this;
+    var _this = this;
 
     var childContainer = this.container.createChild();
-    var dialogController = new _dialogController.DialogController(childContainer.get(_renderer.Renderer), settings, null, null);
-    childContainer.registerInstance(_dialogController.DialogController, dialogController);
-
-    dialogController.result = new Promise(function (resolve, reject) {
-      dialogController._resolve = resolve;
-      dialogController._reject = reject;
-    }).then(function (result) {
-      var i = _this2.controllers.indexOf(dialogController);
-      if (i !== -1) {
-        _this2.controllers.splice(i, 1);
-        _this2.hasActiveDialog = !!_this2.controllers.length;
-      }
-      return result;
+    var dialogController = void 0;
+    var promise = new Promise(function (resolve, reject) {
+      dialogController = new _dialogController.DialogController(childContainer.get(_renderer.Renderer), _createSettings(settings), resolve, reject);
     });
-
+    childContainer.registerInstance(_dialogController.DialogController, dialogController);
+    dialogController.result = promise;
+    dialogController.result.then(function () {
+      _removeController(_this, dialogController);
+    }, function () {
+      _removeController(_this, dialogController);
+    });
     return _openDialog(this, childContainer, dialogController).then(function () {
       return dialogController;
     });
@@ -83,6 +64,12 @@ var DialogService = exports.DialogService = (_temp = _class = function () {
   return DialogService;
 }(), _class.inject = [_aureliaDependencyInjection.Container, _aureliaTemplating.CompositionEngine], _temp);
 
+
+function _createSettings(settings) {
+  settings = Object.assign({}, _dialogOptions.dialogOptions, settings);
+  settings.startingZIndex = _dialogOptions.dialogOptions.startingZIndex;
+  return settings;
+}
 
 function _openDialog(service, childContainer, dialogController) {
   var host = dialogController.renderer.getDialogContainer();
@@ -102,10 +89,9 @@ function _openDialog(service, childContainer, dialogController) {
 
     return (0, _lifecycle.invokeLifecycle)(dialogController.viewModel, 'canActivate', dialogController.settings.model).then(function (canActivate) {
       if (canActivate) {
-        service.controllers.push(dialogController);
-        service.hasActiveDialog = !!service.controllers.length;
-
         return service.compositionEngine.compose(returnedInstruction).then(function (controller) {
+          service.controllers.push(dialogController);
+          service.hasActiveDialog = !!service.controllers.length;
           dialogController.controller = controller;
           dialogController.view = controller.view;
 
@@ -126,4 +112,12 @@ function _getViewModel(instruction, compositionEngine) {
   }
 
   return Promise.resolve(instruction);
+}
+
+function _removeController(service, controller) {
+  var i = service.controllers.indexOf(controller);
+  if (i !== -1) {
+    service.controllers.splice(i, 1);
+    service.hasActiveDialog = !!service.controllers.length;
+  }
 }

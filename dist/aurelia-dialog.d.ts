@@ -1,4 +1,11 @@
 import {
+  DOM
+} from 'aurelia-pal';
+import {
+  transient,
+  Container
+} from 'aurelia-dependency-injection';
+import {
   customAttribute,
   customElement,
   inlineView,
@@ -7,15 +14,13 @@ import {
   ViewSlot
 } from 'aurelia-templating';
 import {
-  DOM
-} from 'aurelia-pal';
-import {
-  transient,
-  Container
-} from 'aurelia-dependency-injection';
-import {
   Origin
 } from 'aurelia-metadata';
+export declare class DialogRenderer {
+  getDialogContainer(): any;
+  showDialog(dialogController: DialogController): any;
+  hideDialog(dialogController: DialogController): any;
+}
 
 /**
  * An abstract base class for implementors of the basic Renderer API.
@@ -128,57 +133,6 @@ export declare class DialogController {
      */
   close(ok: boolean, output?: any): Promise<DialogResult>;
 }
-export declare class DialogRenderer {
-  dialogControllers: any;
-  escapeKeyEvent: any;
-  constructor();
-  getDialogContainer(): any;
-  showDialog(dialogController: DialogController): any;
-  hideDialog(dialogController: DialogController): any;
-}
-
-/**
- * * View-model for footer of Dialog.
- * */
-export declare class AiDialogFooter {
-  static inject: any;
-  buttons: any[];
-  useDefaultButtons: boolean;
-  constructor(controller: DialogController);
-  close(buttonValue: string): any;
-  useDefaultButtonsChanged(newValue: boolean): any;
-  static isCancelButton(value: string): any;
-}
-export declare class AiDialogHeader {
-  static inject: any;
-  constructor(controller?: any);
-}
-
-/**
- * A service allowing for the creation of dialogs.
- */
-export declare class DialogService {
-  static inject: any;
-  
-  /**
-     * The current dialog controllers
-     */
-  controllers: DialogController[];
-  
-  /**
-     * Is there an active dialog
-     */
-  hasActiveDialog: boolean;
-  constructor(container: Container, compositionEngine: CompositionEngine);
-  
-  /**
-     * Opens a new dialog.
-     * @param settings Dialog settings for this dialog instance.
-     * @return Promise A promise that settles when the dialog is closed.
-     */
-  open(settings?: Object): Promise<DialogResult>;
-  openAndYieldController(settings?: Object): Promise<DialogController>;
-}
 
 /**
  * A configuration builder for the dialog plugin.
@@ -224,4 +178,54 @@ export declare class DialogConfiguration {
      * @return This instance.
      */
   useCSS(cssText: string): DialogConfiguration;
+}
+
+/**
+ * * View-model for footer of Dialog.
+ * */
+export declare class AiDialogFooter {
+  static inject: any;
+  buttons: any[];
+  useDefaultButtons: boolean;
+  constructor(controller: DialogController);
+  close(buttonValue: string): any;
+  useDefaultButtonsChanged(newValue: boolean): any;
+  static isCancelButton(value: string): any;
+}
+export declare class AiDialogHeader {
+  static inject: any;
+  constructor(controller?: any);
+}
+
+/**
+ * A service allowing for the creation of dialogs.
+ */
+export declare class DialogService {
+  static inject: any;
+  
+  /**
+     * The current dialog controllers
+     */
+  controllers: DialogController[];
+  
+  /**
+     * Is there an active dialog
+     */
+  hasActiveDialog: boolean;
+  constructor(container: Container, compositionEngine: CompositionEngine);
+  
+  /**
+     * Opens a new dialog.
+     * @param settings Dialog settings for this dialog instance.
+     * @return Promise A promise that settles when the dialog is closed.
+     */
+  open(settings?: Object): Promise<DialogResult>;
+  
+  /**
+     * Opens a new dialog.
+     * @param settings Dialog settings for this dialog instance.
+     * @return Promise A promise that settles when the dialog is opened.
+     * Resolves to the controller of the dialog.
+     */
+  openAndYieldController(settings?: Object): Promise<DialogController>;
 }

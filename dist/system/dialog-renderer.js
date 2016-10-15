@@ -1,9 +1,9 @@
 'use strict';
 
-System.register(['./dialog-options', 'aurelia-pal', 'aurelia-dependency-injection'], function (_export, _context) {
+System.register(['aurelia-pal', 'aurelia-dependency-injection'], function (_export, _context) {
   "use strict";
 
-  var dialogOptions, DOM, transient, _dec, _class, containerTagName, overlayTagName, transitionEvent, DialogRenderer;
+  var DOM, transient, _dec, _class, containerTagName, overlayTagName, transitionEvent, DialogRenderer;
 
   
 
@@ -15,9 +15,7 @@ System.register(['./dialog-options', 'aurelia-pal', 'aurelia-dependency-injectio
     child.style.marginBottom = Math.max((vh - child.offsetHeight) / 2, 30) + 'px';
   }
   return {
-    setters: [function (_dialogOptions) {
-      dialogOptions = _dialogOptions.dialogOptions;
-    }, function (_aureliaPal) {
+    setters: [function (_aureliaPal) {
       DOM = _aureliaPal.DOM;
     }, function (_aureliaDependencyInjection) {
       transient = _aureliaDependencyInjection.transient;
@@ -55,18 +53,14 @@ System.register(['./dialog-options', 'aurelia-pal', 'aurelia-dependency-injectio
 
           
 
-          this.dialogControllers = [];
-
-          this.escapeKeyEvent = function (e) {
+          this._escapeKeyEventHandler = function (e) {
             if (e.keyCode === 27) {
-              var top = _this.dialogControllers[_this.dialogControllers.length - 1];
+              var top = _this._dialogControllers[_this._dialogControllers.length - 1];
               if (top && top.settings.lock !== true) {
                 top.cancel();
               }
             }
           };
-
-          this.defaultSettings = dialogOptions;
         }
 
         DialogRenderer.prototype.getDialogContainer = function getDialogContainer() {
@@ -76,7 +70,7 @@ System.register(['./dialog-options', 'aurelia-pal', 'aurelia-dependency-injectio
         DialogRenderer.prototype.showDialog = function showDialog(dialogController) {
           var _this2 = this;
 
-          var settings = Object.assign({}, this.defaultSettings, dialogController.settings);
+          var settings = dialogController.settings;
           var body = DOM.querySelectorAll('body')[0];
           var wrapper = document.createElement('div');
 
@@ -102,8 +96,8 @@ System.register(['./dialog-options', 'aurelia-pal', 'aurelia-dependency-injectio
             centerDialog(_this2.modalContainer);
           };
 
-          this.modalOverlay.style.zIndex = this.defaultSettings.startingZIndex;
-          this.modalContainer.style.zIndex = this.defaultSettings.startingZIndex;
+          this.modalOverlay.style.zIndex = settings.startingZIndex;
+          this.modalContainer.style.zIndex = settings.startingZIndex;
 
           var lastContainer = Array.from(body.querySelectorAll(containerTagName)).pop();
 
@@ -115,11 +109,11 @@ System.register(['./dialog-options', 'aurelia-pal', 'aurelia-dependency-injectio
             body.insertBefore(this.modalOverlay, body.firstChild);
           }
 
-          if (!this.dialogControllers.length) {
-            DOM.addEventListener('keyup', this.escapeKeyEvent);
+          if (!this._dialogControllers.length) {
+            DOM.addEventListener('keyup', this._escapeKeyEventHandler);
           }
 
-          this.dialogControllers.push(dialogController);
+          this._dialogControllers.push(dialogController);
 
           dialogController.slot.attached();
 
@@ -157,19 +151,19 @@ System.register(['./dialog-options', 'aurelia-pal', 'aurelia-dependency-injectio
         DialogRenderer.prototype.hideDialog = function hideDialog(dialogController) {
           var _this3 = this;
 
-          var settings = Object.assign({}, this.defaultSettings, dialogController.settings);
+          var settings = dialogController.settings;
           var body = DOM.querySelectorAll('body')[0];
 
           this.modalContainer.removeEventListener('click', this.closeModalClick);
           this.anchor.removeEventListener('click', this.stopPropagation);
 
-          var i = this.dialogControllers.indexOf(dialogController);
+          var i = this._dialogControllers.indexOf(dialogController);
           if (i !== -1) {
-            this.dialogControllers.splice(i, 1);
+            this._dialogControllers.splice(i, 1);
           }
 
-          if (!this.dialogControllers.length) {
-            DOM.removeEventListener('keyup', this.escapeKeyEvent);
+          if (!this._dialogControllers.length) {
+            DOM.removeEventListener('keyup', this._escapeKeyEventHandler);
           }
 
           return new Promise(function (resolve) {
@@ -192,7 +186,7 @@ System.register(['./dialog-options', 'aurelia-pal', 'aurelia-dependency-injectio
             body.removeChild(_this3.modalContainer);
             dialogController.slot.detached();
 
-            if (!_this3.dialogControllers.length) {
+            if (!_this3._dialogControllers.length) {
               body.classList.remove('ai-dialog-open');
             }
 
@@ -204,6 +198,8 @@ System.register(['./dialog-options', 'aurelia-pal', 'aurelia-dependency-injectio
       }()) || _class));
 
       _export('DialogRenderer', DialogRenderer);
+
+      DialogRenderer.prototype._dialogControllers = [];
     }
   };
 });

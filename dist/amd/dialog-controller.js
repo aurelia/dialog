@@ -40,7 +40,9 @@ define(['exports', './lifecycle', './dialog-result'], function (exports, _lifecy
     DialogController.prototype.close = function close(ok, output) {
       var _this2 = this;
 
-      if (this._closePromise) return this._closePromise;
+      if (this._closePromise) {
+        return this._closePromise;
+      }
 
       this._closePromise = (0, _lifecycle.invokeLifecycle)(this.viewModel, 'canDeactivate').then(function (canDeactivate) {
         if (canDeactivate) {
@@ -54,7 +56,10 @@ define(['exports', './lifecycle', './dialog-result'], function (exports, _lifecy
           });
         }
 
-        return Promise.resolve();
+        _this2._closePromise = undefined;
+      }, function (e) {
+        _this2._closePromise = undefined;
+        return Promise.reject(e);
       });
 
       return this._closePromise;

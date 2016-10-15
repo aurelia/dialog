@@ -1,6 +1,5 @@
 var _dec, _class;
 
-import { dialogOptions } from './dialog-options';
 import { DOM } from 'aurelia-pal';
 import { transient } from 'aurelia-dependency-injection';
 
@@ -30,20 +29,15 @@ let transitionEvent = function () {
 }();
 
 export let DialogRenderer = (_dec = transient(), _dec(_class = class DialogRenderer {
-
   constructor() {
-    this.dialogControllers = [];
-
-    this.escapeKeyEvent = e => {
+    this._escapeKeyEventHandler = e => {
       if (e.keyCode === 27) {
-        let top = this.dialogControllers[this.dialogControllers.length - 1];
+        let top = this._dialogControllers[this._dialogControllers.length - 1];
         if (top && top.settings.lock !== true) {
           top.cancel();
         }
       }
     };
-
-    this.defaultSettings = dialogOptions;
   }
 
   getDialogContainer() {
@@ -51,7 +45,7 @@ export let DialogRenderer = (_dec = transient(), _dec(_class = class DialogRende
   }
 
   showDialog(dialogController) {
-    let settings = Object.assign({}, this.defaultSettings, dialogController.settings);
+    let settings = dialogController.settings;
     let body = DOM.querySelectorAll('body')[0];
     let wrapper = document.createElement('div');
 
@@ -77,8 +71,8 @@ export let DialogRenderer = (_dec = transient(), _dec(_class = class DialogRende
       centerDialog(this.modalContainer);
     };
 
-    this.modalOverlay.style.zIndex = this.defaultSettings.startingZIndex;
-    this.modalContainer.style.zIndex = this.defaultSettings.startingZIndex;
+    this.modalOverlay.style.zIndex = settings.startingZIndex;
+    this.modalContainer.style.zIndex = settings.startingZIndex;
 
     let lastContainer = Array.from(body.querySelectorAll(containerTagName)).pop();
 
@@ -90,11 +84,11 @@ export let DialogRenderer = (_dec = transient(), _dec(_class = class DialogRende
       body.insertBefore(this.modalOverlay, body.firstChild);
     }
 
-    if (!this.dialogControllers.length) {
-      DOM.addEventListener('keyup', this.escapeKeyEvent);
+    if (!this._dialogControllers.length) {
+      DOM.addEventListener('keyup', this._escapeKeyEventHandler);
     }
 
-    this.dialogControllers.push(dialogController);
+    this._dialogControllers.push(dialogController);
 
     dialogController.slot.attached();
 
@@ -130,19 +124,19 @@ export let DialogRenderer = (_dec = transient(), _dec(_class = class DialogRende
   }
 
   hideDialog(dialogController) {
-    let settings = Object.assign({}, this.defaultSettings, dialogController.settings);
+    let settings = dialogController.settings;
     let body = DOM.querySelectorAll('body')[0];
 
     this.modalContainer.removeEventListener('click', this.closeModalClick);
     this.anchor.removeEventListener('click', this.stopPropagation);
 
-    let i = this.dialogControllers.indexOf(dialogController);
+    let i = this._dialogControllers.indexOf(dialogController);
     if (i !== -1) {
-      this.dialogControllers.splice(i, 1);
+      this._dialogControllers.splice(i, 1);
     }
 
-    if (!this.dialogControllers.length) {
-      DOM.removeEventListener('keyup', this.escapeKeyEvent);
+    if (!this._dialogControllers.length) {
+      DOM.removeEventListener('keyup', this._escapeKeyEventHandler);
     }
 
     return new Promise(resolve => {
@@ -165,7 +159,7 @@ export let DialogRenderer = (_dec = transient(), _dec(_class = class DialogRende
       body.removeChild(this.modalContainer);
       dialogController.slot.detached();
 
-      if (!this.dialogControllers.length) {
+      if (!this._dialogControllers.length) {
         body.classList.remove('ai-dialog-open');
       }
 
@@ -173,6 +167,8 @@ export let DialogRenderer = (_dec = transient(), _dec(_class = class DialogRende
     });
   }
 }) || _class);
+
+DialogRenderer.prototype._dialogControllers = [];
 
 function centerDialog(modalContainer) {
   const child = modalContainer.children[0];

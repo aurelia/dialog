@@ -1,3 +1,14 @@
+# 1.0.0-beta.3.0.1
+
+## Bug Fixes
+
+* **dialog-service:** .open() proper error propagation
+* **dialog-controller:** clear close promise when canDeactivate=>false
+* **dialog-renderer, dialog-service:** fix settings merging
+* **dialog-renderer:** do not track controllers per renderer instance
+* **dialog-service:** fix remove controllers closed with .error
+* **styles:** make ai-dialog display:table
+
 <a name="1.0.0-beta.3.0.0"></a>
 # [1.0.0-beta.3.0.0](https://github.com/aurelia/dialog/compare/1.0.0-beta.2.0.0...v1.0.0-beta.3.0.0) (2016-07-27)
 

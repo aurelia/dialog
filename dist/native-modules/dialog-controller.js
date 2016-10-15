@@ -35,7 +35,9 @@ export var DialogController = function () {
   DialogController.prototype.close = function close(ok, output) {
     var _this2 = this;
 
-    if (this._closePromise) return this._closePromise;
+    if (this._closePromise) {
+      return this._closePromise;
+    }
 
     this._closePromise = invokeLifecycle(this.viewModel, 'canDeactivate').then(function (canDeactivate) {
       if (canDeactivate) {
@@ -49,7 +51,10 @@ export var DialogController = function () {
         });
       }
 
-      return Promise.resolve();
+      _this2._closePromise = undefined;
+    }, function (e) {
+      _this2._closePromise = undefined;
+      return Promise.reject(e);
     });
 
     return this._closePromise;

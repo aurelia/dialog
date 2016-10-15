@@ -7,8 +7,6 @@ exports.DialogRenderer = undefined;
 
 var _dec, _class;
 
-var _dialogOptions = require('./dialog-options');
-
 var _aureliaPal = require('aurelia-pal');
 
 var _aureliaDependencyInjection = require('aurelia-dependency-injection');
@@ -46,18 +44,14 @@ var DialogRenderer = exports.DialogRenderer = (_dec = (0, _aureliaDependencyInje
 
     
 
-    this.dialogControllers = [];
-
-    this.escapeKeyEvent = function (e) {
+    this._escapeKeyEventHandler = function (e) {
       if (e.keyCode === 27) {
-        var top = _this.dialogControllers[_this.dialogControllers.length - 1];
+        var top = _this._dialogControllers[_this._dialogControllers.length - 1];
         if (top && top.settings.lock !== true) {
           top.cancel();
         }
       }
     };
-
-    this.defaultSettings = _dialogOptions.dialogOptions;
   }
 
   DialogRenderer.prototype.getDialogContainer = function getDialogContainer() {
@@ -67,7 +61,7 @@ var DialogRenderer = exports.DialogRenderer = (_dec = (0, _aureliaDependencyInje
   DialogRenderer.prototype.showDialog = function showDialog(dialogController) {
     var _this2 = this;
 
-    var settings = Object.assign({}, this.defaultSettings, dialogController.settings);
+    var settings = dialogController.settings;
     var body = _aureliaPal.DOM.querySelectorAll('body')[0];
     var wrapper = document.createElement('div');
 
@@ -93,8 +87,8 @@ var DialogRenderer = exports.DialogRenderer = (_dec = (0, _aureliaDependencyInje
       centerDialog(_this2.modalContainer);
     };
 
-    this.modalOverlay.style.zIndex = this.defaultSettings.startingZIndex;
-    this.modalContainer.style.zIndex = this.defaultSettings.startingZIndex;
+    this.modalOverlay.style.zIndex = settings.startingZIndex;
+    this.modalContainer.style.zIndex = settings.startingZIndex;
 
     var lastContainer = Array.from(body.querySelectorAll(containerTagName)).pop();
 
@@ -106,11 +100,11 @@ var DialogRenderer = exports.DialogRenderer = (_dec = (0, _aureliaDependencyInje
       body.insertBefore(this.modalOverlay, body.firstChild);
     }
 
-    if (!this.dialogControllers.length) {
-      _aureliaPal.DOM.addEventListener('keyup', this.escapeKeyEvent);
+    if (!this._dialogControllers.length) {
+      _aureliaPal.DOM.addEventListener('keyup', this._escapeKeyEventHandler);
     }
 
-    this.dialogControllers.push(dialogController);
+    this._dialogControllers.push(dialogController);
 
     dialogController.slot.attached();
 
@@ -148,19 +142,19 @@ var DialogRenderer = exports.DialogRenderer = (_dec = (0, _aureliaDependencyInje
   DialogRenderer.prototype.hideDialog = function hideDialog(dialogController) {
     var _this3 = this;
 
-    var settings = Object.assign({}, this.defaultSettings, dialogController.settings);
+    var settings = dialogController.settings;
     var body = _aureliaPal.DOM.querySelectorAll('body')[0];
 
     this.modalContainer.removeEventListener('click', this.closeModalClick);
     this.anchor.removeEventListener('click', this.stopPropagation);
 
-    var i = this.dialogControllers.indexOf(dialogController);
+    var i = this._dialogControllers.indexOf(dialogController);
     if (i !== -1) {
-      this.dialogControllers.splice(i, 1);
+      this._dialogControllers.splice(i, 1);
     }
 
-    if (!this.dialogControllers.length) {
-      _aureliaPal.DOM.removeEventListener('keyup', this.escapeKeyEvent);
+    if (!this._dialogControllers.length) {
+      _aureliaPal.DOM.removeEventListener('keyup', this._escapeKeyEventHandler);
     }
 
     return new Promise(function (resolve) {
@@ -183,7 +177,7 @@ var DialogRenderer = exports.DialogRenderer = (_dec = (0, _aureliaDependencyInje
       body.removeChild(_this3.modalContainer);
       dialogController.slot.detached();
 
-      if (!_this3.dialogControllers.length) {
+      if (!_this3._dialogControllers.length) {
         body.classList.remove('ai-dialog-open');
       }
 
@@ -194,6 +188,8 @@ var DialogRenderer = exports.DialogRenderer = (_dec = (0, _aureliaDependencyInje
   return DialogRenderer;
 }()) || _class);
 
+
+DialogRenderer.prototype._dialogControllers = [];
 
 function centerDialog(modalContainer) {
   var child = modalContainer.children[0];

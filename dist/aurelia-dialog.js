@@ -1,7 +1,180 @@
-import {customAttribute,customElement,inlineView,bindable,CompositionEngine,ViewSlot} from 'aurelia-templating';
 import {DOM} from 'aurelia-pal';
 import {transient,Container} from 'aurelia-dependency-injection';
+import {customAttribute,customElement,inlineView,bindable,CompositionEngine,ViewSlot} from 'aurelia-templating';
 import {Origin} from 'aurelia-metadata';
+
+let containerTagName = 'ai-dialog-container';
+let overlayTagName = 'ai-dialog-overlay';
+let transitionEvent = (function() {
+  let transition = null;
+
+  return function() {
+    if (transition) return transition;
+
+    let t;
+    let el = DOM.createElement('fakeelement');
+    let transitions = {
+      'transition': 'transitionend',
+      'OTransition': 'oTransitionEnd',
+      'MozTransition': 'transitionend',
+      'WebkitTransition': 'webkitTransitionEnd'
+    };
+    for (t in transitions) {
+      if (el.style[t] !== undefined) {
+        transition = transitions[t];
+        return transition;
+      }
+    }
+  };
+}());
+
+@transient()
+export class DialogRenderer {
+  _escapeKeyEventHandler = (e) => {
+    if (e.keyCode === 27) {
+      let top = this._dialogControllers[this._dialogControllers.length - 1];
+      if (top && top.settings.lock !== true) {
+        top.cancel();
+      }
+    }
+  }
+
+  getDialogContainer() {
+    return DOM.createElement('div');
+  }
+
+  showDialog(dialogController: DialogController) {
+    let settings = dialogController.settings;
+    let body = DOM.querySelectorAll('body')[0];
+    let wrapper = document.createElement('div');
+
+    this.modalOverlay = DOM.createElement(overlayTagName);
+    this.modalContainer = DOM.createElement(containerTagName);
+    this.anchor = dialogController.slot.anchor;
+    wrapper.appendChild(this.anchor);
+    this.modalContainer.appendChild(wrapper);
+
+    this.stopPropagation = (e) => { e._aureliaDialogHostClicked = true; };
+    this.closeModalClick = (e) => {
+      if (!settings.lock && !e._aureliaDialogHostClicked) {
+        dialogController.cancel();
+      } else {
+        return false;
+      }
+    };
+
+    dialogController.centerDialog = () => {
+      if (settings.centerHorizontalOnly) return;
+      centerDialog(this.modalContainer);
+    };
+
+    this.modalOverlay.style.zIndex = settings.startingZIndex;
+    this.modalContainer.style.zIndex = settings.startingZIndex;
+
+    let lastContainer = Array.from(body.querySelectorAll(containerTagName)).pop();
+
+    if (lastContainer) {
+      lastContainer.parentNode.insertBefore(this.modalContainer, lastContainer.nextSibling);
+      lastContainer.parentNode.insertBefore(this.modalOverlay, lastContainer.nextSibling);
+    } else {
+      body.insertBefore(this.modalContainer, body.firstChild);
+      body.insertBefore(this.modalOverlay, body.firstChild);
+    }
+
+    if (!this._dialogControllers.length) {
+      DOM.addEventListener('keyup', this._escapeKeyEventHandler);
+    }
+
+    this._dialogControllers.push(dialogController);
+
+    dialogController.slot.attached();
+
+    if (typeof settings.position === 'function') {
+      settings.position(this.modalContainer, this.modalOverlay);
+    } else {
+      dialogController.centerDialog();
+    }
+
+    this.modalContainer.addEventListener('click', this.closeModalClick);
+    this.anchor.addEventListener('click', this.stopPropagation);
+
+    return new Promise((resolve) => {
+      let renderer = this;
+      if (settings.ignoreTransitions) {
+        resolve();
+      } else {
+        this.modalContainer.addEventListener(transitionEvent(), onTransitionEnd);
+      }
+
+      this.modalOverlay.classList.add('active');
+      this.modalContainer.classList.add('active');
+      body.classList.add('ai-dialog-open');
+
+      function onTransitionEnd(e) {
+        if (e.target !== renderer.modalContainer) {
+          return;
+        }
+        renderer.modalContainer.removeEventListener(transitionEvent(), onTransitionEnd);
+        resolve();
+      }
+    });
+  }
+
+  hideDialog(dialogController: DialogController) {
+    let settings = dialogController.settings;
+    let body = DOM.querySelectorAll('body')[0];
+
+    this.modalContainer.removeEventListener('click', this.closeModalClick);
+    this.anchor.removeEventListener('click', this.stopPropagation);
+
+    let i = this._dialogControllers.indexOf(dialogController);
+    if (i !== -1) {
+      this._dialogControllers.splice(i, 1);
+    }
+
+    if (!this._dialogControllers.length) {
+      DOM.removeEventListener('keyup', this._escapeKeyEventHandler);
+    }
+
+    return new Promise((resolve) => {
+      let renderer = this;
+      if (settings.ignoreTransitions) {
+        resolve();
+      } else {
+        this.modalContainer.addEventListener(transitionEvent(), onTransitionEnd);
+      }
+
+      this.modalOverlay.classList.remove('active');
+      this.modalContainer.classList.remove('active');
+
+      function onTransitionEnd() {
+        renderer.modalContainer.removeEventListener(transitionEvent(), onTransitionEnd);
+        resolve();
+      }
+    })
+      .then(() => {
+        body.removeChild(this.modalOverlay);
+        body.removeChild(this.modalContainer);
+        dialogController.slot.detached();
+
+        if (!this._dialogControllers.length) {
+          body.classList.remove('ai-dialog-open');
+        }
+
+        return Promise.resolve();
+      });
+  }
+}
+
+DialogRenderer.prototype._dialogControllers = []; // will be shared by all instances
+
+function centerDialog(modalContainer) {
+  const child = modalContainer.children[0];
+  const vh = Math.max(DOM.querySelectorAll('html')[0].clientHeight, window.innerHeight || 0);
+
+  child.style.marginTop = Math.max((vh - child.offsetHeight) / 2, 30) + 'px';
+  child.style.marginBottom = Math.max((vh - child.offsetHeight) / 2, 30) + 'px';
+}
 
 /**
  * An abstract base class for implementors of the basic Renderer API.
@@ -78,7 +251,6 @@ export class AttachFocus {
     this.value = newValue;
   }
 }
-
 
 @customElement('ai-dialog')
 @inlineView(`
@@ -187,7 +359,9 @@ export class DialogController {
    * @returns Promise An empty promise object.
    */
   close(ok: boolean, output?: any): Promise<DialogResult> {
-    if (this._closePromise) return this._closePromise;
+    if (this._closePromise) {
+      return this._closePromise;
+    }
 
     this._closePromise = invokeLifecycle(this.viewModel, 'canDeactivate').then(canDeactivate => {
       if (canDeactivate) {
@@ -202,187 +376,106 @@ export class DialogController {
           });
       }
 
-      return Promise.resolve();
+      this._closePromise = undefined;
+    }, e => {
+      this._closePromise = undefined;
+      return Promise.reject(e);
     });
 
     return this._closePromise;
   }
 }
 
-let containerTagName = 'ai-dialog-container';
-let overlayTagName = 'ai-dialog-overlay';
-let transitionEvent = (function() {
-  let transition = null;
+let defaultRenderer = DialogRenderer;
 
-  return function() {
-    if (transition) return transition;
+let resources = {
+  'ai-dialog': './ai-dialog',
+  'ai-dialog-header': './ai-dialog-header',
+  'ai-dialog-body': './ai-dialog-body',
+  'ai-dialog-footer': './ai-dialog-footer',
+  'attach-focus': './attach-focus'
+};
 
-    let t;
-    let el = DOM.createElement('fakeelement');
-    let transitions = {
-      'transition': 'transitionend',
-      'OTransition': 'oTransitionEnd',
-      'MozTransition': 'transitionend',
-      'WebkitTransition': 'webkitTransitionEnd'
-    };
-    for (t in transitions) {
-      if (el.style[t] !== undefined) {
-        transition = transitions[t];
-        return transition;
-      }
-    }
-  };
-}());
+let defaultCSSText = `ai-dialog-container,ai-dialog-overlay{position:fixed;top:0;right:0;bottom:0;left:0}ai-dialog-overlay{opacity:0}ai-dialog-overlay.active{opacity:1}ai-dialog-container{display:block;transition:opacity .2s linear;opacity:0;overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch}ai-dialog-container.active{opacity:1}ai-dialog-container>div{padding:30px}ai-dialog-container>div>div{display:block;min-width:300px;width:-moz-fit-content;width:-webkit-fit-content;width:fit-content;height:-moz-fit-content;height:-webkit-fit-content;height:fit-content;margin:auto}ai-dialog-container,ai-dialog-container>div,ai-dialog-container>div>div{outline:0}ai-dialog{display:table;box-shadow:0 5px 15px rgba(0,0,0,.5);border:1px solid rgba(0,0,0,.2);border-radius:5px;padding:3;min-width:300px;width:-moz-fit-content;width:-webkit-fit-content;width:fit-content;height:-moz-fit-content;height:-webkit-fit-content;height:fit-content;margin:auto;border-image-source:initial;border-image-slice:initial;border-image-width:initial;border-image-outset:initial;border-image-repeat:initial;background:#fff}ai-dialog>ai-dialog-header{display:block;padding:16px;border-bottom:1px solid #e5e5e5}ai-dialog>ai-dialog-header>button{float:right;border:none;display:block;width:32px;height:32px;background:0 0;font-size:22px;line-height:16px;margin:-14px -16px 0 0;padding:0;cursor:pointer}ai-dialog>ai-dialog-body{display:block;padding:16px}ai-dialog>ai-dialog-footer{display:block;padding:6px;border-top:1px solid #e5e5e5;text-align:right}ai-dialog>ai-dialog-footer button{color:#333;background-color:#fff;padding:6px 12px;font-size:14px;text-align:center;white-space:nowrap;vertical-align:middle;-ms-touch-action:manipulation;touch-action:manipulation;cursor:pointer;background-image:none;border:1px solid #ccc;border-radius:4px;margin:5px 0 5px 5px}ai-dialog>ai-dialog-footer button:disabled{cursor:default;opacity:.45}ai-dialog>ai-dialog-footer button:hover:enabled{color:#333;background-color:#e6e6e6;border-color:#adadad}.ai-dialog-open{overflow:hidden}`;
+/**
+ * A configuration builder for the dialog plugin.
+ */
+export class DialogConfiguration {
+  /**
+   * The configuration settings.
+   */
+  settings: any;
 
-@transient()
-export class DialogRenderer {
-  dialogControllers = [];
-  escapeKeyEvent = (e) => {
-    if (e.keyCode === 27) {
-      let top = this.dialogControllers[this.dialogControllers.length - 1];
-      if (top && top.settings.lock !== true) {
-        top.cancel();
-      }
-    }
-  };
-
-  constructor() {
-    this.defaultSettings = dialogOptions;
+  constructor(aurelia) {
+    this.aurelia = aurelia;
+    this.settings = dialogOptions;
+    this.resources = [];
+    this.cssText = defaultCSSText;
+    this.renderer = defaultRenderer;
   }
 
-  getDialogContainer() {
-    return DOM.createElement('div');
+  /**
+   * Selects the Aurelia conventional defaults for the dialog plugin.
+   * @return This instance.
+   */
+  useDefaults(): DialogConfiguration {
+    return this.useRenderer(defaultRenderer)
+      .useCSS(defaultCSSText)
+      .useStandardResources();
   }
 
-  showDialog(dialogController: DialogController) {
-    let settings = Object.assign({}, this.defaultSettings, dialogController.settings);
-    let body = DOM.querySelectorAll('body')[0];
-    let wrapper = document.createElement('div');
-
-    this.modalOverlay = DOM.createElement(overlayTagName);
-    this.modalContainer = DOM.createElement(containerTagName);
-    this.anchor = dialogController.slot.anchor;
-    wrapper.appendChild(this.anchor);
-    this.modalContainer.appendChild(wrapper);
-
-    this.stopPropagation = (e) => { e._aureliaDialogHostClicked = true; };
-    this.closeModalClick = (e) => {
-      if (!settings.lock && !e._aureliaDialogHostClicked) {
-        dialogController.cancel();
-      } else {
-        return false;
-      }
-    };
-
-    dialogController.centerDialog = () => {
-      if (settings.centerHorizontalOnly) return;
-      centerDialog(this.modalContainer);
-    };
-
-    this.modalOverlay.style.zIndex = this.defaultSettings.startingZIndex;
-    this.modalContainer.style.zIndex = this.defaultSettings.startingZIndex;
-
-    let lastContainer = Array.from(body.querySelectorAll(containerTagName)).pop();
-
-    if (lastContainer) {
-      lastContainer.parentNode.insertBefore(this.modalContainer, lastContainer.nextSibling);
-      lastContainer.parentNode.insertBefore(this.modalOverlay, lastContainer.nextSibling);
-    } else {
-      body.insertBefore(this.modalContainer, body.firstChild);
-      body.insertBefore(this.modalOverlay, body.firstChild);
-    }
-
-    if (!this.dialogControllers.length) {
-      DOM.addEventListener('keyup', this.escapeKeyEvent);
-    }
-
-    this.dialogControllers.push(dialogController);
-
-    dialogController.slot.attached();
-
-    if (typeof settings.position === 'function') {
-      settings.position(this.modalContainer, this.modalOverlay);
-    } else {
-      dialogController.centerDialog();
-    }
-
-    this.modalContainer.addEventListener('click', this.closeModalClick);
-    this.anchor.addEventListener('click', this.stopPropagation);
-
-    return new Promise((resolve) => {
-      let renderer = this;
-      if (settings.ignoreTransitions) {
-        resolve();
-      } else {
-        this.modalContainer.addEventListener(transitionEvent(), onTransitionEnd);
-      }
-
-      this.modalOverlay.classList.add('active');
-      this.modalContainer.classList.add('active');
-      body.classList.add('ai-dialog-open');
-
-      function onTransitionEnd(e) {
-        if (e.target !== renderer.modalContainer) {
-          return;
-        }
-        renderer.modalContainer.removeEventListener(transitionEvent(), onTransitionEnd);
-        resolve();
-      }
-    });
+  /**
+   * Exports the standard set of dialog behaviors to Aurelia's global resources.
+   * @return This instance.
+   */
+  useStandardResources(): DialogConfiguration {
+    return this.useResource('ai-dialog')
+      .useResource('ai-dialog-header')
+      .useResource('ai-dialog-body')
+      .useResource('ai-dialog-footer')
+      .useResource('attach-focus');
   }
 
-  hideDialog(dialogController: DialogController) {
-    let settings = Object.assign({}, this.defaultSettings, dialogController.settings);
-    let body = DOM.querySelectorAll('body')[0];
-
-    this.modalContainer.removeEventListener('click', this.closeModalClick);
-    this.anchor.removeEventListener('click', this.stopPropagation);
-
-    let i = this.dialogControllers.indexOf(dialogController);
-    if (i !== -1) {
-      this.dialogControllers.splice(i, 1);
-    }
-
-    if (!this.dialogControllers.length) {
-      DOM.removeEventListener('keyup', this.escapeKeyEvent);
-    }
-
-    return new Promise((resolve) => {
-      let renderer = this;
-      if (settings.ignoreTransitions) {
-        resolve();
-      } else {
-        this.modalContainer.addEventListener(transitionEvent(), onTransitionEnd);
-      }
-
-      this.modalOverlay.classList.remove('active');
-      this.modalContainer.classList.remove('active');
-
-      function onTransitionEnd() {
-        renderer.modalContainer.removeEventListener(transitionEvent(), onTransitionEnd);
-        resolve();
-      }
-    })
-      .then(() => {
-        body.removeChild(this.modalOverlay);
-        body.removeChild(this.modalContainer);
-        dialogController.slot.detached();
-
-        if (!this.dialogControllers.length) {
-          body.classList.remove('ai-dialog-open');
-        }
-
-        return Promise.resolve();
-      });
+  /**
+   * Exports the chosen dialog element or view to Aurelia's global resources.
+   * @param resourceName The name of the dialog resource to export.
+   * @return This instance.
+   */
+  useResource(resourceName: string): DialogConfiguration {
+    this.resources.push(resourceName);
+    return this;
   }
-}
 
-function centerDialog(modalContainer) {
-  const child = modalContainer.children[0];
-  const vh = Math.max(DOM.querySelectorAll('html')[0].clientHeight, window.innerHeight || 0);
+  /**
+   * Configures the plugin to use a specific dialog renderer.
+   * @param renderer A type that implements the Renderer interface.
+   * @param settings Global settings for the renderer.
+   * @return This instance.
+   */
+  useRenderer(renderer: Function, settings?: Object): DialogConfiguration {
+    this.renderer = renderer;
+    this.settings = Object.assign(this.settings, settings || {});
+    return this;
+  }
 
-  child.style.marginTop = Math.max((vh - child.offsetHeight) / 2, 30) + 'px';
-  child.style.marginBottom = Math.max((vh - child.offsetHeight) / 2, 30) + 'px';
+  /**
+   * Configures the plugin to use specific css.
+   * @param cssText The css to use in place of the default styles.
+   * @return This instance.
+   */
+  useCSS(cssText: string): DialogConfiguration {
+    this.cssText = cssText;
+    return this;
+  }
+
+  _apply() {
+    this.aurelia.transient(Renderer, this.renderer);
+    this.resources.forEach(resourceName => this.aurelia.globalResources(resources[resourceName]));
+
+    if (this.cssText) {
+      DOM.injectStyles(this.cssText);
+    }
+  }
 }
 
 /**
@@ -475,47 +568,38 @@ export class DialogService {
    * @return Promise A promise that settles when the dialog is closed.
    */
   open(settings?: Object): Promise<DialogResult> {
-    let dialogController;
-
-    let promise = new Promise((resolve, reject) => {
-      let childContainer = this.container.createChild();
-      dialogController = new DialogController(childContainer.get(Renderer), settings, resolve, reject);
-      childContainer.registerInstance(DialogController, dialogController);
-      return _openDialog(this, childContainer, dialogController);
-    });
-
-    return promise.then((result) => {
-      let i = this.controllers.indexOf(dialogController);
-      if (i !== -1) {
-        this.controllers.splice(i, 1);
-        this.hasActiveDialog = !!this.controllers.length;
-      }
-
-      return result;
-    });
+    return this.openAndYieldController(settings)
+      .then((controller) => controller.result);
   }
 
+  /**
+   * Opens a new dialog.
+   * @param settings Dialog settings for this dialog instance.
+   * @return Promise A promise that settles when the dialog is opened.
+   * Resolves to the controller of the dialog.
+   */
   openAndYieldController(settings?: Object): Promise<DialogController> {
     let childContainer = this.container.createChild();
-    let dialogController = new DialogController(childContainer.get(Renderer), settings, null, null);
+    let dialogController;
+    let promise = new Promise((resolve, reject) => {
+      dialogController = new DialogController(childContainer.get(Renderer), _createSettings(settings), resolve, reject);
+    });
     childContainer.registerInstance(DialogController, dialogController);
-
-    dialogController.result = new Promise((resolve, reject) => {
-      dialogController._resolve = resolve;
-      dialogController._reject = reject;
-    }).then((result) => {
-      let i = this.controllers.indexOf(dialogController);
-      if (i !== -1) {
-        this.controllers.splice(i, 1);
-        this.hasActiveDialog = !!this.controllers.length;
-      }
-      return result;
+    dialogController.result = promise;
+    dialogController.result.then(() => {
+      _removeController(this, dialogController);
+    }, () => {
+      _removeController(this, dialogController);
     });
-
-    return _openDialog(this, childContainer, dialogController).then(() => {
-      return dialogController;
-    });
+    return _openDialog(this, childContainer, dialogController)
+      .then(() => dialogController);
   }
+}
+
+function _createSettings(settings) {
+  settings = Object.assign({}, dialogOptions, settings);
+  settings.startingZIndex = dialogOptions.startingZIndex; // should be set only when configuring the plugin
+  return settings;
 }
 
 function _openDialog(service, childContainer, dialogController) {
@@ -536,10 +620,9 @@ function _openDialog(service, childContainer, dialogController) {
 
     return invokeLifecycle(dialogController.viewModel, 'canActivate', dialogController.settings.model).then(canActivate => {
       if (canActivate) {
-        service.controllers.push(dialogController);
-        service.hasActiveDialog = !!service.controllers.length;
-
         return service.compositionEngine.compose(returnedInstruction).then(controller => {
+          service.controllers.push(dialogController);
+          service.hasActiveDialog = !!service.controllers.length;
           dialogController.controller = controller;
           dialogController.view = controller.view;
 
@@ -562,95 +645,10 @@ function _getViewModel(instruction, compositionEngine) {
   return Promise.resolve(instruction);
 }
 
-let defaultRenderer = DialogRenderer;
-
-let resources = {
-  'ai-dialog': './ai-dialog',
-  'ai-dialog-header': './ai-dialog-header',
-  'ai-dialog-body': './ai-dialog-body',
-  'ai-dialog-footer': './ai-dialog-footer',
-  'attach-focus': './attach-focus'
-};
-
-let defaultCSSText = `ai-dialog-container,ai-dialog-overlay{position:fixed;top:0;right:0;bottom:0;left:0}ai-dialog,ai-dialog-container>div>div{min-width:300px;margin:auto;display:block}ai-dialog-overlay{opacity:0}ai-dialog-overlay.active{opacity:1}ai-dialog-container{display:block;transition:opacity .2s linear;opacity:0;overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch}ai-dialog-container.active{opacity:1}ai-dialog-container>div{padding:30px}ai-dialog-container>div>div{width:-moz-fit-content;width:-webkit-fit-content;width:fit-content;height:-moz-fit-content;height:-webkit-fit-content;height:fit-content}ai-dialog-container,ai-dialog-container>div,ai-dialog-container>div>div{outline:0}ai-dialog{box-shadow:0 5px 15px rgba(0,0,0,.5);border:1px solid rgba(0,0,0,.2);border-radius:5px;padding:3;width:-moz-fit-content;width:-webkit-fit-content;width:fit-content;height:-moz-fit-content;height:-webkit-fit-content;height:fit-content;border-image-source:initial;border-image-slice:initial;border-image-width:initial;border-image-outset:initial;border-image-repeat:initial;background:#fff}ai-dialog>ai-dialog-header{display:block;padding:16px;border-bottom:1px solid #e5e5e5}ai-dialog>ai-dialog-header>button{float:right;border:none;display:block;width:32px;height:32px;background:0 0;font-size:22px;line-height:16px;margin:-14px -16px 0 0;padding:0;cursor:pointer}ai-dialog>ai-dialog-body{display:block;padding:16px}ai-dialog>ai-dialog-footer{display:block;padding:6px;border-top:1px solid #e5e5e5;text-align:right}ai-dialog>ai-dialog-footer button{color:#333;background-color:#fff;padding:6px 12px;font-size:14px;text-align:center;white-space:nowrap;vertical-align:middle;-ms-touch-action:manipulation;touch-action:manipulation;cursor:pointer;background-image:none;border:1px solid #ccc;border-radius:4px;margin:5px 0 5px 5px}ai-dialog>ai-dialog-footer button:disabled{cursor:default;opacity:.45}ai-dialog>ai-dialog-footer button:hover:enabled{color:#333;background-color:#e6e6e6;border-color:#adadad}.ai-dialog-open{overflow:hidden}`;
-
-/**
- * A configuration builder for the dialog plugin.
- */
-export class DialogConfiguration {
-  /**
-   * The configuration settings.
-   */
-  settings: any;
-
-  constructor(aurelia) {
-    this.aurelia = aurelia;
-    this.settings = dialogOptions;
-    this.resources = [];
-    this.cssText = defaultCSSText;
-    this.renderer = defaultRenderer;
-  }
-
-  /**
-   * Selects the Aurelia conventional defaults for the dialog plugin.
-   * @return This instance.
-   */
-  useDefaults(): DialogConfiguration {
-    return this.useRenderer(defaultRenderer)
-      .useCSS(defaultCSSText)
-      .useStandardResources();
-  }
-
-  /**
-   * Exports the standard set of dialog behaviors to Aurelia's global resources.
-   * @return This instance.
-   */
-  useStandardResources(): DialogConfiguration {
-    return this.useResource('ai-dialog')
-      .useResource('ai-dialog-header')
-      .useResource('ai-dialog-body')
-      .useResource('ai-dialog-footer')
-      .useResource('attach-focus');
-  }
-
-  /**
-   * Exports the chosen dialog element or view to Aurelia's global resources.
-   * @param resourceName The name of the dialog resource to export.
-   * @return This instance.
-   */
-  useResource(resourceName: string): DialogConfiguration {
-    this.resources.push(resourceName);
-    return this;
-  }
-
-  /**
-   * Configures the plugin to use a specific dialog renderer.
-   * @param renderer A type that implements the Renderer interface.
-   * @param settings Global settings for the renderer.
-   * @return This instance.
-   */
-  useRenderer(renderer: Function, settings?: Object): DialogConfiguration {
-    this.renderer = renderer;
-    this.settings = Object.assign(this.settings, settings || {});
-    return this;
-  }
-
-  /**
-   * Configures the plugin to use specific css.
-   * @param cssText The css to use in place of the default styles.
-   * @return This instance.
-   */
-  useCSS(cssText: string): DialogConfiguration {
-    this.cssText = cssText;
-    return this;
-  }
-
-  _apply() {
-    this.aurelia.transient(Renderer, this.renderer);
-    this.resources.forEach(resourceName => this.aurelia.globalResources(resources[resourceName]));
-
-    if (this.cssText) {
-      DOM.injectStyles(this.cssText);
-    }
+function _removeController(service, controller) {
+  let i = service.controllers.indexOf(controller);
+  if (i !== -1) {
+    service.controllers.splice(i, 1);
+    service.hasActiveDialog = !!service.controllers.length;
   }
 }

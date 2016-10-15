@@ -1,11 +1,17 @@
 'use strict';
 
-System.register(['aurelia-metadata', 'aurelia-dependency-injection', 'aurelia-templating', './dialog-controller', './renderer', './lifecycle', './dialog-result'], function (_export, _context) {
+System.register(['aurelia-metadata', 'aurelia-dependency-injection', 'aurelia-templating', './dialog-controller', './renderer', './lifecycle', './dialog-result', './dialog-options'], function (_export, _context) {
   "use strict";
 
-  var Origin, Container, CompositionEngine, ViewSlot, DialogController, Renderer, invokeLifecycle, DialogResult, _class, _temp, DialogService;
+  var Origin, Container, CompositionEngine, ViewSlot, DialogController, Renderer, invokeLifecycle, DialogResult, dialogOptions, _class, _temp, DialogService;
 
   
+
+  function _createSettings(settings) {
+    settings = Object.assign({}, dialogOptions, settings);
+    settings.startingZIndex = dialogOptions.startingZIndex;
+    return settings;
+  }
 
   function _openDialog(service, childContainer, dialogController) {
     var host = dialogController.renderer.getDialogContainer();
@@ -25,10 +31,9 @@ System.register(['aurelia-metadata', 'aurelia-dependency-injection', 'aurelia-te
 
       return invokeLifecycle(dialogController.viewModel, 'canActivate', dialogController.settings.model).then(function (canActivate) {
         if (canActivate) {
-          service.controllers.push(dialogController);
-          service.hasActiveDialog = !!service.controllers.length;
-
           return service.compositionEngine.compose(returnedInstruction).then(function (controller) {
+            service.controllers.push(dialogController);
+            service.hasActiveDialog = !!service.controllers.length;
             dialogController.controller = controller;
             dialogController.view = controller.view;
 
@@ -50,6 +55,14 @@ System.register(['aurelia-metadata', 'aurelia-dependency-injection', 'aurelia-te
 
     return Promise.resolve(instruction);
   }
+
+  function _removeController(service, controller) {
+    var i = service.controllers.indexOf(controller);
+    if (i !== -1) {
+      service.controllers.splice(i, 1);
+      service.hasActiveDialog = !!service.controllers.length;
+    }
+  }
   return {
     setters: [function (_aureliaMetadata) {
       Origin = _aureliaMetadata.Origin;
@@ -66,6 +79,8 @@ System.register(['aurelia-metadata', 'aurelia-dependency-injection', 'aurelia-te
       invokeLifecycle = _lifecycle.invokeLifecycle;
     }, function (_dialogResult) {
       DialogResult = _dialogResult.DialogResult;
+    }, function (_dialogOptions) {
+      dialogOptions = _dialogOptions.dialogOptions;
     }],
     execute: function () {
       _export('DialogService', DialogService = (_temp = _class = function () {
@@ -79,47 +94,26 @@ System.register(['aurelia-metadata', 'aurelia-dependency-injection', 'aurelia-te
         }
 
         DialogService.prototype.open = function open(settings) {
-          var _this = this;
-
-          var dialogController = void 0;
-
-          var promise = new Promise(function (resolve, reject) {
-            var childContainer = _this.container.createChild();
-            dialogController = new DialogController(childContainer.get(Renderer), settings, resolve, reject);
-            childContainer.registerInstance(DialogController, dialogController);
-            return _openDialog(_this, childContainer, dialogController);
-          });
-
-          return promise.then(function (result) {
-            var i = _this.controllers.indexOf(dialogController);
-            if (i !== -1) {
-              _this.controllers.splice(i, 1);
-              _this.hasActiveDialog = !!_this.controllers.length;
-            }
-
-            return result;
+          return this.openAndYieldController(settings).then(function (controller) {
+            return controller.result;
           });
         };
 
         DialogService.prototype.openAndYieldController = function openAndYieldController(settings) {
-          var _this2 = this;
+          var _this = this;
 
           var childContainer = this.container.createChild();
-          var dialogController = new DialogController(childContainer.get(Renderer), settings, null, null);
-          childContainer.registerInstance(DialogController, dialogController);
-
-          dialogController.result = new Promise(function (resolve, reject) {
-            dialogController._resolve = resolve;
-            dialogController._reject = reject;
-          }).then(function (result) {
-            var i = _this2.controllers.indexOf(dialogController);
-            if (i !== -1) {
-              _this2.controllers.splice(i, 1);
-              _this2.hasActiveDialog = !!_this2.controllers.length;
-            }
-            return result;
+          var dialogController = void 0;
+          var promise = new Promise(function (resolve, reject) {
+            dialogController = new DialogController(childContainer.get(Renderer), _createSettings(settings), resolve, reject);
           });
-
+          childContainer.registerInstance(DialogController, dialogController);
+          dialogController.result = promise;
+          dialogController.result.then(function () {
+            _removeController(_this, dialogController);
+          }, function () {
+            _removeController(_this, dialogController);
+          });
           return _openDialog(this, childContainer, dialogController).then(function () {
             return dialogController;
           });
