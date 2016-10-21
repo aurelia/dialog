@@ -8,17 +8,13 @@
  */
 export function invokeLifecycle(instance: any, name: string, model: any) {
   if (typeof instance[name] === 'function') {
-    let result = instance[name](model);
+    return Promise.resolve(instance[name](model)).then(function(result) {
+      if (result !== null && result !== undefined) {
+        return result;
+      }
 
-    if (result instanceof Promise) {
-      return result;
-    }
-
-    if (result !== null && result !== undefined) {
-      return Promise.resolve(result);
-    }
-
-    return Promise.resolve(true);
+      return true;
+    });
   }
 
   return Promise.resolve(true);
