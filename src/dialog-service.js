@@ -34,7 +34,7 @@ export class DialogService {
    * @param settings Dialog settings for this dialog instance.
    * @return Promise A promise that settles when the dialog is closed.
    */
-  open(settings?: DialogSettings) {
+  open(settings?: DialogSettings): Promise<OpenDialogResult | CloseDialogResult> {
     let childContainer = this.container.createChild();
     let dialogController;
     let closeResult: Promise<CloseDialogResult> = new Promise((resolve, reject) => {
@@ -48,12 +48,12 @@ export class DialogService {
       _removeController(this, dialogController);
     });
 
-    let openResult: Promise<OpenDialogResult> = _getViewModel(this.container, this.compositionEngine, childContainer, dialogController)
-      .then((instruction) => {
-        dialogController.viewModel = instruction.viewModel;
-        dialogController.slot = instruction.viewSlot;
+    let openResult = _getViewModel(this.container, this.compositionEngine, childContainer, dialogController).then((instruction) => {
+      dialogController.viewModel = instruction.viewModel;
+      dialogController.slot = instruction.viewSlot;
 
-        return invokeLifecycle(dialogController.viewModel, 'canActivate', dialogController.settings.model).then(canActivate => {
+      return invokeLifecycle(dialogController.viewModel, 'canActivate', dialogController.settings.model)
+        .then(canActivate => {
           if (canActivate) {
             return this.compositionEngine.compose(instruction).then(controller => {
               this.controllers.push(dialogController);
@@ -71,16 +71,17 @@ export class DialogService {
             });
           }
 
+          if (settings.throwOnCancel) {
+            throw new Error('Dialog cancelled.');
+          }
+
           return {
             wasCancelled: true // see aurelia/dialog#223
           };
         });
-      });
+    });
 
-    return {
-      openResult,
-      closeResult
-    };
+    return settings.yieldController ? openResult : openResult.then(result => result.wasCancelled ? result : result.closeResult);
   }
 }
 
@@ -90,10 +91,10 @@ function _createSettings(settings) {
   return settings;
 }
 
-function _getViewModel(container, compositionEngine, childCOntainer, dialogController) {
+function _getViewModel(container, compositionEngine, childContainer, dialogController) {
   let host = dialogController.renderer.getDialogContainer();
   let instruction = {
-    container: service.container,
+    container: container,
     childContainer: childContainer,
     model: dialogController.settings.model,
     view: dialogController.settings.view,
