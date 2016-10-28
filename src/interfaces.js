@@ -5,6 +5,8 @@ interface DialogSettings {
   lock?: boolean;
   startingZIndex?: number;
   centerHorizontalOnly?: boolean;
+  throwOnCancel?: boolean;
+  yieldController?: boolean;
   ignoreTransitions?: boolean;
   position?: (modalContainer: Element, modalOverlay: Element) => void;
 }

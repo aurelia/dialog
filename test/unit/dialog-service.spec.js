@@ -41,6 +41,7 @@ describe('the Dialog Service', () => {
     spyOn(renderer, 'showDialog').and.callFake((dialogController) => {
       expect(dialogController.settings).toEqual(jasmine.objectContaining(dialogOptions));
       done();
+      return Promise.resolve();
     });
 
     dialogService.open({ viewModel: TestElement });
@@ -50,13 +51,14 @@ describe('the Dialog Service', () => {
     const newSettings = {
       lock: !dialogOptions.lock,
       centerHorizontalOnly: !dialogOptions.centerHorizontalOnly,
-      // startingZIndex: 1, // should be overrided only when configuring the plugin
+      // startingZIndex: 1, // should be overridden only when configuring the plugin
       ignoreTransitions: !dialogOptions.ignoreTransitions
     };
 
     spyOn(renderer, 'showDialog').and.callFake((dialogController) => {
       expect(dialogController.settings).toEqual(jasmine.objectContaining(newSettings));
       done();
+      return Promise.resolve();
     });
 
     dialogService.open(Object.assign({}, newSettings, { viewModel: TestElement }));
@@ -66,6 +68,7 @@ describe('the Dialog Service', () => {
     spyOn(renderer, 'showDialog').and.callFake((dialogController) => {
       expect(dialogController.settings).toEqual(jasmine.objectContaining(dialogOptions));
       done();
+      return Promise.resolve();
     });
 
     dialogService.open({ startingZIndex: 1, viewModel: TestElement });
@@ -76,6 +79,7 @@ describe('the Dialog Service', () => {
 
     spyOn(renderer, 'showDialog').and.callFake((dialogController) => {
       done();
+      return Promise.resolve();
     });
 
     dialogService.open(settings);
@@ -87,6 +91,7 @@ describe('the Dialog Service', () => {
     spyOn(renderer, 'showDialog').and.callFake((dialogController) => {
       expect(dialogService.hasActiveDialog).toBe(true);
       dialogController.cancel();
+      return Promise.resolve();
     });
 
     expect(dialogService.hasActiveDialog).toBe(false);
@@ -104,6 +109,7 @@ describe('the Dialog Service', () => {
     spyOn(renderer, 'showDialog').and.callFake((dialogController) => {
       expect(dialogService.hasActiveDialog).toBe(true);
       done();
+      return Promise.resolve();
     });
 
     expect(dialogService.hasActiveDialog).toBe(false);
@@ -129,6 +135,7 @@ describe('the Dialog Service', () => {
     spyOn(renderer, 'showDialog').and.callFake((dialogController) => {
       expect(dialogService.controllers.length).toBe(1);
       done();
+      return Promise.resolve();
     });
 
     expect(dialogService.controllers.length).toBe(0);
@@ -140,7 +147,7 @@ describe('the Dialog Service', () => {
     // if there is activate
     const viewModel = new TestElement();
     viewModel.activate = function () { };
-    const settings = { viewModel };
+    const settings = { viewModel, yieldController: true };
     const activateError = new Error();
 
     spyOn(viewModel, 'activate').and.returnValue(Promise.reject(activateError));
@@ -148,7 +155,7 @@ describe('the Dialog Service', () => {
 
     // we need a Promise to the point where the dialog will open
     let catchWasCalled = false;
-    dialogService.openAndYieldController(settings).catch((reason) => {
+    dialogService.open(settings).catch((reason) => {
       catchWasCalled = true; // the .activate() error has propagated
       expect(reason).toBe(activateError);
     }).then(() => {
@@ -168,6 +175,7 @@ describe('the Dialog Service', () => {
         expect(dialogService.controllers.length).toBe(dialogsToOpen);
         dialogController.cancel();
       }
+      return Promise.resolve();
     });
 
     expect(dialogService.controllers.length).toBe(0);
@@ -188,13 +196,13 @@ describe('the Dialog Service', () => {
   });
 
   it('properly tracks dialogs closed with ".error()"', (done) => {
-    const settings = { viewModel: TestElement };
+    const settings = { viewModel: TestElement, yieldController: true };
     const closeError = new Error();
     let catchWasCalled = false;
     expect(dialogService.controllers.length).toBe(0); // start with 0
-    dialogService.openAndYieldController(settings).then((controller => {
+    dialogService.open(settings).then(({ controller, closeResult }) => {
       expect(dialogService.controllers.length).toBe(1); // have 1 open
-      controller.result.catch((reason) => {
+      closeResult.catch((reason) => {
         catchWasCalled = true;
         expect(dialogService.controllers.length).toBe(0); // the dialog has been closed with error
         expect(reason).toBe(closeError);
@@ -203,10 +211,10 @@ describe('the Dialog Service', () => {
         done();
       });
       controller.error(closeError);
-    }));
+    });
   });
 
-  it('".open" properly propagates errors', (done) => {
+  it('".open" properly propagates errors when "yieldController" is "false"', (done) => {
     let catchWasCalled = false;
     let promise = dialogService.open({ viewModel: 'test/fixtures/non-existent' })
       .catch(() => {
@@ -217,9 +225,9 @@ describe('the Dialog Service', () => {
       });
   });
 
-  it('".openAndYieldController" properly propagates errors', (done) => {
+  it('".open" properly propagates errors when "yieldController" is "true"', (done) => {
     let catchWasCalled = false;
-    dialogService.openAndYieldController({ viewModel: 'test/fixtures/non-existent' })
+    dialogService.open({ viewModel: 'test/fixtures/non-existent', yieldController: true })
       .catch(() => {
         catchWasCalled = true;
       }).then(() => {
