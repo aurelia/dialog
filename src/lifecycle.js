@@ -8,7 +8,9 @@
  */
 export function invokeLifecycle(instance: any, name: string, model: any) {
   if (typeof instance[name] === 'function') {
-    return Promise.resolve(instance[name](model)).then(function(result) {
+    return Promise.resolve().then(() => {
+      return instance[name](model);
+    }).then(function (result) {
       if (result !== null && result !== undefined) {
         return result;
       }
