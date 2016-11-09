@@ -1,6 +1,6 @@
 import {invokeLifecycle} from '../../src/lifecycle';
 
-describe('the lifecycle', function () {
+describe('"invokeLifecycle()"', function () {
   const CAN_ACTIVATE = 'canActivate';
   const ACTIVATE = 'activate';
   const CAN_DEACTIVATE = 'canDeactivate';
@@ -134,6 +134,15 @@ describe('the lifecycle', function () {
         expect(result).toBe(asyncResult);
         done();
       });
+    });
+  });
+
+  it('propagates errors when the invocation of the specified lifecycle method throws', function (done) {
+    const expectedError = new Error();
+    const erroneousVM = { [CAN_ACTIVATE]() { throw expectedError; } };
+    invokeLifecycle(erroneousVM, CAN_ACTIVATE).catch((e) => e).then((e) => {
+      expect(e).toBe(expectedError);
+      done();
     });
   });
 });
