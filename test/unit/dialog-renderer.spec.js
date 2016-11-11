@@ -5,7 +5,7 @@ import {dialogOptions} from '../../src/dialog-options';
 import {configure} from '../../src/aurelia-dialog';
 import {TestElement} from '../fixtures/test-element';
 
-describe('the Dialog Renderer', () => {
+describe('the Dialog Renderer', function () {
   function createDialogController(controllerSettings) {
     const controller = new DialogController(new DialogRenderer(), controllerSettings, Function.prototype, Function.prototype);
     controller.viewModel = {};

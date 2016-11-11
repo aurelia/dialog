@@ -1,6 +1,6 @@
 import {configure} from '../../src/aurelia-dialog';
 
-describe('testing aurelia configure routine', () => {
+describe('testing aurelia configure routine', function () {
   let frameworkConfig = {
     globalResources: () => { },
     container: {
@@ -10,11 +10,11 @@ describe('testing aurelia configure routine', () => {
     transient: () => {}
   };
 
-  it('should export configure function', () => {
+  it('should export configure function', function () {
     expect(typeof configure).toBe('function');
   });
 
-  it('should accept a setup callback passing back the callback', (done) => {
+  it('should accept a setup callback passing back the callback', function (done) {
     let callback = (callbackObj) => {
       expect(typeof callbackObj).toBe('object');
       done();
@@ -22,7 +22,7 @@ describe('testing aurelia configure routine', () => {
     configure(frameworkConfig, callback);
   });
 
-  it('should accept no callback and not fail', () => {
+  it('should accept no callback and not fail', function () {
     configure(frameworkConfig);
   });
 });

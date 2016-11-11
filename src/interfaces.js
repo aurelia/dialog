@@ -5,7 +5,7 @@ interface DialogSettings {
   lock?: boolean;
   startingZIndex?: number;
   centerHorizontalOnly?: boolean;
-  throwOnCancel?: boolean;
+  rejectOnCancel?: boolean;
   yieldController?: boolean;
   ignoreTransitions?: boolean;
   position?: (modalContainer: Element, modalOverlay: Element) => void;
@@ -17,7 +17,7 @@ interface CloseDialogResult {
 }
 
 interface OpenDialogResult {
-  wasCancelled: boolean; // see aurelia/dialog#223
+  wasCancelled: boolean;
   controller?: DialogController;
   closeResult?: Promise<CloseDialogResult>;
 }

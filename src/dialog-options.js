@@ -3,6 +3,6 @@ export let dialogOptions = {
   centerHorizontalOnly: false,
   startingZIndex: 1000,
   ignoreTransitions: false,
-  throwOnCancel: false,
+  rejectOnCancel: false,
   yieldController: false
 };
