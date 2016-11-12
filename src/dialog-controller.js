@@ -69,15 +69,13 @@ export class DialogController {
           .then(() => {
             return this.renderer.hideDialog(this);
           }).then(() => {
-            if (this.settings.rejectOnCancel && !ok) {
-              const cancellationError = new DialogCancelError(output);
-              cancellationError.reason = output;
-              this._reject(cancellationError);
-              throw cancellationError;
-            }
-            let result = new DialogResult(!ok, output);
             this.controller.unbind();
-            this._resolve(result);
+            let result = new DialogResult(!ok, output);
+            if (!this.settings.rejectOnCancel || ok) {
+              this._resolve(result);
+            } else {
+              this._reject(new DialogCancelError(output));
+            }
             return result;
           });
       }

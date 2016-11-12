@@ -93,19 +93,23 @@ describe('the Dialog Controller', function () {
       failOnRejection(result, done);
     });
 
-    it('reject on cancellation if "rejectOnCancel" is true', function (done) {
+    it('resolve on cancellation if "rejectOnCancel" is true', function (done) {
       dialogController.settings.rejectOnCancel = true;
       spyOn(dialogController, '_resolve');
-      spyOn(dialogController, '_reject');
+      spyOn(dialogController, '_reject').and.callFake((reason) => {
+        expect(reason).toBeDefined();
+        expect(reason.wasCancelled).toBe(true);
+        expect(reason.reason).toBe(this.expectedOutput);
+      });
       dialogController.close(false, this.expectedOutput)
-        .then(() => {
-          fail('".close" should be rejected when "rejectOnError" is "true".');
-          done();
-        }).catch((reason) => {
-          expect(reason.wasCancelled).toBe(true);
-          expect(reason.reason).toBe(this.expectedOutput);
+        .then((result) => {
+          expect(result.wasCancelled).toBe(true);
+          expect(result.output).toBe(this.expectedOutput);
           expect(dialogController._resolve).not.toHaveBeenCalled();
-          expect(dialogController._reject).toHaveBeenCalledWith(reason);
+          expect(dialogController._reject).toHaveBeenCalled();
+          done();
+        }).catch(() => {
+          fail('".close" should be resolved when "rejectOnError" is "true".');
           done();
         });
     });
