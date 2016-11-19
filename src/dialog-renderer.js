@@ -25,6 +25,28 @@ let transitionEvent = (function() {
     }
   };
 }());
+let hasTransition = (function () {
+  const defaultDuration = '0s';
+  let transitionDuration;
+  let t;
+  let el = DOM.createElement('fakeelement');
+  let transitions = {
+    'transition': 'transitionDuration',
+    'OTransition': 'oTransitionDuration',
+    'MozTransition': 'transitionDuration',
+    'WebkitTransition': 'webkitTransitionDuration'
+  };
+  for (t in transitions) {
+    if (el.style[t] !== undefined) {
+      transitionDuration = transitions[t];
+      break;
+    }
+  }
+
+  return function (element) {
+    return !!transitionDuration && DOM.getComputedStyle(element)[transitionDuration] !== defaultDuration;
+  }
+}());
 
 @transient()
 export class DialogRenderer {
@@ -98,7 +120,7 @@ export class DialogRenderer {
 
     return new Promise((resolve) => {
       let renderer = this;
-      if (settings.ignoreTransitions) {
+      if (settings.ignoreTransitions || !hasTransition(this.modalContainer)) {
         resolve();
       } else {
         this.modalContainer.addEventListener(transitionEvent(), onTransitionEnd);
@@ -136,7 +158,7 @@ export class DialogRenderer {
 
     return new Promise((resolve) => {
       let renderer = this;
-      if (settings.ignoreTransitions) {
+      if (settings.ignoreTransitions || !hasTransition(this.modalContainer)) {
         resolve();
       } else {
         this.modalContainer.addEventListener(transitionEvent(), onTransitionEnd);
