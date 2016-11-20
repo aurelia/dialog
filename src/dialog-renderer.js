@@ -25,26 +25,20 @@ let transitionEvent = (function() {
     }
   };
 }());
-let hasTransition = (function () {
-  const defaultDuration = '0s';
-  let transitionDuration;
-  let t;
-  let el = DOM.createElement('fakeelement');
-  let transitions = {
-    'transition': 'transitionDuration',
-    'OTransition': 'oTransitionDuration',
-    'MozTransition': 'transitionDuration',
-    'WebkitTransition': 'webkitTransitionDuration'
-  };
-  for (t in transitions) {
-    if (el.style[t] !== undefined) {
-      transitionDuration = transitions[t];
-      break;
-    }
+let hasTransition = (function() {
+  const unprefixedName = 'transitionDuration';
+  const el = DOM.createElement('fakeelement');
+  let prefixedNames = ['webkitTransitionDuration', 'oTransitionDuration'];
+  let transitionDurationName;
+  if (unprefixedName in el.style) {
+    transitionDurationName = unprefixedName;
+  } else {
+    transitionDurationName = prefixedNames.find(prefixed => (prefixed in el.style));
   }
-
   return function (element) {
-    return !!transitionDuration && DOM.getComputedStyle(element)[transitionDuration] !== defaultDuration;
+    return !!transitionDurationName && !!DOM.getComputedStyle(element)[transitionDurationName]
+      .split(',')
+      .find(duration => !!parseFloat(duration));
   }
 }());
 
