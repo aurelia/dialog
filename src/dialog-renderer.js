@@ -1,9 +1,9 @@
 import {DOM} from 'aurelia-pal';
 import {transient} from 'aurelia-dependency-injection';
 
-let containerTagName = 'ai-dialog-container';
-let overlayTagName = 'ai-dialog-overlay';
-let transitionEvent = (function() {
+const containerTagName = 'ai-dialog-container';
+const overlayTagName = 'ai-dialog-overlay';
+export const transitionEvent = (function() {
   let transition = null;
 
   return function() {
@@ -25,21 +25,21 @@ let transitionEvent = (function() {
     }
   };
 }());
-let hasTransition = (function() {
+export const hasTransition = (function() {
   const unprefixedName = 'transitionDuration';
   const el = DOM.createElement('fakeelement');
-  let prefixedNames = ['webkitTransitionDuration', 'oTransitionDuration'];
+  const prefixedNames = ['webkitTransitionDuration', 'oTransitionDuration'];
   let transitionDurationName;
   if (unprefixedName in el.style) {
     transitionDurationName = unprefixedName;
   } else {
     transitionDurationName = prefixedNames.find(prefixed => (prefixed in el.style));
   }
-  return function (element) {
+  return function(element) {
     return !!transitionDurationName && !!DOM.getComputedStyle(element)[transitionDurationName]
       .split(',')
       .find(duration => !!parseFloat(duration));
-  }
+  };
 }());
 
 @transient()
