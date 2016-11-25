@@ -1,6 +1,8 @@
 <!--
 BUGS: Please use this template.
 
+**PLEASE SEE BELOW FOR STEPS ON CREATING A REPRO TO AID IN SHOWING OFF THE ERROR, THIS WILL GET YOUR ISSUE PRIORITIZED**
+
 SUPPORT REQUESTS/QUESTIONS: If you have a support request or question please
 submit them to StackOverflow using the tags aurelia and aurelia-framework
 http://stackoverflow.com/questions/tagged/aurelia
@@ -64,7 +66,7 @@ all | TypeScript X.X | ESNext
 <!--
 If the current behavior is a bug, please provide the steps to reproduce and, if possible, a minimal demo of the
 problem along with a runnable gist, if possible.
-To create a runnable gist, go to https://gist.run/?id=7542e061bc940cde506b&sha=6821c521a6c7bae6f59a36fb8628ecd1032b2d10
+To create a runnable gist, go to https://gist.run/?id=aae79c2b0157b8d54dc0ce15a5a2d2dc
 Then click "Fork to Public Gist".
 Create your gist, then finally click "Update Gist." Include a link to the gist.run below.
 -->
