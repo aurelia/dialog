@@ -129,6 +129,8 @@ typings install github:aurelia/dialog --save
   }
 ```
 
+> Note: If you are using WebPack it is possible that the plugin is installed before Aurelia has replaced the `<body>` element, if that is where your `aurelia-app="main"` is defined, which results in some of the dialog components getting overwritten.  In this case you can move the `aurelia-app` attribute to a `<div>` inside of the `<body>`.  Example - `<body><div aurelia-app="main"></div></body>`.
+
 ## Using the plugin
 
 There are a few ways you can take advantage of the Aurelia dialog.
