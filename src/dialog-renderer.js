@@ -1,9 +1,9 @@
 import {DOM} from 'aurelia-pal';
 import {transient} from 'aurelia-dependency-injection';
 
-let containerTagName = 'ai-dialog-container';
-let overlayTagName = 'ai-dialog-overlay';
-let transitionEvent = (function() {
+const containerTagName = 'ai-dialog-container';
+const overlayTagName = 'ai-dialog-overlay';
+export const transitionEvent = (function() {
   let transition = null;
 
   return function() {
@@ -23,6 +23,22 @@ let transitionEvent = (function() {
         return transition;
       }
     }
+  };
+}());
+export const hasTransition = (function() {
+  const unprefixedName = 'transitionDuration';
+  const el = DOM.createElement('fakeelement');
+  const prefixedNames = ['webkitTransitionDuration', 'oTransitionDuration'];
+  let transitionDurationName;
+  if (unprefixedName in el.style) {
+    transitionDurationName = unprefixedName;
+  } else {
+    transitionDurationName = prefixedNames.find(prefixed => (prefixed in el.style));
+  }
+  return function(element) {
+    return !!transitionDurationName && !!DOM.getComputedStyle(element)[transitionDurationName]
+      .split(',')
+      .find(duration => !!parseFloat(duration));
   };
 }());
 
@@ -98,7 +114,7 @@ export class DialogRenderer {
 
     return new Promise((resolve) => {
       let renderer = this;
-      if (settings.ignoreTransitions) {
+      if (settings.ignoreTransitions || !hasTransition(this.modalContainer)) {
         resolve();
       } else {
         this.modalContainer.addEventListener(transitionEvent(), onTransitionEnd);
@@ -136,7 +152,7 @@ export class DialogRenderer {
 
     return new Promise((resolve) => {
       let renderer = this;
-      if (settings.ignoreTransitions) {
+      if (settings.ignoreTransitions || !hasTransition(this.modalContainer)) {
         resolve();
       } else {
         this.modalContainer.addEventListener(transitionEvent(), onTransitionEnd);
