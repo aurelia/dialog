@@ -270,6 +270,10 @@ The settings available for the dialog are set on the dialog controller on a per-
 - `centerHorizontalOnly` means that the dialog will be centered horizontally, and the vertical alignment is left up to you. (defaults to false)
 - `position` a callback that is called right before showing the modal with the signature: `(modalContainer: Element, modalOverlay: Element) => void`. This allows you to setup special classes, play with the position, etc... If specified, `centerHorizontalOnly` is ignored. (optional)
 - `ignoreTransitions` is a Boolean you must set to `true` if you disable css animation of your dialog. (optional, default to false)
+- `yieldController` is a Boolean you must set to `true` if you want to execute some logic when the dialog gets open and/or get access to the dialog controller
+- `rejectOnCancel` is a Boolean you must set to `true` if you want to handle cancellations as rejection. The reason will be instance of `DialogCancelError` - the property `wasCancelled` will be set to `true` and if cancellation data was provided it will be set to the `reason` property.
+
+> Warning: Plugin authors are advised to be explicit with settings that change behavior(`yieldController` and `rejectOnCancel`).
 
 ```javascript
 export class Prompt {
@@ -299,10 +303,10 @@ It is possible to resolve and close (using cancel/ok/error methods) dialog in th
     }
     person = { firstName: 'Wade', middleName: 'Owen', lastName: 'Watts' };
     submit(){
-      this.dialogService.openAndYieldController({viewModel: EditPerson, model: this.person}).then(controller => {
+      this.dialogService.open({yieldController: true, viewModel: EditPerson, model: this.person}).then(openDialogResult => {
         // Note you get here when the dialog is opened, and you are able to close dialog  
-        // Promise for the result is stored in controller.result property
-        controller.result.then((response) => {
+        // Promise for the result is stored in openDialogResult.closeResult property
+        openDialogResult.closeResult.then((response) => {
 
           if (!response.wasCancelled) {
             console.log('good');
@@ -315,7 +319,7 @@ It is possible to resolve and close (using cancel/ok/error methods) dialog in th
         })
 
         setTimeout(() => {
-          controller.cancel('canceled outside after 3 sec')
+          openDialogResult.controller.cancel('canceled outside after 3 sec')
         }, 3000)
 
       });

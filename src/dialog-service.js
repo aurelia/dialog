@@ -4,8 +4,9 @@ import {CompositionEngine, ViewSlot} from 'aurelia-templating';
 import {DialogController} from './dialog-controller';
 import {Renderer} from './renderer';
 import {invokeLifecycle} from './lifecycle';
-import {DialogResult} from './dialog-result';
 import {dialogOptions} from './dialog-options';
+import {DialogCancelError} from './dialog-cancel-error';
+import {DialogSettings, OpenDialogResult, CloseDialogResult} from './interfaces';
 
 /**
  * A service allowing for the creation of dialogs.
@@ -34,32 +35,34 @@ export class DialogService {
    * @param settings Dialog settings for this dialog instance.
    * @return Promise A promise that settles when the dialog is closed.
    */
-  open(settings?: Object): Promise<DialogResult> {
-    return this.openAndYieldController(settings)
-      .then((controller) => controller.result);
-  }
-
-  /**
-   * Opens a new dialog.
-   * @param settings Dialog settings for this dialog instance.
-   * @return Promise A promise that settles when the dialog is opened.
-   * Resolves to the controller of the dialog.
-   */
-  openAndYieldController(settings?: Object): Promise<DialogController> {
+  open(settings?: DialogSettings): Promise<OpenDialogResult | CloseDialogResult> {
     let childContainer = this.container.createChild();
     let dialogController;
-    let promise = new Promise((resolve, reject) => {
+    let closeResult: Promise<CloseDialogResult> = new Promise((resolve, reject) => {
       dialogController = new DialogController(childContainer.get(Renderer), _createSettings(settings), resolve, reject);
     });
     childContainer.registerInstance(DialogController, dialogController);
-    dialogController.result = promise;
-    dialogController.result.then(() => {
+
+    closeResult.then(() => {
       _removeController(this, dialogController);
     }, () => {
       _removeController(this, dialogController);
     });
-    return _openDialog(this, childContainer, dialogController)
-      .then(() => dialogController);
+
+    let openResult = _getViewModel(this.container, this.compositionEngine, childContainer, dialogController).then((compositionContext) => {
+      dialogController.viewModel = compositionContext.viewModel;
+      dialogController.slot = compositionContext.viewSlot;
+      return _tryActivate(this, dialogController, compositionContext).then((result) => {
+        if (result) { return result; }
+        return {
+          wasCancelled: false,
+          controller: dialogController,
+          closeResult
+        };
+      });
+    });
+
+    return settings.yieldController ? openResult : openResult.then(result => result.wasCancelled ? result : result.closeResult);
   }
 }
 
@@ -69,10 +72,10 @@ function _createSettings(settings) {
   return settings;
 }
 
-function _openDialog(service, childContainer, dialogController) {
+function _getViewModel(container, compositionEngine, childContainer, dialogController) {
   let host = dialogController.renderer.getDialogContainer();
-  let instruction = {
-    container: service.container,
+  let compositionContext = {
+    container: container,
     childContainer: childContainer,
     model: dialogController.settings.model,
     view: dialogController.settings.view,
@@ -81,39 +84,46 @@ function _openDialog(service, childContainer, dialogController) {
     host: host
   };
 
-  return _getViewModel(instruction, service.compositionEngine).then(returnedInstruction => {
-    dialogController.viewModel = returnedInstruction.viewModel;
-    dialogController.slot = returnedInstruction.viewSlot;
+  if (typeof compositionContext.viewModel === 'function') {
+    compositionContext.viewModel = Origin.get(compositionContext.viewModel).moduleId;
+  }
 
-    return invokeLifecycle(dialogController.viewModel, 'canActivate', dialogController.settings.model).then(canActivate => {
+  if (typeof compositionContext.viewModel === 'string') {
+    return compositionEngine.ensureViewModel(compositionContext);
+  }
+
+  return Promise.resolve(compositionContext);
+}
+
+function _tryActivate(service, dialogController, compositionContext) {
+  return invokeLifecycle(dialogController.viewModel, 'canActivate', dialogController.settings.model)
+    .then((canActivate => {
       if (canActivate) {
-        return service.compositionEngine.compose(returnedInstruction).then(controller => {
-          service.controllers.push(dialogController);
-          service.hasActiveDialog = !!service.controllers.length;
-          dialogController.controller = controller;
-          dialogController.view = controller.view;
-
-          return dialogController.renderer.showDialog(dialogController);
-        });
+        return _composeAndShowDialog(service, dialogController, compositionContext);
       }
-    });
+
+      if (dialogController.settings.rejectOnCancel) {
+        throw new DialogCancelError();
+      }
+
+      return {
+        wasCancelled: true
+      };
+    }));
+}
+
+function _composeAndShowDialog(service, dialogController, compositionContext) {
+  return service.compositionEngine.compose(compositionContext).then(controller => {
+    service.controllers.push(dialogController);
+    service.hasActiveDialog = !!service.controllers.length;
+    dialogController.controller = controller;
+    dialogController.view = controller.view;
+    return dialogController.renderer.showDialog(dialogController)
   });
 }
 
-function _getViewModel(instruction, compositionEngine) {
-  if (typeof instruction.viewModel === 'function') {
-    instruction.viewModel = Origin.get(instruction.viewModel).moduleId;
-  }
-
-  if (typeof instruction.viewModel === 'string') {
-    return compositionEngine.ensureViewModel(instruction);
-  }
-
-  return Promise.resolve(instruction);
-}
-
-function _removeController(service, controller) {
-  let i = service.controllers.indexOf(controller);
+function _removeController(service, dialogCOntroller) {
+  let i = service.controllers.indexOf(dialogCOntroller);
   if (i !== -1) {
     service.controllers.splice(i, 1);
     service.hasActiveDialog = !!service.controllers.length;
