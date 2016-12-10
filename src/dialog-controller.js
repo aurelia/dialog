@@ -1,5 +1,6 @@
 import {invokeLifecycle} from './lifecycle';
 import {DialogResult} from './dialog-result';
+import {DialogCancelError} from './dialog-cancel-error';
 
 /**
  * A controller object for a Dialog instance.
@@ -68,9 +69,13 @@ export class DialogController {
           .then(() => {
             return this.renderer.hideDialog(this);
           }).then(() => {
-            let result = new DialogResult(!ok, output);
             this.controller.unbind();
-            this._resolve(result);
+            let result = new DialogResult(!ok, output);
+            if (!this.settings.rejectOnCancel || ok) {
+              this._resolve(result);
+            } else {
+              this._reject(new DialogCancelError(output));
+            }
             return result;
           });
       }

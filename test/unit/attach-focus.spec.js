@@ -6,7 +6,7 @@ import {bootstrap} from 'aurelia-bootstrapper';
 
 let element = document.createElement('div');
 
-describe('modal gets focused when attached', () => {
+describe('modal gets focused when attached', function () {
   let component;
   let attachFocus;
   let container;
@@ -17,12 +17,12 @@ describe('modal gets focused when attached', () => {
     first;
   }
 
-  beforeEach(() => {
+  beforeEach(function () {
     viewModel = new ViewModel();
   });
 
-  describe('when using attribute without .bind', () => {
-    beforeEach(() => {
+  describe('when using attribute without .bind', function () {
+    beforeEach(function () {
       component = StageComponent
         .withResources('src/attach-focus')
         .inView('\
@@ -32,7 +32,7 @@ describe('modal gets focused when attached', () => {
         .boundTo(viewModel);
     });
 
-    it('sets focus to no value element', (done) => {
+    it('sets focus to no value element', function (done) {
       component.create(bootstrap).then(() => {
         expect(document.activeElement).toBe(viewModel.noValueEl);
         done();
@@ -40,8 +40,8 @@ describe('modal gets focused when attached', () => {
     });
   });
 
-  describe('when binding to vm property', () => {
-    beforeEach(() => {
+  describe('when binding to vm property', function () {
+    beforeEach(function () {
       component = StageComponent
         .withResources('src/attach-focus')
         .inView('\
@@ -52,7 +52,7 @@ describe('modal gets focused when attached', () => {
         .boundTo(viewModel);
     });
 
-    it('sets focus to first element when true', (done) => {
+    it('sets focus to first element when true', function (done) {
       viewModel.first = true;
       component.create(bootstrap).then(() => {
         expect(document.activeElement).toBe(viewModel.firstEl);
@@ -60,7 +60,7 @@ describe('modal gets focused when attached', () => {
       });
     });
 
-    it('sets focus to second element when false', (done) => {
+    it('sets focus to second element when false', function (done) {
       viewModel.first = false;
       component.create(bootstrap).then(() => {
         expect(document.activeElement).toBe(viewModel.secondEl);
@@ -69,7 +69,7 @@ describe('modal gets focused when attached', () => {
     });
   });
 
-  afterEach(() => {
+  afterEach(function () {
     component.dispose();
   });
 });

@@ -1,57 +1,44 @@
 import {invokeLifecycle} from '../../src/lifecycle';
 
-describe('"invokeLifecycle()"', function () {
+describe('".invokeLifecycle()"', function () {
+  function failOnRejection(promise, done) {
+    promise.catch((reason) => {
+      fail(reason);
+      done();
+    });
+  }
+
   const CAN_ACTIVATE = 'canActivate';
   const ACTIVATE = 'activate';
   const CAN_DEACTIVATE = 'canDeactivate';
   const DEACTIVATE = 'deactivate';
   const DEFAULT_LEFECYCLE_RESULT = true;
 
-  beforeEach(function () {
-    this.catchWasCalled = false;
-  });
-
   describe('resolves with default value if there is', function () {
     const vm = {};
 
     it(`no "canActivate" method implemented`, function (done) {
-      invokeLifecycle(vm, CAN_ACTIVATE).catch(() => {
-        this.catchWasCalled = true;
-      }).then((result) => {
+      const result = invokeLifecycle(vm, CAN_ACTIVATE).then((result) => {
         expect(result).toBe(DEFAULT_LEFECYCLE_RESULT);
-        expect(this.catchWasCalled).toBe(false);
         done();
-      })
-    });
-
-    it('no "activate" method implemented', function (done) {
-      invokeLifecycle(vm, ACTIVATE).catch(() => {
-        this.catchWasCalled = true;
-      }).then((result) => {
-        expect(result).toBe(DEFAULT_LEFECYCLE_RESULT);
-        expect(this.catchWasCalled).toBe(false);
-        done();
-      })
+      });
+      failOnRejection(result, done);
     });
 
     it('no "canDeactivate" method implemented', function (done) {
-      invokeLifecycle(vm, CAN_DEACTIVATE).catch(() => {
-        this.catchWasCalled = true;
-      }).then((result) => {
+      const result = invokeLifecycle(vm, CAN_DEACTIVATE).then((result) => {
         expect(result).toBe(DEFAULT_LEFECYCLE_RESULT);
-        expect(this.catchWasCalled).toBe(false);
         done();
-      })
+      });
+      failOnRejection(result, done);
     });
 
     it('no "deactivate" method implemented', function (done) {
-      invokeLifecycle(vm, DEACTIVATE).catch(() => {
-        this.catchWasCalled = true;
-      }).then((result) => {
+      const result = invokeLifecycle(vm, DEACTIVATE).then((result) => {
         expect(result).toBe(DEFAULT_LEFECYCLE_RESULT);
-        expect(this.catchWasCalled).toBe(false);
         done();
-      })
+      });
+      failOnRejection(result, done);
     });
   });
 
@@ -71,43 +58,30 @@ describe('"invokeLifecycle()"', function () {
     };
 
     it('of "canActivate"', function (done) {
-      Promise.all([invokeLifecycle(syncVM, CAN_ACTIVATE), invokeLifecycle(asyncVM, CAN_ACTIVATE)]).catch(() => {
-        this.catchWasCalled = true;
-      }).then(([syncResult, asyncResult]) => {
-        expect(this.catchWasCalled).toBe(false);
-        expect(syncResult).toBe(asyncResult);
-        done();
-      });
-    });
-
-    it('of "activate"', function (done) {
-      Promise.all([invokeLifecycle(syncVM, ACTIVATE), invokeLifecycle(asyncVM, ACTIVATE)]).catch(() => {
-        this.catchWasCalled = true;
-      }).then(([syncResult, asyncResult]) => {
-        expect(this.catchWasCalled).toBe(false);
-        expect(syncResult).toBe(asyncResult);
-        done();
-      });
+      const result = Promise.all([invokeLifecycle(syncVM, CAN_ACTIVATE), invokeLifecycle(asyncVM, CAN_ACTIVATE)])
+        .then(([syncResult, asyncResult]) => {
+          expect(syncResult).toBe(asyncResult);
+          done();
+        });
+      failOnRejection(result, done);
     });
 
     it('of "canDeactivate"', function (done) {
-      Promise.all([invokeLifecycle(syncVM, CAN_DEACTIVATE), invokeLifecycle(asyncVM, CAN_DEACTIVATE)]).catch(() => {
-        this.catchWasCalled = true;
-      }).then(([syncResult, asyncResult]) => {
-        expect(this.catchWasCalled).toBe(false);
-        expect(syncResult).toBe(asyncResult);
-        done();
-      });
+      const result = Promise.all([invokeLifecycle(syncVM, CAN_DEACTIVATE), invokeLifecycle(asyncVM, CAN_DEACTIVATE)])
+        .then(([syncResult, asyncResult]) => {
+          expect(syncResult).toBe(asyncResult);
+          done();
+        });
+      failOnRejection(result, done);
     });
 
     it('of "deactivate"', function (done) {
-      Promise.all([invokeLifecycle(syncVM, DEACTIVATE), invokeLifecycle(asyncVM, DEACTIVATE)]).catch(() => {
-        this.catchWasCalled = true;
-      }).then(([syncResult, asyncResult]) => {
-        expect(this.catchWasCalled).toBe(false);
-        expect(syncResult).toBe(asyncResult);
-        done();
-      });
+      const result = Promise.all([invokeLifecycle(syncVM, DEACTIVATE), invokeLifecycle(asyncVM, DEACTIVATE)])
+        .then(([syncResult, asyncResult]) => {
+          expect(syncResult).toBe(asyncResult);
+          done();
+        });
+      failOnRejection(result, done);
     });
   });
 
@@ -115,25 +89,23 @@ describe('"invokeLifecycle()"', function () {
     it('for sync implementations', function (done) {
       const syncResult = {};
       const syncVM = { [ACTIVATE]: function () { return syncResult; } };
-      invokeLifecycle(syncVM, ACTIVATE).catch(() => {
-        this.catchWasCalled = true;
-      }).then((result) => {
-        expect(this.catchWasCalled).toBe(false);
-        expect(result).toBe(syncResult);
-        done();
-      });
+      const result = invokeLifecycle(syncVM, ACTIVATE)
+        .then((result) => {
+          expect(result).toBe(syncResult);
+          done();
+        });
+      failOnRejection(result, done);
     });
 
     it('for async implementations', function (done) {
       const asyncResult = {};
       const asyncVM = { [ACTIVATE]: function () { return Promise.resolve(asyncResult); } };
-      invokeLifecycle(asyncVM, ACTIVATE).catch(() => {
-        this.catchWasCalled = true;
-      }).then((result) => {
-        expect(this.catchWasCalled).toBe(false);
-        expect(result).toBe(asyncResult);
-        done();
-      });
+      const result = invokeLifecycle(asyncVM, ACTIVATE)
+        .then((result) => {
+          expect(result).toBe(asyncResult);
+          done();
+        });
+      failOnRejection(result, done);
     });
   });
 
@@ -144,5 +116,17 @@ describe('"invokeLifecycle()"', function () {
       expect(e).toBe(expectedError);
       done();
     });
+  });
+
+  it('passes the provided model', function (done) {
+    const expectedModel = {};
+    const vm = { [CAN_ACTIVATE]() { } };
+    spyOn(vm, CAN_ACTIVATE);
+    const result = invokeLifecycle(vm, CAN_ACTIVATE, expectedModel)
+      .then(() => {
+        expect(vm[CAN_ACTIVATE]).toHaveBeenCalledWith(expectedModel);
+        done();
+      });
+    failOnRejection(result, done);
   });
 });

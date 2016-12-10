@@ -27,8 +27,10 @@ var paths = {
 
 paths.ignore = ['aurelia-dialog.js'];
 paths.files = [
+  'interfaces.js',
   'dialog-options.js',
   'dialog-result.js',
+  'dialog-cancel-error.js',
   'ai-dialog-body.js',
   'ai-dialog-footer.js',
   'ai-dialog-header.js',

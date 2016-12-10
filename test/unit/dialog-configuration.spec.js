@@ -11,9 +11,9 @@ let aurelia = {
   transient: () => {}
 };
 
-describe('DialogConfiguration', () => {
+describe('DialogConfiguration', function () {
   let configuration;
-  beforeEach(() => {
+  beforeEach(function () {
     configuration = new DialogConfiguration(aurelia);
 
     Object.keys(dialogOptions).forEach((key) => {
@@ -23,8 +23,8 @@ describe('DialogConfiguration', () => {
     Object.assign(dialogOptions, defaultDialogOptions);
   });
 
-  describe('useRenderer', () => {
-    it('should register a renderer as a transient', () => {
+  describe('useRenderer', function () {
+    it('should register a renderer as a transient', function () {
       let renderer = {};
       spyOn(aurelia, 'transient');
       configuration.useRenderer(renderer);
@@ -32,7 +32,7 @@ describe('DialogConfiguration', () => {
       expect(aurelia.transient).toHaveBeenCalledWith(Renderer, renderer);
     });
 
-    it('should export settings', () => {
+    it('should export settings', function () {
       let renderer = {};
       let settings = { first: 'first', second: 'second' };
       configuration.useRenderer(renderer, settings);
@@ -42,8 +42,8 @@ describe('DialogConfiguration', () => {
     });
   });
 
-  describe('useResource', () => {
-    it('should call globalResources', () => {
+  describe('useResource', function () {
+    it('should call globalResources', function () {
       spyOn(aurelia, 'globalResources');
       configuration.useResource('ai-dialog');
       configuration._apply();
@@ -51,8 +51,8 @@ describe('DialogConfiguration', () => {
     });
   });
 
-  describe('useDefaults', () => {
-    it('should call useRenderer with the default renderer', () => {
+  describe('useDefaults', function () {
+    it('should call useRenderer with the default renderer', function () {
       spyOn(configuration, 'useRenderer').and.callThrough();
       spyOn(configuration, 'useResource').and.callThrough();
 
@@ -66,7 +66,7 @@ describe('DialogConfiguration', () => {
       expect(configuration.useResource).toHaveBeenCalledWith('attach-focus');
     });
     
-    it('should inject default style', () => {
+    it('should inject default style', function () {
       spyOn(DOM, 'injectStyles').and.callThrough();
       
       configuration.useDefaults();
@@ -75,8 +75,8 @@ describe('DialogConfiguration', () => {
     });
   });
   
-  describe('useCSS', () => {
-    it('should skip injecting empty style', () => {
+  describe('useCSS', function () {
+    it('should skip injecting empty style', function () {
       spyOn(DOM, 'injectStyles').and.callThrough();
       
       // Undefined css

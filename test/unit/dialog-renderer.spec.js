@@ -251,8 +251,8 @@ describe('"hasTransition"', function () {
   });
 
   beforeEach(function () {
-    this.element = DOM.createElement('duration-test-element'); 
-    this.body.insertBefore(this.element, this.body.firstChild) 
+    this.element = DOM.createElement('duration-test-element');
+    this.body.insertBefore(this.element, this.body.firstChild)
   });
 
   afterEach(function () {
