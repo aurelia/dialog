@@ -4,5 +4,6 @@ export let dialogOptions = {
   startingZIndex: 1000,
   ignoreTransitions: false,
   rejectOnCancel: false,
-  yieldController: false
+  yieldController: false,
+  enableEscClose: true
 };

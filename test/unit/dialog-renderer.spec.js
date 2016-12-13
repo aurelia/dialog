@@ -115,6 +115,48 @@ describe('the Dialog Renderer', () => {
     });
   });
 
+  it('does close the top dialog when enableEscClose is true', function (done) {
+    const settings = { enableEscClose: true, lock: false };
+    const expectedEndCount = 2;
+    const first = createDialogController(settings);
+    const last = createDialogController(settings);
+
+    spyOn(first, 'cancel');
+    spyOn(last, 'cancel');
+
+    this.showDialogs([first, last]).then(() => {
+      expect(this.catchWasCalled).toBe(false);
+      if (this.catchWasCalled) { return done(); }
+      expect(last.renderer._dialogControllers.length).toBe(expectedEndCount);
+      last.renderer._escapeKeyEventHandler({ keyCode: 27 });
+      expect(first.cancel).not.toHaveBeenCalled();
+      expect(last.cancel).not.toHaveBeenCalled();
+      expect(last.renderer._dialogControllers.length).toBe(expectedEndCount);
+      done();
+    });
+  });
+
+  it('does not close the top dialog when enableEscClose is false and lock is true', function (done) {
+      const settings = { enableEscClose: false, lock: true };
+      const expectedEndCount = 2;
+      const first = createDialogController(settings);
+      const last = createDialogController(settings);
+
+      spyOn(first, 'cancel');
+      spyOn(last, 'cancel');
+
+      this.showDialogs([first, last]).then(() => {
+        expect(this.catchWasCalled).toBe(false);
+        if (this.catchWasCalled) { return done(); }
+        expect(last.renderer._dialogControllers.length).toBe(expectedEndCount);
+        last.renderer._escapeKeyEventHandler({ keyCode: 27 });
+        expect(first.cancel).not.toHaveBeenCalled();
+        expect(last.cancel).not.toHaveBeenCalled();
+        expect(last.renderer._dialogControllers.length).toBe(expectedEndCount);
+        done();
+      });
+    });
+
   it('does add the "ai-dialog-open" class on first open dialog', function (done) {
     const body = DOM.querySelectorAll('body')[0];
     spyOn(body.classList, 'add').and.callThrough();

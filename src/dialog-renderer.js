@@ -47,7 +47,7 @@ export class DialogRenderer {
   _escapeKeyEventHandler = (e) => {
     if (e.keyCode === 27) {
       let top = this._dialogControllers[this._dialogControllers.length - 1];
-      if (top && top.settings.lock !== true) {
+      if (top && (top.settings.lock !== true && !top.settings.enableEscClose)) {
         top.cancel();
       }
     }
