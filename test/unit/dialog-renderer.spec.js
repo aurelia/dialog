@@ -68,7 +68,7 @@ describe('the Dialog Renderer', () => {
   });
 
   it('does close the top dialog, when not locked, on ESC', function (done) {
-    const settings = { lock: false };
+    const settings = { lock: false, enableEscClose: true };
     const expectedEndCount = 1;
     const first = createDialogController(settings);
     const last = createDialogController(settings);
@@ -130,7 +130,7 @@ describe('the Dialog Renderer', () => {
       expect(last.renderer._dialogControllers.length).toBe(expectedEndCount);
       last.renderer._escapeKeyEventHandler({ keyCode: 27 });
       expect(first.cancel).not.toHaveBeenCalled();
-      expect(last.cancel).not.toHaveBeenCalled();
+      expect(last.cancel).toHaveBeenCalled();
       expect(last.renderer._dialogControllers.length).toBe(expectedEndCount);
       done();
     });
