@@ -256,6 +256,7 @@ export function configure(aurelia) {
       config.settings.lock = true;
       config.settings.centerHorizontalOnly = false;
       config.settings.startingZIndex = 5;
+      config.settings.enableEscClose = true;
     });
 
   aurelia.start().then(a => a.setRoot());
@@ -272,6 +273,7 @@ The settings available for the dialog are set on the dialog controller on a per-
 - `ignoreTransitions` is a Boolean you must set to `true` if you disable css animation of your dialog. (optional, default to false)
 - `yieldController` is a Boolean you must set to `true` if you want to execute some logic when the dialog gets open and/or get access to the dialog controller
 - `rejectOnCancel` is a Boolean you must set to `true` if you want to handle cancellations as rejection. The reason will be instance of `DialogCancelError` - the property `wasCancelled` will be set to `true` and if cancellation data was provided it will be set to the `reason` property.
+- `enableEscClose` allows pressings escape to close the modal without `lock: false`. (optional, defaults to true)
 
 > Warning: Plugin authors are advised to be explicit with settings that change behavior(`yieldController` and `rejectOnCancel`).
 
