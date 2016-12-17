@@ -87,17 +87,14 @@ describe('the Dialog Service', function () {
   });
 
   it('reports no active dialog if no dialog is open', function (done) {
-    const settings = { viewModel: TestElement };
-
-    spyOn(renderer, 'showDialog').and.callFake((dialogController) => {
-      expect(dialogService.hasActiveDialog).toBe(true);
-      dialogController.cancel();
-      return Promise.resolve();
-    });
-
+    const settings = { viewModel: TestElement, yieldController: true };
     expect(dialogService.hasActiveDialog).toBe(false);
-
     dialogService.open(settings)
+      .then((openDialogResult) => {
+        expect(dialogService.hasActiveDialog).toBe(true);
+        openDialogResult.controller.cancel();
+        return openDialogResult.closeResult;
+      })
       .then(() => {
         expect(dialogService.hasActiveDialog).toBe(false);
         done();
@@ -105,25 +102,21 @@ describe('the Dialog Service', function () {
   });
 
   it('reports an active dialog if a dialog is open', function (done) {
-    const settings = { viewModel: TestElement };
-
-    spyOn(renderer, 'showDialog').and.callFake((dialogController) => {
+    const settings = { viewModel: TestElement, yieldController: true };
+    expect(dialogService.hasActiveDialog).toBe(false);
+    dialogService.open(settings).then(() => {
       expect(dialogService.hasActiveDialog).toBe(true);
       done();
-      return Promise.resolve();
     });
-
-    expect(dialogService.hasActiveDialog).toBe(false);
-    dialogService.open(settings);
   });
 
-  it('reports an active dialog after it has been activated', function (done) {
-    // the cotroller should be added to .controllers after the result of .activate() has settled
+  it('reports an active dialog after it has been shown', function (done) {
+    // the cotroller should be added to .controllers after the result of renderer.showDialog() has settled
     // if there is activate
     const viewModel = new TestElement();
     viewModel.canActivate = function () { };
     viewModel.activate = function () { };
-    const settings = { viewModel };
+    const settings = { viewModel, yieldController: true };
 
     spyOn(viewModel, 'canActivate').and.callFake(() => {
       expect(dialogService.controllers.length).toBe(0);
@@ -134,13 +127,16 @@ describe('the Dialog Service', function () {
     });
 
     spyOn(renderer, 'showDialog').and.callFake((dialogController) => {
-      expect(dialogService.controllers.length).toBe(1);
-      done();
+      expect(dialogService.controllers.length).toBe(0);
       return Promise.resolve();
     });
 
     expect(dialogService.controllers.length).toBe(0);
-    dialogService.open(settings);
+    dialogService.open(settings)
+      .then(() => {
+        expect(dialogService.controllers.length).toBe(1);
+        done();
+      });
   });
 
   it('does not report an active dialog if it fails to activate', function (done) {
@@ -174,8 +170,7 @@ describe('the Dialog Service', function () {
 
     spyOn(renderer, 'showDialog').and.callFake((dialogController) => {
       if (renderer.showDialog.calls.count() === dialogsToOpen) {
-        expect(dialogService.controllers.length).toBe(dialogsToOpen);
-        dialogController.cancel();
+        expect(dialogService.controllers.length).toBe(expectedEndCount); // not considered "active" till ".showDalog" settles
       }
       return Promise.resolve();
     });
@@ -187,13 +182,19 @@ describe('the Dialog Service', function () {
     }
 
     // the order in which DialogService.open is called does not match 
-    // the order DialogRendere.showDialog is called 
+    // the order DialogRenderer.showDialog is called 
     // with the respective DialogController instances
     setTimeout(() => {
-      dialogService.open(settings).then(() => {
-        expect(dialogService.controllers.length).toBe(expectedEndCount);
-        done();
-      });
+      dialogService.open(Object.assign({}, settings, { yieldController: true }))
+        .then((openDialogResult) => {
+          expect(dialogService.controllers.length).toBe(dialogsToOpen); // at this point the dialog should be "open"
+          openDialogResult.controller.cancel();
+          return openDialogResult.closeResult;
+        })
+        .then(() => {
+          expect(dialogService.controllers.length).toBe(expectedEndCount);
+          done();
+        });
     }, 60);
   });
 
@@ -331,40 +332,6 @@ describe('the Dialog Service', function () {
       });
   });
 
-  it('reports no active dialog after ".closeAll" has been invoked', (done) => {
-    const settings = { viewModel: TestElement };
-    const dialogsToOpen = 6;
-    let i = dialogsToOpen;
-    let controllersPromises = [];
-    let controllers;
-    let catchWasCalled = false;
-
-    expect(dialogService.hasActiveDialog).toBe(false);
-    while (i--) { 
-      controllersPromises.push(dialogService.openAndYieldController(settings));
-    }
-    expect(dialogService.hasActiveDialog).toBe(false);
-    const closeAll = Promise.all(controllersPromises).then((ctrls) => {
-      controllers = ctrls;
-      ctrls.forEach((controller) => {
-        spyOn(controller, 'cancel').and.callThrough();
-      });
-      return dialogService.closeAll();
-    }).catch((reason => {
-      catchWasCalled = true;
-    })).then(() => {
-      expect(catchWasCalled).toBe(false);
-      if (catchWasCalled) {
-        return done();
-      }
-      controllers.forEach((controller) => {
-        expect(controller.cancel).toHaveBeenCalled();
-      });
-      expect(dialogService.controllers.length).toBe(0);
-      done();
-    });
-  });
-
   it('".open" properly propagates errors', (done) => {
     let catchWasCalled = false;
     let promise = dialogService.open({ viewModel: 'test/fixtures/non-existent' })
@@ -376,37 +343,144 @@ describe('the Dialog Service', function () {
       });
   });
 
-  it('reports no active dialog after ".closeAll" has been invoked', (done) => {
-    const settings = { viewModel: TestElement };
+  it('".closeAll" returns an empty array when all controllers succeed in closing', function (done) {
+    const settings = { viewModel: TestElement, yieldController: true };
     const dialogsToOpen = 6;
     let i = dialogsToOpen;
-    let controllersPromises = [];
-    let controllers;
-    let catchWasCalled = false;
-
-    expect(dialogService.hasActiveDialog).toBe(false);
-    while (i--) { 
-      controllersPromises.push(dialogService.openAndYieldController(settings));
+    let openResults = [];
+    let controllers = [];
+    while (i--) {
+      openResults.push(dialogService.open(settings));
     }
-    expect(dialogService.hasActiveDialog).toBe(false);
-    const closeAll = Promise.all(controllersPromises).then((ctrls) => {
-      controllers = ctrls;
-      ctrls.forEach((controller) => {
-        spyOn(controller, 'cancel').and.callThrough();
+    Promise.all(openResults)
+      .then((results) => {
+        results.forEach(({controller}) => {
+          spyOn(controller, 'cancel').and.callThrough();
+          controllers.push(controller);
+        });
+        return dialogService.closeAll();
+      })
+      .catch((reason => {
+        fail(reason);
+        done();
+        return Promise.reject(reason);
+      }))
+      .then((notClosedControllers) => {
+        expect(notClosedControllers.length).toBe(0);
+        controllers.forEach((ctrl) => {
+          expect(ctrl.cancel).toHaveBeenCalled();
+        });
+        done();
       });
-      return dialogService.closeAll();
-    }).catch((reason => {
-      catchWasCalled = true;
-    })).then(() => {
-      expect(catchWasCalled).toBe(false);
-      if (catchWasCalled) {
-        return done();
-      }
-      controllers.forEach((controller) => {
-        expect(controller.cancel).toHaveBeenCalled();
+  });
+
+  it('".closeAll" returns an empty array when all controllers succeed in closing and "rejectOnCancel" is true', function (done) {
+    const settings = { viewModel: TestElement, yieldController: true, rejectOnCancel: true };
+    const dialogsToOpen = 6;
+    let i = dialogsToOpen;
+    let openResults = [];
+    let controllers = [];
+    while (i--) {
+      openResults.push(dialogService.open(settings));
+    }
+    Promise.all(openResults)
+      .then((results) => {
+        results.forEach(({controller}) => {
+          spyOn(controller, 'cancel').and.callThrough();
+          controllers.push(controller);
+        });
+        return dialogService.closeAll();
+      })
+      .catch((reason => {
+        fail(reason);
+        done();
+        return Promise.reject(reason);
+      }))
+      .then((notClosedControllers) => {
+        expect(notClosedControllers.length).toBe(0);
+        controllers.forEach((ctrl) => {
+          expect(ctrl.cancel).toHaveBeenCalled();
+        });
+        done();
       });
-      expect(dialogService.controllers.length).toBe(0);
-      done();
-    });
+  });
+
+  // no dialog is opened in the meantime and no dialog fails to close
+  it('".closeAll" method reports no open dialog after completion', function (done) {
+    const settings = { viewModel: TestElement, yieldController: true };
+    const dialogsToOpen = 5;
+    let i = dialogsToOpen;
+    let openResults = [];
+    expect(dialogService.hasOpenDialog).toBe(false);
+    while (i--) {
+      openResults.push(dialogService.open(settings));
+    }
+    expect(dialogService.hasOpenDialog).toBe(false);
+    Promise.all(openResults)
+      .then(() => dialogService.closeAll())
+      .catch((reason => {
+        fail(reason);
+        done();
+        return Promise.reject(reason);
+      }))
+      .then(() => {
+        expect(dialogService.controllers.length).toBe(0);
+        done();
+      });
+  });
+
+  it('".closeAll" method fails if any dialog errors when closing', function (done) {
+    // the error propagation from both ".canDeactivate" and ".deactivate" is covered in the DialogController tests
+    const vm = new TestElement();
+    const expecterError = new Error();
+    vm.canDeactivate = () => { throw expecterError; }
+    dialogService.open({ viewModel: vm, yieldController: true })
+      .then(() => dialogService.closeAll())
+      .then(() => {
+        fail('".closeAll" had to fail.');
+        done();
+      })
+      .catch((reason) => {
+        expect(reason).toBe(expecterError);
+        expect(dialogService.controllers.length).toBe(1);
+        done();
+      });
+  });
+
+  it('".closeAll" method fails if any dialog errors when closing and "rejectOnCancel" is true', function (done) {
+    // the error propagation from both ".canDeactivate" and ".deactivate" is covered in the DialogController tests
+    const vm = new TestElement();
+    const expecterError = new Error();
+    vm.canDeactivate = () => { throw expecterError; }
+    dialogService.open({ viewModel: vm, yieldController: true, rejectOnCancel: true })
+      .then(() => dialogService.closeAll())
+      .then(() => {
+        fail('".closeAll" had to fail.');
+        done();
+      })
+      .catch((reason) => {
+        expect(reason).toBe(expecterError);
+        expect(dialogService.controllers.length).toBe(1);
+        done();
+      });
+  });
+
+  it('".closeAll" method returns the controllers whose close operation was cancelled', function (done) {
+    const vms = [
+      new TestElement(),
+      new TestElement(),
+      new TestElement()
+    ];
+    vms[1].canDeactivate = () => { return false; }
+    Promise.all(vms.map((vm) => dialogService.open({viewModel: vm, yieldController: true})))
+      .then(() => dialogService.closeAll())
+      .then((failedToClose) => {
+        expect(failedToClose.length).toBe(1);
+        done();
+      })
+      .catch((reason) => {
+        fail(reason);
+        done();
+      });
   });
 });

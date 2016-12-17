@@ -19,15 +19,16 @@ export class DialogService {
    */
   controllers: DialogController[];
   /**
-   * Is there an active dialog
+   * Is there an open dialog
    */
+  hasOpenDialog: boolean;
   hasActiveDialog: boolean;
 
   constructor(container: Container, compositionEngine: CompositionEngine) {
     this.container = container;
     this.compositionEngine = compositionEngine;
     this.controllers = [];
-    this.hasActiveDialog = false;
+    this.hasActiveDialog = this.hasOpenDialog = false;
   }
 
   /**
@@ -67,18 +68,24 @@ export class DialogService {
 
   /**
    * Closes all open dialogs at the time of invocation.
-   * @return Promise A promise that settles when all dialogs have closed.
+   * @return Promise<DialogController[]> All controllers whose close operation was cancelled.
    */
-  closeAll(): Promise<void> {
-    return Promise.all(this.controllers.map((controller) => controller.cancel().catch((reason) => reason)));
-  }
-
-  /**
-   * Closes all open dialogs at the time of invocation.
-   * @return Promise A promise that settles when all dialogs have closed.
-   */
-  closeAll(): Promise<void> {
-    return Promise.all(this.controllers.map((controller) => controller.cancel().catch((reason) => reason)));
+  closeAll(): Promise<DialogController[]> {
+    return Promise.all(this.controllers.slice(0).map((controller) => {
+      if (!controller.settings.rejectOnCancel) {
+        return controller.cancel().then((result) => {
+          if (result.wasCancelled) {
+            return controller;
+          }
+        });
+      }
+      return controller.cancel().then(() => { }).catch((reason) => {
+        if (reason.wasCancelled) {
+          return controller;
+        }
+        return Promise.reject(reason);
+      });
+    })).then((unclosedControllers) => unclosedControllers.filter(unclosed => !!unclosed));
   }
 }
 
@@ -113,7 +120,7 @@ function _getViewModel(container, compositionEngine, childContainer, dialogContr
 
 function _tryActivate(service, dialogController, compositionContext) {
   return invokeLifecycle(dialogController.viewModel, 'canActivate', dialogController.settings.model)
-    .then((canActivate => {
+    .then((canActivate) => {
       if (canActivate) {
         return _composeAndShowDialog(service, dialogController, compositionContext);
       }
@@ -125,16 +132,20 @@ function _tryActivate(service, dialogController, compositionContext) {
       return {
         wasCancelled: true
       };
-    }));
+    });
 }
 
 function _composeAndShowDialog(service, dialogController, compositionContext) {
   return service.compositionEngine.compose(compositionContext).then(controller => {
-    service.controllers.push(dialogController);
-    service.hasActiveDialog = !!service.controllers.length;
     dialogController.controller = controller;
     dialogController.view = controller.view;
-    return dialogController.renderer.showDialog(dialogController)
+    return dialogController.renderer.showDialog(dialogController).then(() => {
+      service.controllers.push(dialogController);
+      service.hasActiveDialog = service.hasOpenDialog = !!service.controllers.length;
+    }).catch((reason) => {
+      invokeLifecycle(dialogController.viewModel, 'deactivate');
+      return Promise.reject(reason);
+    });
   });
 }
 
@@ -142,6 +153,6 @@ function _removeController(service, dialogCOntroller) {
   let i = service.controllers.indexOf(dialogCOntroller);
   if (i !== -1) {
     service.controllers.splice(i, 1);
-    service.hasActiveDialog = !!service.controllers.length;
+    service.hasActiveDialog = service.hasOpenDialog = !!service.controllers.length;
   }
 }

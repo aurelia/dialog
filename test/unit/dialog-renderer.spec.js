@@ -222,15 +222,14 @@ describe('the Dialog Renderer', () => {
       it('when "inoreTransitions" is set to "true"', function (done) {
         this.dialogController.settings.ignoreTransitions = true;
         this.expectedDuration = '0.2s';
-        this.renderer.showDialog(this.dialogController).then(done).catch(e => fail(e));;
+        this.renderer.showDialog(this.dialogController).then(done).catch(e => fail(e));
         expect(this.awaitsTransition).toBe(false);
       });
 
       it('when duration is zero', function (done) {
         this.dialogController.settings.ignoreTransitions = false;
         this.expectedDuration = '0s';
-        this.renderer.showDialog(this.dialogController).then(done).catch(e => fail(e));;
-        console.log();
+        this.renderer.showDialog(this.dialogController).then(done).catch(e => fail(e));
         expect(this.awaitsTransition).toBe(false);
       });
     });
@@ -238,7 +237,7 @@ describe('the Dialog Renderer', () => {
     it('when the transition is with non-zero duration', function (done) {
       this.dialogController.settings.ignoreTransitions = false;
       this.expectedDuration = '0.3s';
-      this.renderer.showDialog(this.dialogController).then(done).catch(e => fail(e));;
+      this.renderer.showDialog(this.dialogController).then(done).catch(e => fail(e));
       expect(this.awaitsTransition).toBe(true);
     });
   });

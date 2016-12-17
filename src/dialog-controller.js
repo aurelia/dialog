@@ -76,11 +76,15 @@ export class DialogController {
             } else {
               this._reject(new DialogCancelError(output));
             }
-            return result;
+            return { wasCancelled: false };
           });
       }
 
       this._closePromise = undefined;
+      if (!this.settings.rejectOnCancel) {
+        return { wasCancelled: true };
+      }
+      return Promise.reject(new DialogCancelError());
     }, e => {
       this._closePromise = undefined;
       return Promise.reject(e);
