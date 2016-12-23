@@ -1,5 +1,6 @@
 <template>
   <button click.trigger="submit()">Open Modal</button>
+  <button click.trigger="openLocked()">Open Locked Modal</button>
   <button style="position: absolute; top: 100px; left: 50px;" click.trigger="positionManually($event)">Open Next To Me</button>
   <input type="checkbox" checked.bind="showExtraData" /> Fill the modal with extra stuff (scrolling and sizing text)
 
