@@ -10,7 +10,7 @@ export function invokeLifecycle(instance: any, name: string, model: any) {
   if (typeof instance[name] === 'function') {
     return Promise.resolve().then(() => {
       return instance[name](model);
-    }).then(function (result) {
+    }).then(function(result) {
       if (result !== null && result !== undefined) {
         return result;
       }
