@@ -6,9 +6,10 @@ export function configure(aurelia) {
     .developmentLogging()
     .plugin('aurelia-dialog', config => {
       config.useDefaults();
-      config.settings.lock = false;
+      config.settings.lock = true;
       config.settings.centerHorizontalOnly = false;
       config.settings.startingZIndex = 1005;
+      config.settings.enableEscClose = true;
     });
 
   aurelia.start().then(a => a.setRoot('src/app'));

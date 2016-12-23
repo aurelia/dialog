@@ -1,6 +1,7 @@
 import {inject} from 'aurelia-framework';
 import {DialogService} from 'aurelia-dialog';
 import {EditPerson} from './edit-person';
+import {Locked} from './locked';
 
 @inject(DialogService)
 export class App {
@@ -11,6 +12,17 @@ export class App {
 
   submit(){
     this.dialogService.open({ viewModel: EditPerson, model: { firstName: 'Owen', testScrolling: this.showExtraData }}).then((result) => {
+      if (!result.wasCancelled) {
+        console.log('good');
+        console.log(result.output);
+      } else {
+        console.log('bad');
+      }
+    });
+  }
+
+  openLocked() {
+    this.dialogService.open({ viewModel: Locked, model: { firstName: 'Owen'}}).then((result) => {
       if (!result.wasCancelled) {
         console.log('good');
         console.log(result.output);
