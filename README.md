@@ -92,17 +92,39 @@ To run the sample code using this plugin proceed with these additional steps:
 
 ## How to install this plugin?
 
-1. In your JSPM-based project install the plugin via `jspm` with following command
+1. In your **JSPM**-based project install the plugin via `jspm` with following command
 
   ```shell
 jspm install aurelia-dialog
   ```
 
-If you use Webpack, install the plugin with the following command
+If you use **Webpack**, install the plugin with the following command
 
   ```shell
 npm install aurelia-dialog --save
   ```
+
+If you use the **Aurelia CLI**, install the plugin with the following command
+
+  ```shell
+npm install aurelia-dialog --save
+  ```
+
+and then add a section in your `aurelia.json` for the plugin
+
+```javascript
+{
+  dependencies: [
+  //...
+    {
+      "name": "aurelia-dialog",
+      "path": "../node_modules/aurelia-dialog/dist/amd",
+      "main": "aurelia-dialog"
+    }
+  //...
+  ]
+}
+```
 
 If you use TypeScript, install the plugin's typings with the following command
 
@@ -293,7 +315,7 @@ export class Prompt {
 
 ###Getting access to DialogController API outside
 
-It is possible to resolve and close (using cancel/ok/error methods) dialog in the same context where you open it.   
+It is possible to resolve and close (using cancel/ok/error methods) dialog in the same context where you open it.
 
 ```javascript
   import {EditPerson} from './edit-person';
@@ -306,7 +328,7 @@ It is possible to resolve and close (using cancel/ok/error methods) dialog in th
     person = { firstName: 'Wade', middleName: 'Owen', lastName: 'Watts' };
     submit(){
       this.dialogService.open({yieldController: true, viewModel: EditPerson, model: this.person}).then(openDialogResult => {
-        // Note you get here when the dialog is opened, and you are able to close dialog  
+        // Note you get here when the dialog is opened, and you are able to close dialog
         // Promise for the result is stored in openDialogResult.closeResult property
         openDialogResult.closeResult.then((response) => {
 
