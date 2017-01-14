@@ -1,3 +1,9 @@
+import {DialogController} from './dialog-controller';
+
+export interface RendererStatic {
+  new (): Renderer;
+};
+
 /**
  * An abstract base class for implementors of the basic Renderer API.
  */
@@ -6,7 +12,7 @@ export class Renderer {
    * Gets an anchor for the ViewSlot to insert a view into.
    * @returns A DOM element.
    */
-  getDialogContainer(): any {
+  public getDialogContainer(): Element {
     throw new Error('DialogRenderer must implement getDialogContainer().');
   }
 
@@ -14,7 +20,7 @@ export class Renderer {
    * Displays the dialog.
    * @returns Promise A promise that resolves when the dialog has been displayed.
    */
-  showDialog(dialogController: DialogController): Promise<any> {
+  public showDialog(dialogController: DialogController): Promise<any> {
     throw new Error('DialogRenderer must implement showDialog().');
   }
 
@@ -22,7 +28,7 @@ export class Renderer {
    * Hides the dialog.
    * @returns Promise A promise that resolves when the dialog has been hidden.
    */
-  hideDialog(dialogController: DialogController): Promise<any> {
+  public hideDialog(dialogController: DialogController): Promise<any> {
     throw new Error('DialogRenderer must implement hideDialog().');
   }
 }
