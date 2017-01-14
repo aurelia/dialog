@@ -4,4 +4,3 @@ import {customElement} from 'aurelia-templating';
 export class TestElement {
 
 }
-

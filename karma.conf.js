@@ -1,5 +1,5 @@
 // Karma configuration
-// Generated on Fri Dec 05 2014 16:49:29 GMT-0500 (EST)
+// Generated on Sun Aug 28 2016 19:03:27 GMT-0400 (Eastern Daylight Time)
 
 module.exports = function(config) {
   config.set({
@@ -10,17 +10,16 @@ module.exports = function(config) {
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-    frameworks: ['jspm', 'jasmine'],
-
-    jspm: {
-      // Edit this to your needs
-      loadFiles: ['test/setup.js', 'test/**/*.js'],
-      serveFiles: ['src/**/*.*', 'test/fixtures/**/*.html']
-    },
+    frameworks: ['jasmine', 'requirejs'],
 
 
     // list of files / patterns to load in the browser
-    files: [],
+    files: [
+      'dist/test/test/main.js',
+      { pattern: 'dist/test/**/*.js', included: false, watched: true },
+      //{ pattern: 'dist/test/**/*.html', included: false, watched: true },
+      { pattern: 'node_modules/**/*.js', included: false, watched: false },
+    ],
 
 
     // list of files to exclude
@@ -31,20 +30,8 @@ module.exports = function(config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      'test/**/*.js': ['babel'],
-      'src/**/*.js': ['babel']
     },
-    'babelPreprocessor': {
-      options: {
-        sourceMap: 'inline',
-        presets: [ 'es2015-loose', 'stage-1'],
-        plugins: [
-          'syntax-flow',
-          'transform-decorators-legacy',
-          'transform-flow-strip-types'
-        ]
-      }
-    },
+
 
     // test results reporter to use
     // possible values: 'dots', 'progress'
@@ -76,6 +63,10 @@ module.exports = function(config) {
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
-    singleRun: false
-  });
-};
+    singleRun: false,
+
+    // Concurrency level
+    // how many browser should be started simultaneous
+    concurrency: Infinity
+  })
+}

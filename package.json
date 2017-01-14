@@ -91,6 +91,7 @@
     "aurelia-templating": "^1.0.0"
   },
   "devDependencies": {
+    "@types/jasmine": "^2.5.40",
     "aurelia-bootstrapper": "^2.0.1",
     "aurelia-pal-browser": "^1.1.0",
     "aurelia-polyfills": "^1.1.1",
