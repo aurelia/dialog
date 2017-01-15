@@ -1,8 +1,9 @@
 import {FrameworkConfiguration} from 'aurelia-framework';
 import {DialogConfiguration} from './dialog-configuration';
 
- // tslint:disable-next-line:max-line-length
-export function configure(frameworkConfig: FrameworkConfiguration, callback?: (config: DialogConfiguration) => void): void {
+export function configure(
+  frameworkConfig: FrameworkConfiguration,
+  callback?: (config: DialogConfiguration) => void): void {
   let applyConfig: () => void = null as any;
   const config = new DialogConfiguration(frameworkConfig, (apply: () => void) => { applyConfig = apply; });
   if (typeof callback === 'function') {

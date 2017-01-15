@@ -1,4 +1,4 @@
-import { Container, inject } from 'aurelia-dependency-injection';
+import {Container} from 'aurelia-dependency-injection';
 import {Origin} from 'aurelia-metadata';
 import {CompositionEngine, Controller, ViewSlot, CompositionContext} from 'aurelia-templating';
 import {Renderer} from './renderer';
@@ -11,7 +11,6 @@ import {DialogController} from './dialog-controller';
 /**
  * A service allowing for the creation of dialogs.
  */
-@inject(Container, CompositionEngine, DefaultDialogSettings)
 export class DialogService {
   private container: Container;
   private compositionEngine: CompositionEngine;
@@ -28,6 +27,7 @@ export class DialogService {
   public hasOpenDialog: boolean = false;
   public hasActiveDialog: boolean = false;
 
+  public static inject = [Container, CompositionEngine, DefaultDialogSettings];
   constructor(container: Container, compositionEngine: CompositionEngine, defaultSettings: BaseDialogSettings) {
     this.container = container;
     this.compositionEngine = compositionEngine;

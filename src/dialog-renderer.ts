@@ -1,7 +1,7 @@
-import { DOM } from 'aurelia-pal';
-import { transient } from 'aurelia-dependency-injection';
-import { Renderer } from './renderer';
-import { DialogController } from './dialog-controller';
+import {DOM} from 'aurelia-pal';
+import {transient} from 'aurelia-dependency-injection';
+import {Renderer} from './renderer';
+import {DialogController} from './dialog-controller';
 
 const containerTagName = 'ai-dialog-container';
 const overlayTagName = 'ai-dialog-overlay';
@@ -11,14 +11,12 @@ export const transitionEvent = (() => {
   return (): string => {
     if (transition) { return transition; }
     const el = DOM.createElement('fakeelement') as HTMLElement;
-    /* tslint:disable:object-literal-key-quotes */
     const transitions: { [key: string]: string; } = {
-      'transition': 'transitionend',
-      'OTransition': 'oTransitionEnd',
-      'MozTransition': 'transitionend',
-      'WebkitTransition': 'webkitTransitionEnd'
+      transition: 'transitionend',
+      OTransition: 'oTransitionEnd',
+      MozTransition: 'transitionend',
+      WebkitTransition: 'webkitTransitionEnd'
     };
-    /* tslint:enable:object-literal-key-quotes */
     for (let t in transitions) { // tslint:disable-line:prefer-const
       if ((el.style as any)[t] !== undefined) {
         transition = transitions[t];

@@ -1,15 +1,13 @@
-import { inject } from 'aurelia-dependency-injection';
-import { Controller } from 'aurelia-templating';
-import { Renderer } from './renderer';
-import { DialogOperationResult, DialogCloseResult, DialogCancelResult } from './dialog-result';
-import { BaseDialogSettings } from './dialog-settings';
-import { invokeLifecycle } from './lifecycle';
-import { DialogCancelError } from './dialog-cancel-error';
+import {Controller} from 'aurelia-templating';
+import {Renderer} from './renderer';
+import {DialogOperationResult, DialogCloseResult, DialogCancelResult} from './dialog-result';
+import {BaseDialogSettings} from './dialog-settings';
+import {invokeLifecycle} from './lifecycle';
+import {DialogCancelError} from './dialog-cancel-error';
 
 /**
  * A controller object for a Dialog instance.
  */
-@inject(Renderer)
 export class DialogController {
   private resolve: (data?: any) => void;
   private reject: (reason: any) => void;
@@ -22,11 +20,15 @@ export class DialogController {
   public renderer: Renderer;
   public controller: Controller;
 
+  public static inject = [Renderer];
   /**
    * Creates an instance of DialogController.
    */
-  // tslint:disable-next-line:max-line-length
-  constructor(renderer: Renderer, settings: BaseDialogSettings, resolve: (data?: any) => void, reject: (reason: any) => void) {
+  constructor(
+    renderer: Renderer,
+    settings: BaseDialogSettings,
+    resolve: (data?: any) => void,
+    reject: (reason: any) => void) {
     this.resolve = resolve;
     this.reject = reject;
     this.settings = settings;
