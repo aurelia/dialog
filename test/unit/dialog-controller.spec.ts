@@ -207,13 +207,13 @@ describe('DialogController', () => {
     });
 
     it('call the "reject" callback on "cancel" when "rejectOnCancel" is "true"', async done => {
-      const reason = 'cancel rejection reason';
+      const output = 'cancel rejection reason';
       let rejectionReason: DialogCancelError | null = null;
       dialogController.settings.rejectOnCancel = true;
       rejectCallback.and.callFake((reason: DialogCancelError) => rejectionReason = reason);
-      await _success(() => dialogController.close(false, reason), done);
+      await _success(() => dialogController.close(false, output), done);
       expect(rejectCallback).toHaveBeenCalledWith(jasmine.any(Error));
-      expect(rejectionReason).toEqual(jasmine.objectContaining({ wasCancelled: true, reason }));
+      expect(rejectionReason).toEqual(jasmine.objectContaining({ wasCancelled: true, output }));
       done();
     });
 

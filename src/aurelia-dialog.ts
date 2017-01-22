@@ -24,5 +24,5 @@ export {DialogConfiguration, DialogResourceName} from './dialog-configuration';
 export {RendererStatic, Renderer} from './renderer';
 export {DialogCancelError} from './dialog-cancel-error';
 export {DialogOperationResult, DialogCancelResult, DialogOpenResult, DialogCloseResult} from './dialog-result';
-export {DialogService} from './dialog-service';
+export {DialogService, DialogOpenPromise} from './dialog-service';
 export {DialogController} from './dialog-controller';

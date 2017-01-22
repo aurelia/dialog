@@ -10,7 +10,6 @@ export interface DialogSettings {
   startingZIndex?: number;
   centerHorizontalOnly?: boolean;
   rejectOnCancel?: boolean;
-  yieldController?: boolean;
   ignoreTransitions?: boolean;
   position?: (dialogContainer: Element, dialogOverlay: Element) => void;
 }
@@ -21,7 +20,6 @@ export interface BaseDialogSettings extends DialogSettings {
   startingZIndex: number;
   ignoreTransitions: boolean;
   rejectOnCancel: boolean;
-  yieldController: boolean;
   enableEscClose: boolean;
 }
 
@@ -35,7 +33,6 @@ export class DefaultDialogSettings implements BaseDialogSettings {
   public startingZIndex = 1000;
   public centerHorizontalOnly = false;
   public rejectOnCancel = false;
-  public yieldController = false;
   public ignoreTransitions = false;
   public position?: (dialogContainer: Element, dialogOverlay: Element) => void;
 };

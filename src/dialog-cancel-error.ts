@@ -1,9 +1,11 @@
-export class DialogCancelError extends Error { // TODO: rework without extends!!!
-  public readonly wasCancelled = true;
-  public readonly reason: any;
+export interface DialogCancelError extends Error {
+  wasCancelled: true;
+  output?: any;
+};
 
-  constructor(cancellationReason: any = null) {
-    super('Operation cancelled.');
-    this.reason = cancellationReason;
-  }
+export function createDialogCancelError(output?: any): DialogCancelError {
+  const error = new Error('Operation cancelled.') as DialogCancelError;
+  error.wasCancelled = true;
+  error.output = output;
+  return error;
 }

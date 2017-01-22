@@ -3,7 +3,7 @@ import {Renderer} from './renderer';
 import {DialogOperationResult, DialogCloseResult, DialogCancelResult} from './dialog-result';
 import {BaseDialogSettings} from './dialog-settings';
 import {invokeLifecycle} from './lifecycle';
-import {DialogCancelError} from './dialog-cancel-error';
+import {createDialogCancelError} from './dialog-cancel-error';
 
 /**
  * A controller object for a Dialog instance.
@@ -45,7 +45,7 @@ export class DialogController {
     if (!this.settings.rejectOnCancel) {
       return { wasCancelled: true };
     }
-    throw new DialogCancelError();
+    throw createDialogCancelError();
   }
 
   /**
@@ -96,7 +96,7 @@ export class DialogController {
         if (!this.settings.rejectOnCancel || ok) {
           this.resolve({ wasCancelled: !ok, output } as DialogCloseResult);
         } else {
-          this.reject(new DialogCancelError(output));
+          this.reject(createDialogCancelError(output));
         }
         return { wasCancelled: false };
       }).catch(reason => {

@@ -4,9 +4,31 @@ import {CompositionEngine, Controller, ViewSlot, CompositionContext} from 'aurel
 import {Renderer} from './renderer';
 import {DialogOpenResult, DialogCloseResult, DialogCancelResult, DialogOperationResult} from './dialog-result';
 import {DialogSettings, BaseDialogSettings, DefaultDialogSettings} from './dialog-settings';
-import {DialogCancelError} from './dialog-cancel-error';
+import {createDialogCancelError} from './dialog-cancel-error';
 import {invokeLifecycle} from './lifecycle';
 import {DialogController} from './dialog-controller';
+
+export type DialogCancellableOpenResult = DialogOpenResult | DialogCancelResult;
+
+/* tslint:disable:max-line-length */
+export interface WhenClosed {
+  whenClosed(onfulfilled?: ((value: DialogCloseResult) => DialogCloseResult | PromiseLike<DialogCloseResult>) | undefined | null, onrejected?: ((reason: any) => DialogCloseResult | PromiseLike<DialogCloseResult>) | undefined | null): Promise<DialogCloseResult>;
+  whenClosed<TResult>(onfulfilled: ((value: DialogCloseResult) => DialogCloseResult | PromiseLike<DialogCloseResult>) | undefined | null, onrejected: (reason: any) => TResult | PromiseLike<TResult>): Promise<DialogCloseResult | TResult>;
+  whenClosed<TResult>(onfulfilled: (value: DialogCloseResult) => TResult | PromiseLike<TResult>, onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<TResult>;
+  whenClosed<TResult1, TResult2>(onfulfilled: (value: DialogCloseResult) => TResult1 | PromiseLike<TResult1>, onrejected: (reason: any) => TResult2 | PromiseLike<TResult2>): Promise<TResult1 | TResult2>;
+}
+/* tslint:enable:max-line-length */
+
+export type DialogOpenPromise<T extends DialogCancellableOpenResult> = Promise<T> & WhenClosed;
+
+function whenClosed(this: Promise<DialogCancellableOpenResult>, onfulfilled?: any, onrejected?: any) {
+  return this.then(r => r.wasCancelled ? r : r.closeResult).then(onfulfilled, onrejected);
+}
+
+function asDialogOpenPromise<T extends DialogCancellableOpenResult>(promise: Promise<T>): DialogOpenPromise<T> {
+  (promise as DialogOpenPromise<T>).whenClosed = whenClosed;
+  return promise as DialogOpenPromise<T>;
+}
 
 /**
  * A service allowing for the creation of dialogs.
@@ -72,7 +94,7 @@ export class DialogService {
     if (!rejectOnCancel) {
       return { wasCancelled: true };
     }
-    throw new DialogCancelError();
+    throw createDialogCancelError();
   }
 
   // tslint:disable-next-line:max-line-length
@@ -94,15 +116,11 @@ export class DialogService {
    * @param settings Dialog settings for this dialog instance.
    * @return Promise A promise that settles when the dialog is closed.
    */
-  /* tslint:disable:max-line-length */
-  public open(settings: DialogSettings & { rejectOnCancel: true, yieldController: false }): Promise<DialogCloseResult>;
-  public open(settings: DialogSettings & { rejectOnCancel: true, yieldController: true }): Promise<DialogOpenResult>;
-  public open(settings: DialogSettings & { rejectOnCancel: true }): Promise<DialogOpenResult | DialogCloseResult>;
-  public open(settings: DialogSettings & { rejectOnCancel?: false, yieldController: false }): Promise<DialogCloseResult | DialogCancelResult>;
-  public open(settings: DialogSettings & { rejectOnCancel?: false, yieldController: true }): Promise<DialogOpenResult | DialogCancelResult>;
-  public open(settings?: DialogSettings): Promise<DialogOpenResult | DialogCloseResult | DialogCancelResult>;
-  /* tslint:enable:max-line-length */
-  public open(settings: DialogSettings = {}): Promise<DialogOpenResult | DialogCloseResult | DialogCancelResult> {
+  // tslint:disable:max-line-length
+  public open(settings: DialogSettings & { rejectOnCancel: true }): DialogOpenPromise<DialogOpenResult>;
+  public open(settings?: DialogSettings & { rejectOnCancel?: false | boolean }): DialogOpenPromise<DialogCancellableOpenResult>;
+  public open(settings: DialogSettings = {}): DialogOpenPromise<DialogCancellableOpenResult> {
+    // tslint:enable:max-line-length
     const childContainer = this.container.createChild();
     let dialogController: DialogController = null as any;
     const closeResult: Promise<DialogCloseResult> = new Promise((resolve, reject) => {
@@ -114,23 +132,23 @@ export class DialogService {
     }, () => {
       removeController(this, dialogController);
     });
-    // tslint:disable-next-line:max-line-length
-    const compositionContext = this.createCompositionContext(childContainer, dialogController.renderer.getDialogContainer(), dialogController.settings);
-    return this._ensureViewModel(compositionContext).then<boolean>(compositionContext => {
+    const compositionContext = this.createCompositionContext(
+      childContainer,
+      dialogController.renderer.getDialogContainer(),
+      dialogController.settings
+    );
+    const openResult = this._ensureViewModel(compositionContext).then<boolean>(compositionContext => {
       return invokeLifecycle(compositionContext.viewModel, 'canActivate', dialogController.settings.model);
-    }).then(canActivate => {
+    }).then<DialogCancellableOpenResult>(canActivate => {
       if (!canActivate) {
         return this._cancelOperation(dialogController.settings.rejectOnCancel);
       }
       // if activation granted, compose and show
-      return this.composeAndShowDialog(compositionContext, dialogController).then(() => {
-        // determine whether to return the open or the end result
-        if (!dialogController.settings.yieldController) {
-          return closeResult;
-        }
-        return { controller: dialogController, closeResult, wasCancelled: false };
-      });
+      return this.composeAndShowDialog(compositionContext, dialogController)
+        .then(() => ({ controller: dialogController, closeResult, wasCancelled: false } as DialogOpenResult));
     });
+
+    return asDialogOpenPromise(openResult);
   }
 
   /**
