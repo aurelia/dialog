@@ -66,7 +66,7 @@ typings install github:aurelia/dialog --save
 2. Make sure you use [manual bootstrapping](http://aurelia.io/docs#startup-and-configuration). In order to do so open your `index.html` and locate the element with the attribute aurelia-app. Change it to look like this:
 
 <code-listing heading="index.html">
-  <source-code lang="ES 2015">
+  <source-code lang="HTML">
   <body aurelia-app="main">...</body>
   </source-code>
 </code-listing>
@@ -169,7 +169,7 @@ There is also an `output` property that gets returned with the outcome of the us
   and the corresponding view -
 
 <code-listing heading="edit-person.html">
-  <source-code lang="ES 2015">
+  <source-code lang="HTML">
   <template>
     <ai-dialog>
       <ai-dialog-body>
@@ -191,7 +191,7 @@ There is also an `output` property that gets returned with the outcome of the us
 The library exposes an `attach-focus` custom attribute that allows focusing in on an element in the modal when it is loaded.  You can use this to focus a button, input, etc...  Example usage -
 
 <code-listing heading="edit-person.html">
-  <source-code lang="ES 2015">
+  <source-code lang="HTML">
   <template>
     <ai-dialog>
       <ai-dialog-body>
@@ -315,7 +315,7 @@ It is possible to resolve and close (using cancel/ok/error methods) dialog in th
 Bootstrap adds 50% opacity and a background color of black to the modal.  To achieve this in dialog you can simply add the following CSS -
 
 <code-listing heading="welcome.js">
-  <source-code lang="ES 2015">
+  <source-code lang="CSS">
 ai-dialog-overlay.active {
   background-color: black;
   opacity: .5;
