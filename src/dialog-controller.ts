@@ -1,7 +1,7 @@
 import {Controller} from 'aurelia-templating';
 import {Renderer} from './renderer';
-import {DialogOperationResult, DialogCloseResult, DialogCancelResult} from './dialog-result';
-import {BaseDialogSettings} from './dialog-settings';
+import {DialogCancelableOperationResult, DialogCloseResult, DialogCancelResult} from './dialog-result';
+import {DialogSettings} from './dialog-settings';
 import {invokeLifecycle} from './lifecycle';
 import {createDialogCancelError} from './dialog-cancel-error';
 
@@ -16,7 +16,7 @@ export class DialogController {
   /**
    * The settings used by this controller.
    */
-  public settings: BaseDialogSettings;
+  public settings: DialogSettings;
   public renderer: Renderer;
   public controller: Controller;
 
@@ -26,7 +26,7 @@ export class DialogController {
    */
   constructor(
     renderer: Renderer,
-    settings: BaseDialogSettings,
+    settings: DialogSettings,
     resolve: (data?: any) => void,
     reject: (reason: any) => void) {
     this.resolve = resolve;
@@ -36,7 +36,7 @@ export class DialogController {
   }
 
   private releaseResources(): Promise<void> {
-    return invokeLifecycle(this.controller.viewModel, 'deactivate')
+    return invokeLifecycle(this.controller.viewModel || {}, 'deactivate')
       .then(() => this.renderer.hideDialog(this))
       .then(() => { this.controller.unbind(); });
   }
@@ -52,7 +52,7 @@ export class DialogController {
    * Closes the dialog with a successful output.
    * @param output The returned success output.
    */
-  public ok(output?: any): Promise<DialogOperationResult> {
+  public ok(output?: any): Promise<DialogCancelableOperationResult> {
     return this.close(true, output);
   }
 
@@ -60,7 +60,7 @@ export class DialogController {
    * Closes the dialog with a cancel output.
    * @param output The returned cancel output.
    */
-  public cancel(output?: any): Promise<DialogOperationResult> {
+  public cancel(output?: any): Promise<DialogCancelableOperationResult> {
     return this.close(false, output);
   }
 
@@ -79,12 +79,12 @@ export class DialogController {
    * @param output The specified output.
    * @returns Promise An empty promise object.
    */
-  public close(ok: boolean, output?: any): Promise<DialogOperationResult> {
+  public close(ok: boolean, output?: any): Promise<DialogCancelableOperationResult> {
     if (this.closePromise) {
       return this.closePromise;
     }
 
-    return this.closePromise = invokeLifecycle(this.controller.viewModel, 'canDeactivate').catch(reason => {
+    return this.closePromise = invokeLifecycle(this.controller.viewModel || {}, 'canDeactivate').catch(reason => {
       this.closePromise = undefined;
       return Promise.reject(reason);
     }).then(canDeactivate => {

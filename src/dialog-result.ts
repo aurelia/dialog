@@ -1,21 +1,42 @@
 import {DialogController} from './dialog-controller';
 
-// TODO: add doc
-
-export interface DialogOperationResult {
+/**
+ * The result that a dialog cancelable operation resolves to.
+ */
+export interface DialogCancelableOperationResult {
   wasCancelled: boolean;
 }
 
-export interface DialogCancelResult extends DialogOperationResult {
+/**
+ * The result that a dialog operation resolves to when cancelled.
+ */
+export interface DialogCancelResult {
   wasCancelled: true;
 }
 
-export interface DialogCloseResult extends DialogOperationResult {
+/**
+ * The result received when a dialog closes.
+ */
+export interface DialogCloseResult extends DialogCancelableOperationResult {
+  /**
+   * The provided close value.
+   */
   output?: any;
 }
 
-export interface DialogOpenResult extends DialogOperationResult {
+/**
+ * The result received when a dialog opens.
+ */
+export interface DialogOpenResult {
   wasCancelled: false;
+
+  /**
+   * The controller for the open dialog.
+   */
   controller: DialogController;
+
+  /**
+   * Promise that settles when the dialog is closed.
+   */
   closeResult: Promise<DialogCloseResult>;
 }

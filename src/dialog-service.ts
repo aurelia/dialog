@@ -2,8 +2,8 @@ import {Container} from 'aurelia-dependency-injection';
 import {Origin} from 'aurelia-metadata';
 import {CompositionEngine, Controller, ViewSlot, CompositionContext} from 'aurelia-templating';
 import {Renderer} from './renderer';
-import {DialogOpenResult, DialogCloseResult, DialogCancelResult, DialogOperationResult} from './dialog-result';
-import {DialogSettings, BaseDialogSettings, DefaultDialogSettings} from './dialog-settings';
+import {DialogOpenResult, DialogCloseResult, DialogCancelResult} from './dialog-result';
+import {DialogSettings, DefaultDialogSettings} from './dialog-settings';
 import {createDialogCancelError} from './dialog-cancel-error';
 import {invokeLifecycle} from './lifecycle';
 import {DialogController} from './dialog-controller';
@@ -22,9 +22,8 @@ export interface WhenClosed {
 export type DialogOpenPromise<T extends DialogCancellableOpenResult> = Promise<T> & WhenClosed;
 
 function whenClosed(this: Promise<DialogCancellableOpenResult>, onfulfilled?: any, onrejected?: any) {
-  return this.then(r => r.wasCancelled ? r : r.closeResult).then(onfulfilled, onrejected);
+  return this.then<DialogCloseResult>(r => r.wasCancelled ? r : r.closeResult).then(onfulfilled, onrejected);
 }
-
 function asDialogOpenPromise<T extends DialogCancellableOpenResult>(promise: Promise<T>): DialogOpenPromise<T> {
   (promise as DialogOpenPromise<T>).whenClosed = whenClosed;
   return promise as DialogOpenPromise<T>;
@@ -36,7 +35,7 @@ function asDialogOpenPromise<T extends DialogCancellableOpenResult>(promise: Pro
 export class DialogService {
   private container: Container;
   private compositionEngine: CompositionEngine;
-  private defaultSettings: BaseDialogSettings;
+  private defaultSettings: DialogSettings;
 
   /**
    * The current dialog controllers
@@ -50,17 +49,22 @@ export class DialogService {
   public hasActiveDialog: boolean = false;
 
   public static inject = [Container, CompositionEngine, DefaultDialogSettings];
-  constructor(container: Container, compositionEngine: CompositionEngine, defaultSettings: BaseDialogSettings) {
+  constructor(container: Container, compositionEngine: CompositionEngine, defaultSettings: DialogSettings) {
     this.container = container;
     this.compositionEngine = compositionEngine;
     this.defaultSettings = defaultSettings;
   }
 
-  private createSettings(settings: DialogSettings): BaseDialogSettings {
-    const baseSettings = Object.assign({}, this.defaultSettings, settings);
-    baseSettings.startingZIndex = this.defaultSettings.startingZIndex; // should be set only when configuring the plugin
-    // TODO: add settings validation - early error 
-    return baseSettings;
+  private validateSettings(settings: DialogSettings): void {
+    if (!settings.viewModel && !settings.view) {
+      throw new Error('Invalid Dialog Settings. You must provide "viewModel", "view" or both.');
+    }
+  }
+
+  private createSettings(settings: DialogSettings): DialogSettings {
+    settings = Object.assign({}, this.defaultSettings, settings);
+    this.validateSettings(settings);
+    return settings;
   }
 
   // tslint:disable-next-line:max-line-length
@@ -99,13 +103,19 @@ export class DialogService {
 
   // tslint:disable-next-line:max-line-length
   private composeAndShowDialog(compositionContext: CompositionContext, dialogController: DialogController): Promise<void> {
+    if (!compositionContext.viewModel) {
+      // provide access to the dialog controller for view only dialogs
+      compositionContext.bindingContext = { controller: dialogController };
+    }
     return this.compositionEngine.compose(compositionContext).then<void>((controller: Controller) => {
       dialogController.controller = controller;
       return dialogController.renderer.showDialog(dialogController).then(() => {
         this.controllers.push(dialogController);
         this.hasActiveDialog = this.hasOpenDialog = !!this.controllers.length;
       }, reason => {
-        invokeLifecycle(controller.viewModel, 'deactivate');
+        if (controller.viewModel) {
+          invokeLifecycle(controller.viewModel, 'deactivate');
+        }
         return Promise.reject(reason);
       });
     });
@@ -122,10 +132,14 @@ export class DialogService {
   public open(settings: DialogSettings = {}): DialogOpenPromise<DialogCancellableOpenResult> {
     // tslint:enable:max-line-length
     const childContainer = this.container.createChild();
-    let dialogController: DialogController = null as any;
+    let resolveCloseResult: any;
+    let rejectCloseResult: any;
     const closeResult: Promise<DialogCloseResult> = new Promise((resolve, reject) => {
-      dialogController = childContainer.invoke(DialogController, [this.createSettings(settings), resolve, reject]);
+      resolveCloseResult = resolve;
+      rejectCloseResult = reject;
     });
+    const dialogController =
+      childContainer.invoke(DialogController, [this.createSettings(settings), resolveCloseResult, rejectCloseResult]);
     childContainer.registerInstance(DialogController, dialogController);
     closeResult.then(() => {
       removeController(this, dialogController);
@@ -138,10 +152,11 @@ export class DialogService {
       dialogController.settings
     );
     const openResult = this._ensureViewModel(compositionContext).then<boolean>(compositionContext => {
+      if (!compositionContext.viewModel) { return true; }
       return invokeLifecycle(compositionContext.viewModel, 'canActivate', dialogController.settings.model);
     }).then<DialogCancellableOpenResult>(canActivate => {
       if (!canActivate) {
-        return this._cancelOperation(dialogController.settings.rejectOnCancel);
+        return this._cancelOperation(dialogController.settings.rejectOnCancel as boolean);
       }
       // if activation granted, compose and show
       return this.composeAndShowDialog(compositionContext, dialogController)

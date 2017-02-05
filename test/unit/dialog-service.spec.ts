@@ -7,7 +7,7 @@ import { DOM } from 'aurelia-pal';
 import { DialogCancelError } from '../../src/dialog-cancel-error';
 import {
   DialogOpenResult, DialogCloseResult, DialogCancelResult,
-  DialogOperationResult
+  DialogCancelableOperationResult
 } from '../../src/dialog-result';
 import { DefaultDialogSettings, DialogSettings } from '../../src/dialog-settings';
 import { Renderer } from '../../src/renderer';
@@ -81,12 +81,6 @@ describe('DialogService', () => {
       // clone again the default settings, jasmine doesn't like them being a class
       const actualSettings = Object.assign({}, container.get(DefaultDialogSettings));
       expect(actualSettings).toEqual(expectedSettings);
-      done();
-    });
-
-    it('does not allow overriding the "startingZIndex" setting', async done => {
-      const result = await _success(() => dialogService.open({ startingZIndex: 2000 }), done) as DialogOpenResult;
-      expect(result.controller.settings.startingZIndex).toEqual(container.get(DefaultDialogSettings).startingZIndex);
       done();
     });
 
@@ -376,7 +370,7 @@ describe('DialogService', () => {
     it('returns the controllers whose close operation was cancelled', async done => {
       await _success(() => openDialogs(3), done);
       const expectedController = dialogService.controllers[1];
-      (expectedController.controller.viewModel as any).canDeactivate = () => { return false; };
+      (expectedController.controller.viewModel as any).canDeactivate = () => false;
       const failedToClose = await _success(() => dialogService.closeAll(), done);
       expect(failedToClose.length).toBe(1);
       expect(failedToClose).toContain(expectedController);

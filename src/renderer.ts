@@ -2,7 +2,7 @@ import {DialogController} from './dialog-controller';
 
 export interface RendererStatic {
   new (): Renderer;
-};
+}
 
 /**
  * An abstract base class for implementors of the basic Renderer API.

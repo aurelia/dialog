@@ -184,20 +184,19 @@ export class DialogRenderer implements Renderer {
 
     if (typeof settings.position === 'function') {
       settings.position(this.dialogContainer, this.dialogOverlay);
-    } else {
-      if (settings.centerHorizontalOnly) { return Promise.resolve(); }
+    } else if (!settings.centerHorizontalOnly) {
       this.centerDialog();
     }
 
     DialogRenderer.trackController(dialogController);
     this.setupClickHandling(dialogController);
-    return this.awaitTransition(() => this.setAsActive(), dialogController.settings.ignoreTransitions);
+    return this.awaitTransition(() => this.setAsActive(), dialogController.settings.ignoreTransitions as boolean);
   }
 
   public hideDialog(dialogController: DialogController) {
     this.clearClickHandling();
     DialogRenderer.untrackController(dialogController);
-    return this.awaitTransition(() => this.setAsInactive(), dialogController.settings.ignoreTransitions)
+    return this.awaitTransition(() => this.setAsInactive(), dialogController.settings.ignoreTransitions as boolean)
       .then(() => { this.detach(dialogController); });
   }
 }

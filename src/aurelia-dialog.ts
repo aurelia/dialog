@@ -19,10 +19,14 @@ export {AiDialogHeader} from './ai-dialog-header';
 export {AiDialogBody} from './ai-dialog-body';
 export {AiDialogFooter} from './ai-dialog-footer';
 export {AttachFocus} from './attach-focus';
-export {DialogSettings, BaseDialogSettings} from './dialog-settings';
+export * from './interfaces';
+export {DialogSettings} from './dialog-settings';
 export {DialogConfiguration, DialogResourceName} from './dialog-configuration';
 export {RendererStatic, Renderer} from './renderer';
 export {DialogCancelError} from './dialog-cancel-error';
-export {DialogOperationResult, DialogCancelResult, DialogOpenResult, DialogCloseResult} from './dialog-result';
+export {
+  DialogCancelableOperationResult, DialogCancelResult,
+  DialogOpenResult, DialogCloseResult
+} from './dialog-result';
 export {DialogService, DialogOpenPromise} from './dialog-service';
 export {DialogController} from './dialog-controller';
