@@ -1,7 +1,6 @@
 import {Container} from 'aurelia-dependency-injection';
 import {Origin} from 'aurelia-metadata';
 import {CompositionEngine, Controller, ViewSlot, CompositionContext} from 'aurelia-templating';
-import {Renderer} from './renderer';
 import {DialogOpenResult, DialogCloseResult, DialogCancelResult} from './dialog-result';
 import {DialogSettings, DefaultDialogSettings} from './dialog-settings';
 import {createDialogCancelError} from './dialog-cancel-error';

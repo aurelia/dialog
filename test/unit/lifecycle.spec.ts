@@ -44,7 +44,6 @@ describe('invokeLifecycle', () => {
         });
 
         it('"null"', done => {
-          const expected = null;
           testResult(done, Promise.resolve(null));
         });
       });

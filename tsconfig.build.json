@@ -1,7 +1,7 @@
 {
-  "extends": "./tsconfig",
+  "extends": "./node_modules/aurelia-tools/tsc/tsconfig",
   "compilerOptions": {
-    "outDir": "dist/amd"
+    "noUnusedParameters": false
   },
   "exclude": [
     ".vscode",

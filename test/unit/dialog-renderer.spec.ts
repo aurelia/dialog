@@ -2,7 +2,6 @@ import {DOM} from 'aurelia-pal';
 import {DialogController} from '../../src/dialog-controller';
 import {DialogRenderer, hasTransition, transitionEvent} from '../../src/dialog-renderer';
 import {DefaultDialogSettings, DialogSettings} from '../../src/dialog-settings';
-import {TestElement} from '../fixtures/test-element';
 
 type TestDialogRenderer = DialogRenderer & { [key: string]: any, __controller: DialogController };
 
@@ -75,7 +74,7 @@ describe('DialogRenderer', () => {
   describe('honours the setting', () => {
     describe('"postion"', () => {
       it('and calls when provided', async done => {
-        const renderer = createRenderer({ position: jasmine.createSpy('postionSpy') }); const a = 0;
+        const renderer = createRenderer({ position: jasmine.createSpy('postionSpy') });
         await show(done, renderer);
         expect(renderer.__controller.settings.position)
           .toHaveBeenCalledWith(renderer.dialogContainer, renderer.dialogOverlay);

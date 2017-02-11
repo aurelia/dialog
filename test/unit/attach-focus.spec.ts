@@ -1,10 +1,5 @@
-import {Container} from 'aurelia-dependency-injection';
-import {TemplatingEngine} from 'aurelia-templating';
-import {DOM} from 'aurelia-pal';
 import {StageComponent} from 'aurelia-testing';
 import {bootstrap} from 'aurelia-bootstrapper';
-
-const element = document.createElement('div');
 
 describe('modal gets focused when attached', () => {
   let component: any;

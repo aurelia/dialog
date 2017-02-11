@@ -33,13 +33,13 @@ describe('testing aurelia configure routine', () => {
   });
 
   it('should apply the configurations when setup callback is provided', () => {
-    spyOn(DialogConfiguration.prototype, '_apply');
+    spyOn(DialogConfiguration.prototype as any, '_apply');
     configure(frameworkConfig, () => { return; });
     expect((DialogConfiguration.prototype as any)._apply).toHaveBeenCalled();
   });
 
   it('should apply the configurations when no setup callback is provided', () => {
-    spyOn(DialogConfiguration.prototype, '_apply');
+    spyOn(DialogConfiguration.prototype as any, '_apply');
     configure(frameworkConfig);
     expect((DialogConfiguration.prototype as any)._apply).toHaveBeenCalled();
   });

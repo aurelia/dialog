@@ -1,14 +1,11 @@
 import { Container } from 'aurelia-dependency-injection';
 import { Loader } from 'aurelia-loader';
 import { DefaultLoader } from 'aurelia-loader-default';
-import { BindingLanguage, CompositionContext, CompositionEngine, Controller } from 'aurelia-templating';
+import { BindingLanguage, CompositionEngine } from 'aurelia-templating';
 import { TemplatingBindingLanguage } from 'aurelia-templating-binding';
 import { DOM } from 'aurelia-pal';
 import { DialogCancelError } from '../../src/dialog-cancel-error';
-import {
-  DialogOpenResult, DialogCloseResult, DialogCancelResult,
-  DialogCancelableOperationResult
-} from '../../src/dialog-result';
+import { DialogOpenResult } from '../../src/dialog-result';
 import { DefaultDialogSettings, DialogSettings } from '../../src/dialog-settings';
 import { Renderer } from '../../src/renderer';
 import { DialogController } from '../../src/dialog-controller';
@@ -253,7 +250,7 @@ describe('DialogService', () => {
 
     it('when new one is open', async done => {
       expect(dialogService.controllers.length).toBe(initialCount);
-      const { controller, closeResult } = await _success(() => dialogService.open(), done) as DialogOpenResult;
+      const { controller } = await _success(() => dialogService.open(), done) as DialogOpenResult;
       expect(dialogService.controllers.length).toBe(initialCount + 1);
       expect(dialogService.controllers).toContain(controller);
       done();

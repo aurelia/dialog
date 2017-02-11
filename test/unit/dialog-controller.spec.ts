@@ -1,7 +1,7 @@
 import {DefaultDialogSettings} from '../../src/dialog-settings';
 import {Renderer} from '../../src/renderer';
 import {DialogController} from '../../src/dialog-controller';
-import {DialogCancelResult, DialogCloseResult} from '../../src/dialog-result';
+import {DialogCancelResult} from '../../src/dialog-result';
 import {DialogCancelError} from '../../src/dialog-cancel-error';
 
 type TestDialogController = DialogController & {
@@ -14,18 +14,6 @@ describe('DialogController', () => {
   let resolveCallback: jasmine.Spy;
   let rejectCallback: jasmine.Spy;
   let dialogController: TestDialogController;
-
-  function completeOnSuccess(promise: Promise<any>, done: DoneFn) {
-    promise.then(done).catch((reason) => {
-      done.fail(reason || new Error('Unexpected rejection.'));
-    });
-  }
-
-  function completeOnFailure(promise: Promise<any>, done: DoneFn) {
-    promise.then(() => {
-      done.fail(new Error('Unexpected rejection.'));
-    }).catch(done);
-  }
 
   const createDialogController = (settings = new DefaultDialogSettings()): TestDialogController => {
     const renderer = jasmine.createSpyObj('rendererSpy', ['showDialog', 'hideDialog']) as Renderer;
