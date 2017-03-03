@@ -63,7 +63,7 @@ export class DialogController {
       return this._closePromise;
     }
 
-    this._closePromise = invokeLifecycle(this.viewModel, 'canDeactivate').then(canDeactivate => {
+    this._closePromise = invokeLifecycle(this.viewModel, 'canDeactivate', ok).then(canDeactivate => {
       if (canDeactivate) {
         return invokeLifecycle(this.viewModel, 'deactivate')
           .then(() => {
