@@ -1,9 +1,9 @@
-import {Controller} from 'aurelia-templating';
-import {Renderer} from './renderer';
-import {DialogCancelableOperationResult, DialogCloseResult, DialogCancelResult} from './dialog-result';
-import {DialogSettings} from './dialog-settings';
-import {invokeLifecycle} from './lifecycle';
-import {createDialogCancelError} from './dialog-cancel-error';
+import { Controller } from 'aurelia-templating';
+import { Renderer } from './renderer';
+import { DialogCancelableOperationResult, DialogCloseResult, DialogCancelResult } from './dialog-result';
+import { DialogSettings } from './dialog-settings';
+import { invokeLifecycle } from './lifecycle';
+import { createDialogCancelError } from './dialog-cancel-error';
 
 /**
  * A controller object for a Dialog instance.
@@ -11,7 +11,11 @@ import {createDialogCancelError} from './dialog-cancel-error';
 export class DialogController {
   private resolve: (data?: any) => void;
   private reject: (reason: any) => void;
-  private closePromise: Promise<any> | undefined;
+
+  /**
+   * @internal
+   */
+  public closePromise: Promise<any> | undefined;
 
   /**
    * The settings used by this controller.
@@ -20,6 +24,9 @@ export class DialogController {
   public renderer: Renderer;
   public controller: Controller;
 
+  /**
+   * @internal
+   */
   public static inject = [Renderer];
   /**
    * Creates an instance of DialogController.
@@ -35,13 +42,19 @@ export class DialogController {
     this.renderer = renderer;
   }
 
-  private releaseResources(): Promise<void> {
+  /**
+   * @internal
+   */
+  public releaseResources(): Promise<void> {
     return invokeLifecycle(this.controller.viewModel || {}, 'deactivate')
       .then(() => this.renderer.hideDialog(this))
       .then(() => { this.controller.unbind(); });
   }
 
-  private cancelOperation(): DialogCancelResult {
+  /**
+   * @internal
+   */
+  public cancelOperation(): DialogCancelResult {
     if (!this.settings.rejectOnCancel) {
       return { wasCancelled: true };
     }

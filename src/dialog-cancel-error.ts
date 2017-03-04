@@ -6,6 +6,9 @@ export interface DialogCancelError extends Error {
   output?: any;
 }
 
+/**
+ * @internal
+ */
 export function createDialogCancelError(output?: any): DialogCancelError {
   const error = new Error('Operation cancelled.') as DialogCancelError;
   error.wasCancelled = true;

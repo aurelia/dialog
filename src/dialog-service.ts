@@ -1,24 +1,22 @@
-import {Container} from 'aurelia-dependency-injection';
-import {Origin} from 'aurelia-metadata';
-import {CompositionEngine, Controller, ViewSlot, CompositionContext} from 'aurelia-templating';
-import {DialogOpenResult, DialogCloseResult, DialogCancelResult} from './dialog-result';
-import {DialogSettings, DefaultDialogSettings} from './dialog-settings';
-import {createDialogCancelError} from './dialog-cancel-error';
-import {invokeLifecycle} from './lifecycle';
-import {DialogController} from './dialog-controller';
+import { Container } from 'aurelia-dependency-injection';
+import { Origin } from 'aurelia-metadata';
+import { CompositionEngine, Controller, ViewSlot, CompositionContext } from 'aurelia-templating';
+import { DialogOpenResult, DialogCloseResult, DialogCancelResult } from './dialog-result';
+import { DialogSettings, DefaultDialogSettings } from './dialog-settings';
+import { createDialogCancelError } from './dialog-cancel-error';
+import { invokeLifecycle } from './lifecycle';
+import { DialogController } from './dialog-controller';
 
 export type DialogCancellableOpenResult = DialogOpenResult | DialogCancelResult;
 
 /* tslint:disable:max-line-length */
-export interface WhenClosed {
+export interface DialogOpenPromise<T extends DialogCancellableOpenResult> extends Promise<T> {
   whenClosed(onfulfilled?: ((value: DialogCloseResult) => DialogCloseResult | PromiseLike<DialogCloseResult>) | undefined | null, onrejected?: ((reason: any) => DialogCloseResult | PromiseLike<DialogCloseResult>) | undefined | null): Promise<DialogCloseResult>;
   whenClosed<TResult>(onfulfilled: ((value: DialogCloseResult) => DialogCloseResult | PromiseLike<DialogCloseResult>) | undefined | null, onrejected: (reason: any) => TResult | PromiseLike<TResult>): Promise<DialogCloseResult | TResult>;
   whenClosed<TResult>(onfulfilled: (value: DialogCloseResult) => TResult | PromiseLike<TResult>, onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<TResult>;
   whenClosed<TResult1, TResult2>(onfulfilled: (value: DialogCloseResult) => TResult1 | PromiseLike<TResult1>, onrejected: (reason: any) => TResult2 | PromiseLike<TResult2>): Promise<TResult1 | TResult2>;
 }
 /* tslint:enable:max-line-length */
-
-export type DialogOpenPromise<T extends DialogCancellableOpenResult> = Promise<T> & WhenClosed;
 
 function whenClosed(this: Promise<DialogCancellableOpenResult>, onfulfilled?: any, onrejected?: any) {
   return this.then<DialogCloseResult>(r => r.wasCancelled ? r : r.closeResult).then(onfulfilled, onrejected);
@@ -47,6 +45,9 @@ export class DialogService {
   public hasOpenDialog: boolean = false;
   public hasActiveDialog: boolean = false;
 
+  /**
+   * @internal
+   */
   public static inject = [Container, CompositionEngine, DefaultDialogSettings];
   constructor(container: Container, compositionEngine: CompositionEngine, defaultSettings: DialogSettings) {
     this.container = container;
@@ -170,7 +171,7 @@ export class DialogService {
    * @return Promise<DialogController[]> All controllers whose close operation was cancelled.
    */
   public closeAll(): Promise<DialogController[]> {
-    return Promise.all(this.controllers.slice(0).map((controller) => {
+    return Promise.all(this.controllers.slice(0).map(controller => {
       if (!controller.settings.rejectOnCancel) {
         return controller.cancel().then(result => {
           if (result.wasCancelled) {
@@ -185,7 +186,7 @@ export class DialogService {
         }
         return Promise.reject(reason);
       });
-    })).then((unclosedControllers) => unclosedControllers.filter(unclosed => !!unclosed));
+    })).then(unclosedControllers => unclosedControllers.filter(unclosed => !!unclosed));
   }
 }
 

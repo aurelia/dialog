@@ -1,4 +1,4 @@
-import {customElement, inlineView} from 'aurelia-templating';
+import { customElement, inlineView } from 'aurelia-templating';
 
 @customElement('ai-dialog-body')
 @inlineView(`

@@ -1,10 +1,13 @@
-import {customAttribute, ComponentAttached} from 'aurelia-templating';
-import {DOM} from 'aurelia-pal';
+import { customAttribute, ComponentAttached } from 'aurelia-templating';
+import { DOM } from 'aurelia-pal';
 
 @customAttribute('attach-focus')
 export class AttachFocus implements ComponentAttached {
   public value: boolean | string;
 
+  /**
+   * @internal
+   */
   public static inject = [DOM.Element];
   constructor(private element: HTMLElement) {
     this.value = true;

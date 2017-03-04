@@ -1,5 +1,5 @@
-import {customElement, inlineView} from 'aurelia-templating';
-import {DialogController} from './dialog-controller';
+import { customElement, bindable, inlineView } from 'aurelia-templating';
+import { DialogController } from './dialog-controller';
 
 @customElement('ai-dialog-header')
 @inlineView(`
@@ -8,7 +8,7 @@ import {DialogController} from './dialog-controller';
       type="button"
       class="dialog-close"
       aria-label="Close"
-      if.bind="!controller.settings.lock"
+      show.bind="showCloseButton"
       click.trigger="controller.cancel()">
       <span aria-hidden="true">&times;</span>
     </button>
@@ -20,6 +20,11 @@ import {DialogController} from './dialog-controller';
 `)
 
 export class AiDialogHeader {
+  @bindable() public showCloseButton: boolean = false;
+
+  /**
+   * @internal
+   */
   public static inject = [DialogController];
   constructor(public controller: DialogController) { }
 }

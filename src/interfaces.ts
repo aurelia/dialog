@@ -7,7 +7,7 @@ export interface DialogComponentCanActivate<T> {
    * To cancel the opening of the dialog return false or a promise that resolves to false.
    * Any other returned value is coerced to true.
    */
-  canActivate(model?: T): boolean | Promise<Boolean> | PromiseLike<boolean>;
+  canActivate(model?: T): boolean | Promise<boolean> | PromiseLike<boolean>;
 }
 
 /**
@@ -29,7 +29,7 @@ export interface DialogComponentCanDeactivate {
    * To cancel the closing of the dialog return false or a promise that resolves to false.
    * Any other returned value is coerced to true.
    */
-  canDeactivate(): boolean | Promise<Boolean> | PromiseLike<boolean>;
+  canDeactivate(): boolean | Promise<boolean> | PromiseLike<boolean>;
 }
 
 /**

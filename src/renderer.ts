@@ -1,4 +1,4 @@
-import {DialogController} from './dialog-controller';
+import { DialogController } from './dialog-controller';
 
 export interface RendererStatic {
   new (): Renderer;

@@ -1,4 +1,6 @@
-import {ViewStrategy} from 'aurelia-templating';
+import { ViewStrategy } from 'aurelia-templating';
+
+export type ActionKey = 'Escape' | 'Enter';
 
 /**
  * All available dialog settings.
@@ -22,15 +24,20 @@ export interface DialogSettings {
   model?: any;
 
   /**
-   * When set to false allows the dialog to be closed with ESC key or clicking outside the dialog.
-   * When set to true the dialog does not close on ESC key or clicking outside it.
+   * Allows for closing the top most dialog via the keyboard.
+   * When set to "false" no action will be taken.
+   * If set to "true", "Escape" or an array containing "Escape"
+   * the dialog will be "cancel" closed when the ESC key is pressed.
+   * If set to "Enter" or and array containing "Enter"
+   * the dialog will be "ok" closed  when the ENTER key is pressed.
+   * Using the array format allows combining the ESC and ENTER keys.
    */
-  lock?: boolean;
+  keyboard?: boolean | ActionKey | ActionKey[];
 
   /**
-   * When set to true the dialog can be closed with the ESC key.
+   * When set to "true" allows for the dismissal of the dialog by clicking outside of it.
    */
-  enableEscClose?: boolean;
+  backdropDismiss?: boolean;
 
   /**
    * The z-index of the dialog.
@@ -65,8 +72,8 @@ export interface DialogSettings {
  */
 export class DefaultDialogSettings implements DialogSettings {
   [setting: string]: any;
-  public lock = true;
-  public enableEscClose = false;
+  public keyboard = false;
+  public backdropDismiss: false;
   public startingZIndex = 1000;
   public centerHorizontalOnly = false;
   public rejectOnCancel = false;

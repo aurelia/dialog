@@ -1,7 +1,8 @@
-import {DOM} from 'aurelia-pal';
-import {transient} from 'aurelia-dependency-injection';
-import {Renderer} from './renderer';
-import {DialogController} from './dialog-controller';
+import { DOM } from 'aurelia-pal';
+import { transient } from 'aurelia-dependency-injection';
+import { ActionKey } from './dialog-settings';
+import { Renderer } from './renderer';
+import { DialogController } from './dialog-controller';
 
 const containerTagName = 'ai-dialog-container';
 const overlayTagName = 'ai-dialog-overlay';
@@ -46,22 +47,37 @@ export const hasTransition = (() => {
 
 const body = DOM.querySelectorAll('body')[0] as HTMLBodyElement;
 
+function getActionKey(e: KeyboardEvent): ActionKey | undefined {
+  if ((e.code || e.key) === 'Escape' || e.keyCode === 27) {
+    return 'Escape';
+  }
+  if ((e.code || e.key) === 'Enter' || e.keyCode === 13) {
+    return 'Enter';
+  }
+  return undefined;
+}
+
 @transient()
 export class DialogRenderer implements Renderer {
   public static dialogControllers: DialogController[] = [];
 
-  public static escapeKeyEventHandler(e: KeyboardEvent) {
-    if (e.key === 'Escape' || e.key === 'Esc' || e.keyCode === 27) {
-      const top = DialogRenderer.dialogControllers[DialogRenderer.dialogControllers.length - 1];
-      if (top && (top.settings.lock !== true || top.settings.enableEscClose === true)) {
-        top.cancel();
-      }
+  public static keyboardEventHandler(e: KeyboardEvent) {
+    const key = getActionKey(e);
+    if (!key) { return; }
+    const top = DialogRenderer.dialogControllers[DialogRenderer.dialogControllers.length - 1];
+    if (!top || !top.settings.keyboard) { return; }
+    const keyboard = top.settings.keyboard;
+    if (key === 'Escape'
+      && (keyboard === true || keyboard === key || (Array.isArray(keyboard) && keyboard.indexOf(key) > -1))) {
+      top.cancel();
+    } else if (key === 'Enter' && (keyboard === key || (Array.isArray(keyboard) && keyboard.indexOf(key) > -1))) {
+      top.ok();
     }
   }
 
   public static trackController(dialogController: DialogController): void {
     if (!DialogRenderer.dialogControllers.length) {
-      DOM.addEventListener('keyup', DialogRenderer.escapeKeyEventHandler, false);
+      DOM.addEventListener('keyup', DialogRenderer.keyboardEventHandler, false);
     }
     DialogRenderer.dialogControllers.push(dialogController);
   }
@@ -72,7 +88,7 @@ export class DialogRenderer implements Renderer {
       DialogRenderer.dialogControllers.splice(i, 1);
     }
     if (!DialogRenderer.dialogControllers.length) {
-      DOM.removeEventListener('keyup', DialogRenderer.escapeKeyEventHandler, false);
+      DOM.removeEventListener('keyup', DialogRenderer.keyboardEventHandler, false);
     }
   }
 
@@ -128,7 +144,7 @@ export class DialogRenderer implements Renderer {
   private setupClickHandling(dialogController: DialogController): void {
     this.stopPropagation = e => { e._aureliaDialogHostClicked = true; };
     this.closeDialogClick = e => {
-      if (!dialogController.settings.lock && !e._aureliaDialogHostClicked) {
+      if (dialogController.settings.backdropDismiss && !e._aureliaDialogHostClicked) {
         dialogController.cancel();
         return;
       }
