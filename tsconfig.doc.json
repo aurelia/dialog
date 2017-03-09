@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "target": "es2015",
+    "experimentalDecorators": true,
+    "stripInternal": true
+  },
+  "include": [
+      "./dist/doc-temp/*.d.ts"
+  ],
+  "exclude": []
+}

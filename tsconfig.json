@@ -1,7 +1,9 @@
 {
   "extends": "./tsconfig.build",
   "compilerOptions": {
-    "outDir": "dist/test"
+    "outDir": "dist/test",
+    "allowUnreachableCode": true,
+    "allowUnusedLabels": true
   },
   "exclude": [
     ".vscode",
