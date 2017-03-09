@@ -1,15 +1,15 @@
 {
   "extends": "tslint:latest",
   "rules": {
-    "quotemark": [true, "single"],
-    "object-literal-sort-keys": false,
-    "ordered-imports": [false],
-    "whitespace": [true, "check-branch", "check-decl", "check-operator", "check-module", "check-separator", "check-type"],
+    "arrow-parens": [true, "ban-single-arg-parens"],
     "interface-name": [true, "never-prefix"],
+    "member-ordering": ["fields-first"],
     "no-shadowed-variable": false,
     "no-string-literal": false,
+    "object-literal-sort-keys": false,
+    "ordered-imports": [false],
+    "quotemark": [true, "single"],
     "trailing-comma": [false],
-    "member-ordering": ["fields-first"],
-    "arrow-parens": false
+    "whitespace": [true, "check-branch", "check-decl", "check-operator", "check-module", "check-separator", "check-type"]
   }
 }
