@@ -24,6 +24,12 @@ export interface DialogSettings {
   model?: any;
 
   /**
+   * When set to "false" allows the dialog to be closed with ESC key or clicking outside the dialog.
+   * When set to "true" the dialog does not close on ESC key or clicking outside of it.
+   */
+  lock?: boolean;
+
+  /**
    * Allows for closing the top most dialog via the keyboard.
    * When set to "false" no action will be taken.
    * If set to "true", "Escape" or an array containing "Escape"
@@ -37,7 +43,7 @@ export interface DialogSettings {
   /**
    * When set to "true" allows for the dismissal of the dialog by clicking outside of it.
    */
-  backdropDismiss?: boolean;
+  overlayDismiss?: boolean;
 
   /**
    * The z-index of the dialog.
@@ -72,8 +78,7 @@ export interface DialogSettings {
  */
 export class DefaultDialogSettings implements DialogSettings {
   [setting: string]: any;
-  public keyboard = false;
-  public backdropDismiss: false;
+  public lock: boolean = true;
   public startingZIndex = 1000;
   public centerHorizontalOnly = false;
   public rejectOnCancel = false;

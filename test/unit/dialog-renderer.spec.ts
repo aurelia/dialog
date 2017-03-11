@@ -141,7 +141,7 @@ describe('DialogRenderer', () => {
 
     describe('"backdropDismiss"', () => {
       it('set to "false" by not closing the dialog when clicked outside it', async done => {
-        const settings: DialogSettings = { backdropDismiss: false };
+        const settings: DialogSettings = { overlayDismiss: false };
         const renderer = createRenderer(settings);
         await show(done, renderer);
         renderer.dialogContainer.dispatchEvent(new MouseEvent('click'));
@@ -150,7 +150,7 @@ describe('DialogRenderer', () => {
       });
 
       it('set to "true" by closing the dialog when clicked outside it', async done => {
-        const settings: DialogSettings = { backdropDismiss: true };
+        const settings: DialogSettings = { overlayDismiss: true };
         const renderer = createRenderer(settings);
         await show(done, renderer);
         renderer.dialogContainer.dispatchEvent(new MouseEvent('click'));

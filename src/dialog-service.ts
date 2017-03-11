@@ -61,12 +61,6 @@ export class DialogService {
     }
   }
 
-  private createSettings(settings: DialogSettings): DialogSettings {
-    settings = Object.assign({}, this.defaultSettings, settings);
-    this.validateSettings(settings);
-    return settings;
-  }
-
   // tslint:disable-next-line:max-line-length
   private createCompositionContext(childContainer: Container, host: Element, settings: DialogSettings): (CompositionContext & { host: Element }) { // TODO: remove when templating typings fix is used
     return {
@@ -82,7 +76,7 @@ export class DialogService {
     };
   }
 
-  private _ensureViewModel(compositionContext: CompositionContext): Promise<CompositionContext> {
+  private ensureViewModel(compositionContext: CompositionContext): Promise<CompositionContext> {
     if (typeof compositionContext.viewModel === 'function') {
       compositionContext.viewModel = Origin.get(compositionContext.viewModel).moduleId;
     }
@@ -122,6 +116,21 @@ export class DialogService {
   }
 
   /**
+   * @internal
+   */
+  public createSettings(settings: DialogSettings): DialogSettings {
+    settings = Object.assign({}, this.defaultSettings, settings);
+    if (typeof settings.keyboard !== 'boolean' && !settings.keyboard) {
+      settings.keyboard = !settings.lock;
+    }
+    if (typeof settings.overlayDismiss !== 'boolean') {
+      settings.overlayDismiss = !settings.lock;
+    }
+    this.validateSettings(settings);
+    return settings;
+  }
+
+  /**
    * Opens a new dialog.
    * @param settings Dialog settings for this dialog instance.
    * @return Promise A promise that settles when the dialog is closed.
@@ -151,7 +160,7 @@ export class DialogService {
       dialogController.renderer.getDialogContainer(),
       dialogController.settings
     );
-    const openResult = this._ensureViewModel(compositionContext).then<boolean>(compositionContext => {
+    const openResult = this.ensureViewModel(compositionContext).then<boolean>(compositionContext => {
       if (!compositionContext.viewModel) { return true; }
       return invokeLifecycle(compositionContext.viewModel, 'canActivate', dialogController.settings.model);
     }).then<DialogCancellableOpenResult>(canActivate => {

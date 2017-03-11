@@ -144,7 +144,7 @@ export class DialogRenderer implements Renderer {
   private setupClickHandling(dialogController: DialogController): void {
     this.stopPropagation = e => { e._aureliaDialogHostClicked = true; };
     this.closeDialogClick = e => {
-      if (dialogController.settings.backdropDismiss && !e._aureliaDialogHostClicked) {
+      if (dialogController.settings.overlayDismiss && !e._aureliaDialogHostClicked) {
         dialogController.cancel();
         return;
       }

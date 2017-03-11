@@ -64,7 +64,12 @@ describe('DialogService', () => {
 
   describe('".open"', () => {
     it('should create new settings by merging the default settings and the provided ones', async done => {
-      const overrideSettings = { rejectOnCancel: true };
+      const overrideSettings: DialogSettings = {
+        rejectOnCancel: true,
+        lock: true,
+        keyboard: 'Escape',
+        overlayDismiss: true
+      };
       const { controller } = await _success(() => dialogService.open(overrideSettings), done) as DialogOpenResult;
       const expectedSettings = Object.assign({}, container.get(DefaultDialogSettings), overrideSettings);
       expect(controller.settings).toEqual(expectedSettings);
@@ -180,6 +185,54 @@ describe('DialogService', () => {
       const result = await _failure(() => dialogService.open().whenClosed(), done) as DialogCancelError;
       expect(result).toBe(expectdError);
       done();
+    });
+  });
+
+  describe('".createSettings"', () => {
+    it('should not set ".keyboard" if already set', () => {
+      const settings: DialogSettings = { lock: true };
+      const expected = 'Enter';
+      settings.keyboard = expected;
+      expect(dialogService.createSettings(settings).keyboard).toBe(expected);
+    });
+
+    it('should not set ".overlayDismiss" if already set', () => {
+      const settings: DialogSettings = { lock: true };
+      const expected = true;
+      settings.overlayDismiss = expected;
+      expect(dialogService.createSettings(settings).overlayDismiss).toBe(expected);
+    });
+
+    describe('when ".lock" is "false"', () => {
+      let settings: DialogSettings;
+
+      beforeEach(() => {
+         settings = { lock: false };
+      });
+
+      it('should set ".keyboard" to "true" if not set', () => {
+        expect(dialogService.createSettings(settings).keyboard).toBe(true);
+      });
+
+      it('should set ".overlayDismiss" to "true" if not set', () => {
+        expect(dialogService.createSettings(settings).overlayDismiss).toBe(true);
+      });
+    });
+
+    describe('when ".lock" is "true"', () => {
+      let settings: DialogSettings;
+
+      beforeEach(() => {
+         settings = { lock: true };
+      });
+
+      it('should set ".keyboard" to "false" if not set', () => {
+        expect(dialogService.createSettings(settings).keyboard).toBe(false);
+      });
+
+      it('should set ".overlayDismiss" to "false" if not set', () => {
+        expect(dialogService.createSettings(settings).overlayDismiss).toBe(false);
+      });
     });
   });
 
