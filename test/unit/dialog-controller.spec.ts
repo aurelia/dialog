@@ -1,28 +1,21 @@
 import {DefaultDialogSettings} from '../../src/dialog-settings';
 import {Renderer} from '../../src/renderer';
 import {DialogController} from '../../src/dialog-controller';
-import {DialogCancelResult} from '../../src/dialog-result';
 import {DialogCancelError} from '../../src/dialog-cancel-error';
-
-type TestDialogController = DialogController & {
-  closePromise: Promise<any> | undefined;
-  cancelOperation(): DialogCancelResult;
-  releaseResources(): Promise<void>
-};
 
 describe('DialogController', () => {
   let resolveCallback: jasmine.Spy;
   let rejectCallback: jasmine.Spy;
-  let dialogController: TestDialogController;
+  let dialogController: DialogController;
 
-  const createDialogController = (settings = new DefaultDialogSettings()): TestDialogController => {
+  const createDialogController = (settings = new DefaultDialogSettings()): DialogController => {
     const renderer = jasmine.createSpyObj('rendererSpy', ['showDialog', 'hideDialog']) as Renderer;
     resolveCallback = jasmine.createSpy('resolveSpy');
     rejectCallback = jasmine.createSpy('rejectSpy');
     const dialogController = new DialogController(renderer, settings, resolveCallback, rejectCallback);
     dialogController.controller = jasmine.createSpyObj('controllerSpy', ['unbind']);
     dialogController.controller.viewModel = jasmine.createSpyObj('viewModelSpy', ['canDeactivate', 'deactivate']);
-    return dialogController as TestDialogController;
+    return dialogController as DialogController;
   };
 
   async function _success<T>(action: () => Promise<T>, done: DoneFn): Promise<T> {

@@ -1,4 +1,4 @@
-import {DialogController} from './dialog-controller';
+import { DialogController } from './dialog-controller';
 
 /**
  * The result that a dialog cancelable operation resolves to.

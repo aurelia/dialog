@@ -1,7 +1,7 @@
-import {DOM} from 'aurelia-pal';
-import {DialogController} from '../../src/dialog-controller';
-import {DialogRenderer, hasTransition, transitionEvent} from '../../src/dialog-renderer';
-import {DefaultDialogSettings, DialogSettings} from '../../src/dialog-settings';
+import { DOM } from 'aurelia-pal';
+import { DialogController } from '../../src/dialog-controller';
+import { DialogRenderer, hasTransition, transitionEvent } from '../../src/dialog-renderer';
+import { DefaultDialogSettings, DialogSettings } from '../../src/dialog-settings';
 
 type TestDialogRenderer = DialogRenderer & { [key: string]: any, __controller: DialogController };
 
@@ -11,8 +11,9 @@ const durationPropertyName = (() => {
     if (typeof durationPropertyName !== 'undefined') { return durationPropertyName; }
     const propertyNames = ['oTransitionDuration', 'webkitTransitionDuration', 'transitionDuration']; // order matters
     const fakeElement = DOM.createElement('fakeelement') as HTMLElement;
-    while (propertyNames.length) {
-      const propertyName = propertyNames.pop();
+    let propertyName: string | undefined;
+    // tslint:disable-next-line:no-conditional-assignment
+    while (propertyName = propertyNames.pop()) {
       if (propertyName in fakeElement.style) {
         return durationPropertyName = propertyName || null;
       }
@@ -26,13 +27,16 @@ describe('DialogRenderer', () => {
   function createRenderer(settings: DialogSettings = {}): TestDialogRenderer {
     const renderer = new DialogRenderer() as TestDialogRenderer;
     renderer.getDialogContainer();
-    const dialogController = jasmine.createSpyObj('DialogControllerSpy', ['cancel']) as DialogController;
+    const dialogController = jasmine.createSpyObj('DialogControllerSpy', ['cancel', 'ok']) as DialogController;
     (dialogController.cancel as jasmine.Spy)
+      .and
+      .callFake((...args: any[]) => dialogController.renderer.hideDialog(dialogController));
+    (dialogController.ok as jasmine.Spy)
       .and
       .callFake((...args: any[]) => dialogController.renderer.hideDialog(dialogController));
     dialogController.settings = Object.assign(new DefaultDialogSettings(), settings);
     dialogController.renderer = renderer;
-    dialogController.controller = jasmine.createSpyObj('ViewSlotSpy', ['attached', 'detached']);
+    dialogController.controller = jasmine.createSpyObj('ControllerSpy', ['attached', 'detached']);
     renderer.__controller = dialogController;
     return renderer as any;
   }
@@ -82,85 +86,76 @@ describe('DialogRenderer', () => {
       });
     });
 
-    describe('"lock"', () => {
-      describe('and when set to "true"', () => {
-        const settings: DialogSettings = { lock: true };
+    describe('"keyboard"', () => {
+      it('and does nothing when it is "false"', async done => {
+        const settings: DialogSettings = { keyboard: false };
+        const first = createRenderer(settings);
+        const last = createRenderer(settings);
+        await show(done, first, last);
+        DOM.dispatchEvent(new KeyboardEvent('keyup', { key: 'Escape' }));
+        expect(first.__controller.cancel).not.toHaveBeenCalled();
+        expect(last.__controller.cancel).not.toHaveBeenCalled();
+        done();
+      });
 
-        it('does not close the top dialog on ESC', async done => {
-          const first = createRenderer(settings);
-          const last = createRenderer(settings);
-          spyOn(first, 'hideDialog').and.callThrough();
-          spyOn(last, 'hideDialog').and.callThrough();
-          await show(done, first, last);
-          DOM.dispatchEvent(new KeyboardEvent('keyup', { key: 'Escape' }));
-          expect(first.hideDialog).not.toHaveBeenCalled();
-          expect(last.hideDialog).not.toHaveBeenCalled();
-          done();
-        });
-
-        it('click outside the dialog does not close it', async done => {
+      describe('and closes with cancel', () => {
+        async function closeOnEscSpec(done: DoneFn, settings: DialogSettings) {
           const renderer = createRenderer(settings);
           await show(done, renderer);
-          spyOn(renderer, 'hideDialog');
-          renderer.dialogContainer.dispatchEvent(new MouseEvent('click'));
-          expect(renderer.hideDialog).not.toHaveBeenCalled();
+          DOM.dispatchEvent(new KeyboardEvent('keyup', { key: 'Escape' }));
+          expect(renderer.__controller.cancel).toHaveBeenCalled();
           done();
+        }
+
+        it('when set to "true"', done => {
+          closeOnEscSpec(done, { keyboard: true });
+        });
+
+        it('when set to "Escape"', done => {
+          closeOnEscSpec(done, { keyboard: 'Escape' });
+        });
+
+        it('when set to an array containing "Escape"', done => {
+          closeOnEscSpec(done, { keyboard: ['Escape'] });
         });
       });
 
-      describe('and when set to "false"', () => {
-        const settings: DialogSettings = { lock: false };
-
-        it('closes the top dialog on ESC', async done => {
-          const first = createRenderer(settings);
-          const last = createRenderer(settings);
-          spyOn(first, 'hideDialog').and.callThrough();
-          spyOn(last, 'hideDialog').and.callThrough();
-          await show(done, first, last);
-          DOM.dispatchEvent(new KeyboardEvent('keyup', { key: 'Escape' }));
-          expect(first.hideDialog).not.toHaveBeenCalled();
-          expect(last.hideDialog).toHaveBeenCalled();
-          done();
-        });
-
-        it('click outside the dialog does close it', async done => {
+      describe('and closes with ok', () => {
+        async function closeOnEscSpec(done: DoneFn, settings: DialogSettings) {
           const renderer = createRenderer(settings);
           await show(done, renderer);
-          spyOn(renderer, 'hideDialog');
-          renderer.dialogContainer.dispatchEvent(new MouseEvent('click'));
-          expect(renderer.hideDialog).toHaveBeenCalled();
+          DOM.dispatchEvent(new KeyboardEvent('keyup', { key: 'Enter' }));
+          expect(renderer.__controller.ok).toHaveBeenCalled();
           done();
+        }
+
+        it('when set to "Enter"', done => {
+          closeOnEscSpec(done, { keyboard: 'Enter' });
+        });
+
+        it('when set to an array containing "Enter"', done => {
+          closeOnEscSpec(done, { keyboard: ['Enter'] });
         });
       });
     });
 
-    describe('"enableEscClose"', () => {
-      describe('and when set to "true"', () => {
-        const settings: DialogSettings = { enableEscClose: true };
+    describe('"backdropDismiss"', () => {
+      it('set to "false" by not closing the dialog when clicked outside it', async done => {
+        const settings: DialogSettings = { overlayDismiss: false };
+        const renderer = createRenderer(settings);
+        await show(done, renderer);
+        renderer.dialogContainer.dispatchEvent(new MouseEvent('click'));
+        expect(renderer.__controller.cancel).not.toHaveBeenCalled();
+        done();
+      });
 
-        it('closes the top dialog on ESC', async done => {
-          const first = createRenderer(settings);
-          const last = createRenderer(settings);
-          spyOn(first, 'hideDialog').and.callThrough();
-          spyOn(last, 'hideDialog').and.callThrough();
-          await show(done, first, last);
-          DOM.dispatchEvent(new KeyboardEvent('keyup', { key: 'Escape' }));
-          expect(first.hideDialog).not.toHaveBeenCalled();
-          expect(last.hideDialog).toHaveBeenCalled();
-          done();
-        });
-
-        it('overrides "lock"', async done => {
-          const first = createRenderer(Object.assign({ lock: true }, settings));
-          const last = createRenderer(Object.assign({ lock: true }, settings));
-          spyOn(first, 'hideDialog').and.callThrough();
-          spyOn(last, 'hideDialog').and.callThrough();
-          await show(done, first, last);
-          DOM.dispatchEvent(new KeyboardEvent('keyup', { key: 'Escape' }));
-          expect(first.hideDialog).not.toHaveBeenCalled();
-          expect(last.hideDialog).toHaveBeenCalled();
-          done();
-        });
+      it('set to "true" by closing the dialog when clicked outside it', async done => {
+        const settings: DialogSettings = { overlayDismiss: true };
+        const renderer = createRenderer(settings);
+        await show(done, renderer);
+        renderer.dialogContainer.dispatchEvent(new MouseEvent('click'));
+        expect(renderer.__controller.cancel).toHaveBeenCalled();
+        done();
       });
     });
   });

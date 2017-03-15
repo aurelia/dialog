@@ -1,5 +1,5 @@
-import {FrameworkConfiguration} from 'aurelia-framework';
-import {DialogConfiguration} from './dialog-configuration';
+import { FrameworkConfiguration } from 'aurelia-framework';
+import { DialogConfiguration } from './dialog-configuration';
 
 export function configure(
   frameworkConfig: FrameworkConfiguration,
@@ -14,19 +14,16 @@ export function configure(
   applyConfig();
 }
 
-export {AiDialog} from './ai-dialog';
-export {AiDialogHeader} from './ai-dialog-header';
-export {AiDialogBody} from './ai-dialog-body';
-export {AiDialogFooter} from './ai-dialog-footer';
-export {AttachFocus} from './attach-focus';
+export * from './ai-dialog';
+export * from './ai-dialog-header';
+export * from './ai-dialog-body';
+export * from './ai-dialog-footer';
+export * from './attach-focus';
 export * from './interfaces';
-export {DialogSettings} from './dialog-settings';
-export {DialogConfiguration, DialogResourceName} from './dialog-configuration';
-export {RendererStatic, Renderer} from './renderer';
-export {DialogCancelError} from './dialog-cancel-error';
-export {
-  DialogCancelableOperationResult, DialogCancelResult,
-  DialogOpenResult, DialogCloseResult
-} from './dialog-result';
-export {DialogService, DialogOpenPromise} from './dialog-service';
-export {DialogController} from './dialog-controller';
+export * from './dialog-settings';
+export * from './dialog-configuration';
+export * from './renderer';
+export * from './dialog-cancel-error';
+export * from './dialog-result';
+export * from './dialog-service';
+export * from './dialog-controller';

@@ -1,5 +1,5 @@
-import {customElement, bindable, inlineView} from 'aurelia-templating';
-import {DialogController} from './dialog-controller';
+import { customElement, bindable, inlineView } from 'aurelia-templating';
+import { DialogController } from './dialog-controller';
 
 /**
  * View-model for footer of Dialog.
@@ -27,6 +27,9 @@ export class AiDialogFooter {
   @bindable public buttons: any[] = [];
   @bindable public useDefaultButtons: boolean = false;
 
+  /**
+   * @internal
+   */
   public static inject = [DialogController];
   constructor(public controller: DialogController) { }
 
