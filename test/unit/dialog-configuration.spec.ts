@@ -53,7 +53,7 @@ describe('DialogConfiguration', () => {
   describe('useResource', () => {
     it('should call globalResources', () => {
       spyOn(frameworkConfig, 'globalResources');
-      configuration.useResource('ai-dialog');
+      configuration.useResource('ux-dialog');
       applyConfig();
       expect(frameworkConfig.globalResources).toHaveBeenCalled();
     });
@@ -67,10 +67,10 @@ describe('DialogConfiguration', () => {
       configuration.useDefaults();
       applyConfig();
       expect(configuration.useRenderer).toHaveBeenCalledWith(DialogRenderer);
-      expect(configuration.useResource).toHaveBeenCalledWith('ai-dialog');
-      expect(configuration.useResource).toHaveBeenCalledWith('ai-dialog-header');
-      expect(configuration.useResource).toHaveBeenCalledWith('ai-dialog-footer');
-      expect(configuration.useResource).toHaveBeenCalledWith('ai-dialog-body');
+      expect(configuration.useResource).toHaveBeenCalledWith('ux-dialog');
+      expect(configuration.useResource).toHaveBeenCalledWith('ux-dialog-header');
+      expect(configuration.useResource).toHaveBeenCalledWith('ux-dialog-footer');
+      expect(configuration.useResource).toHaveBeenCalledWith('ux-dialog-body');
       expect(configuration.useResource).toHaveBeenCalledWith('attach-focus');
     });
 

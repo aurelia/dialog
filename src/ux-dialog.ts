@@ -1,11 +1,11 @@
 import { customElement, inlineView } from 'aurelia-templating';
 
-@customElement('ai-dialog-body')
+@customElement('ux-dialog')
 @inlineView(`
   <template>
     <slot></slot>
   </template>
 `)
-export class AiDialogBody {
+export class UxDialog {
 
 }

@@ -4,8 +4,8 @@ import { ActionKey } from './dialog-settings';
 import { Renderer } from './renderer';
 import { DialogController } from './dialog-controller';
 
-const containerTagName = 'ai-dialog-container';
-const overlayTagName = 'ai-dialog-overlay';
+const containerTagName = 'ux-dialog-container';
+const overlayTagName = 'ux-dialog-overlay';
 
 export const transitionEvent = (() => {
   let transition: string | undefined;
@@ -119,7 +119,7 @@ export class DialogRenderer implements Renderer {
       body.insertBefore(this.dialogOverlay, body.firstChild);
     }
     dialogController.controller.attached();
-    body.classList.add('ai-dialog-open');
+    body.classList.add('ux-dialog-open');
   }
 
   private detach(dialogController: DialogController): void {
@@ -127,7 +127,7 @@ export class DialogRenderer implements Renderer {
     body.removeChild(this.dialogContainer);
     dialogController.controller.detached();
     if (!DialogRenderer.dialogControllers.length) {
-      body.classList.remove('ai-dialog-open');
+      body.classList.remove('ux-dialog-open');
     }
   }
 
