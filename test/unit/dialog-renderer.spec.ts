@@ -165,7 +165,7 @@ describe('DialogRenderer', () => {
       expect(DialogRenderer.dialogControllers.length).toBe(0);
     });
 
-    it('adds "ai-dialog-open" class to the dialog host', async done => {
+    it('adds "ux-dialog-open" class to the dialog host', async done => {
       spyOn(body.classList, 'add').and.callThrough();
       const renderer = createRenderer();
       await show(done, renderer);
@@ -199,7 +199,7 @@ describe('DialogRenderer', () => {
       expect(DialogRenderer.dialogControllers.length).toBe(0);
     });
 
-    it('removes "ai-dialog-open" class from the dialog host', async done => {
+    it('removes "ux-dialog-open" class from the dialog host', async done => {
       spyOn(body.classList, 'remove').and.callThrough();
       await hide(done, ...renderers);
       expect(body.classList.remove).toHaveBeenCalled();
@@ -228,7 +228,7 @@ describe('DialogRenderer', () => {
       expect(DialogRenderer.dialogControllers.length).toBe(2);
     });
 
-    it('does not remove "ai-dialog-open" from the dialog host', async done => {
+    it('does not remove "ux-dialog-open" from the dialog host', async done => {
       spyOn(body.classList, 'remove').and.callThrough();
       await hide(done, renderer);
       expect(body.classList.remove).not.toHaveBeenCalled();

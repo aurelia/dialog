@@ -14,10 +14,10 @@ export function configure(
   applyConfig();
 }
 
-export * from './ai-dialog';
-export * from './ai-dialog-header';
-export * from './ai-dialog-body';
-export * from './ai-dialog-footer';
+export * from './ux-dialog';
+export * from './ux-dialog-header';
+export * from './ux-dialog-body';
+export * from './ux-dialog-footer';
 export * from './attach-focus';
 export * from './interfaces';
 export * from './dialog-settings';

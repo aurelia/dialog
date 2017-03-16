@@ -1,7 +1,7 @@
 import { customElement, bindable, inlineView, ComponentBind } from 'aurelia-templating';
 import { DialogController } from './dialog-controller';
 
-@customElement('ai-dialog-header')
+@customElement('ux-dialog-header')
 @inlineView(`
   <template>
     <button
@@ -19,7 +19,7 @@ import { DialogController } from './dialog-controller';
   </template>
 `)
 
-export class AiDialogHeader implements ComponentBind {
+export class UxDialogHeader implements ComponentBind {
   @bindable() public showCloseButton: boolean | undefined;
 
   /**

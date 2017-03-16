@@ -4,7 +4,7 @@ import { DialogController } from './dialog-controller';
 /**
  * View-model for footer of Dialog.
  */
-@customElement('ai-dialog-footer')
+@customElement('ux-dialog-footer')
 @inlineView(`
   <template>
     <slot></slot>
@@ -19,7 +19,7 @@ import { DialogController } from './dialog-controller';
   </template>
 `)
 
-export class AiDialogFooter {
+export class UxDialogFooter {
   public static isCancelButton(value: string) {
     return value === 'Cancel';
   }
@@ -34,7 +34,7 @@ export class AiDialogFooter {
   constructor(public controller: DialogController) { }
 
   public close(buttonValue: string) {
-    if (AiDialogFooter.isCancelButton(buttonValue)) {
+    if (UxDialogFooter.isCancelButton(buttonValue)) {
       this.controller.cancel(buttonValue);
     } else {
       this.controller.ok(buttonValue);
