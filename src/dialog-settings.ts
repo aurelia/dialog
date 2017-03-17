@@ -24,6 +24,11 @@ export interface DialogSettings {
   model?: any;
 
   /**
+   * The element that will parent the dialog.
+   */
+  host?: Element;
+
+  /**
    * When set to "false" allows the dialog to be closed with ESC key or clicking outside the dialog.
    * When set to "true" the dialog does not close on ESC key or clicking outside of it.
    */

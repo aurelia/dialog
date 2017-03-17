@@ -158,6 +158,32 @@ describe('DialogRenderer', () => {
         done();
       });
     });
+
+    describe('"host"', () => {
+      it('and when provided parents the dialog', async done => {
+        const host = DOM.createElement('div');
+        spyOn(host, 'insertBefore').and.callThrough();
+        spyOn(host, 'removeChild').and.callThrough();
+        body.appendChild(host);
+        const settings: DialogSettings = { host };
+        const renderer = createRenderer(settings);
+        await show(done, renderer);
+        expect(host.insertBefore).toHaveBeenCalledWith(renderer.dialogContainer, null);
+        expect(host.insertBefore).toHaveBeenCalledWith(renderer.dialogOverlay, renderer.dialogContainer);
+        await hide(done, renderer);
+        expect(host.removeChild).toHaveBeenCalledWith(renderer.dialogOverlay);
+        expect(host.removeChild).toHaveBeenCalledWith(renderer.dialogContainer);
+        body.removeChild(host);
+        done();
+      });
+
+      it('and when missing defaults to the "body" element', async done => {
+        const renderer = createRenderer({ host: undefined });
+        await show(done, renderer);
+        expect(renderer.host).toBe(body);
+        done();
+      });
+    });
   });
 
   describe('on first open dialog', () => {
