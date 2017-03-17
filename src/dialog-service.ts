@@ -140,7 +140,8 @@ export class DialogService {
   public open(settings?: DialogSettings & { rejectOnCancel?: false | boolean }): DialogOpenPromise<DialogCancellableOpenResult>;
   public open(settings: DialogSettings = {}): DialogOpenPromise<DialogCancellableOpenResult> {
     // tslint:enable:max-line-length
-    const childContainer = this.container.createChild();
+    settings = this.createSettings(settings);
+    const childContainer = settings.childContainer || this.container.createChild();
     let resolveCloseResult: any;
     let rejectCloseResult: any;
     const closeResult: Promise<DialogCloseResult> = new Promise((resolve, reject) => {
@@ -148,7 +149,7 @@ export class DialogService {
       rejectCloseResult = reject;
     });
     const dialogController =
-      childContainer.invoke(DialogController, [this.createSettings(settings), resolveCloseResult, rejectCloseResult]);
+      childContainer.invoke(DialogController, [settings, resolveCloseResult, rejectCloseResult]);
     childContainer.registerInstance(DialogController, dialogController);
     closeResult.then(() => {
       removeController(this, dialogController);

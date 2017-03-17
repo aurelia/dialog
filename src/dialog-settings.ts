@@ -1,3 +1,4 @@
+import { Container } from 'aurelia-dependency-injection';
 import { ViewStrategy } from 'aurelia-templating';
 
 export type ActionKey = 'Escape' | 'Enter';
@@ -27,6 +28,12 @@ export interface DialogSettings {
    * The element that will parent the dialog.
    */
   host?: Element;
+
+  /**
+   * The child Container for the dialog creation.
+   * One will be created from the root if not provided.
+   */
+  childContainer?: Container;
 
   /**
    * When set to "false" allows the dialog to be closed with ESC key or clicking outside the dialog.
