@@ -113,6 +113,23 @@ describe('DialogService', () => {
       done();
     });
 
+    it('should create new child Container if "childContainer" is missing', async done => {
+      spyOn(container, 'createChild').and.callThrough();
+      await _success(() => dialogService.open(), done);
+      expect(container.createChild).toHaveBeenCalled();
+      done();
+    });
+
+    it('should not create new child Container if "childContainer" is provided', async done => {
+      const settings = { childContainer: container.createChild() };
+      spyOn(container, 'createChild').and.callThrough();
+      spyOn(settings.childContainer, 'invoke').and.callThrough();
+      await _success(() => dialogService.open(settings), done);
+      expect(container.createChild).not.toHaveBeenCalled();
+      expect(settings.childContainer.invoke).toHaveBeenCalled();
+      done();
+    });
+
     it('propagates errors', async done => {
       const expectdError = new Error('Expected error.');
       spyOn(TestElement.prototype, 'canActivate').and.callFake(() => { throw expectdError; });
