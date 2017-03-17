@@ -97,7 +97,19 @@ export class DialogRenderer implements Renderer {
 
   public dialogContainer: HTMLElement;
   public dialogOverlay: HTMLElement;
+  public host: Element;
   public anchor: Element;
+
+  private getOwnElements(parent: Element, selector: string): Element[] {
+    const elements = parent.querySelectorAll(selector);
+    const own: Element[] = [];
+    for (let i = 0; i < elements.length; i++) {
+      if (elements[i].parentElement === parent) {
+        own.push(elements[i]);
+      }
+    }
+    return own;
+  }
 
   private attach(dialogController: DialogController): void {
     const spacingWrapper = DOM.createElement('div'); // TODO: check if redundant
@@ -110,24 +122,24 @@ export class DialogRenderer implements Renderer {
       : null;
     this.dialogOverlay.style.zIndex = zIndex;
     this.dialogContainer.style.zIndex = zIndex;
-    const lastContainer = Array.from(body.querySelectorAll(containerTagName)).pop();
-    if (lastContainer && lastContainer.parentNode) {
-      lastContainer.parentNode.insertBefore(this.dialogContainer, lastContainer.nextSibling);
-      lastContainer.parentNode.insertBefore(this.dialogOverlay, lastContainer.nextSibling);
+    const lastContainer = this.getOwnElements(this.host, containerTagName).pop();
+    if (lastContainer && lastContainer.parentElement) {
+      this.host.insertBefore(this.dialogContainer, lastContainer.nextSibling);
+      this.host.insertBefore(this.dialogOverlay, lastContainer.nextSibling);
     } else {
-      body.insertBefore(this.dialogContainer, body.firstChild);
-      body.insertBefore(this.dialogOverlay, body.firstChild);
+      this.host.insertBefore(this.dialogContainer, this.host.firstChild);
+      this.host.insertBefore(this.dialogOverlay, this.host.firstChild);
     }
     dialogController.controller.attached();
-    body.classList.add('ux-dialog-open');
+    this.host.classList.add('ux-dialog-open');
   }
 
   private detach(dialogController: DialogController): void {
-    body.removeChild(this.dialogOverlay);
-    body.removeChild(this.dialogContainer);
+    this.host.removeChild(this.dialogOverlay);
+    this.host.removeChild(this.dialogContainer);
     dialogController.controller.detached();
     if (!DialogRenderer.dialogControllers.length) {
-      body.classList.remove('ux-dialog-open');
+      this.host.classList.remove('ux-dialog-open');
     }
   }
 
@@ -195,6 +207,11 @@ export class DialogRenderer implements Renderer {
   }
 
   public showDialog(dialogController: DialogController): Promise<void> {
+    if (dialogController.settings.host) {
+      this.host = dialogController.settings.host;
+    } else {
+      this.host = body;
+    }
     const settings = dialogController.settings;
     this.attach(dialogController);
 
