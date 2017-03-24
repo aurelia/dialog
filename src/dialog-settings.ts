@@ -12,7 +12,7 @@ export interface DialogSettings {
   /**
    * The view model url, constructor or instance for the dialog.
    */
-  viewModel?: string | { new (...params: any[]): any } | any;
+  viewModel?: string | { new (...params: any[]): object } | object;
 
   /**
    * The view url or view strategy to override the default view location convention.
