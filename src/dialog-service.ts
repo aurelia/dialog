@@ -126,6 +126,11 @@ export class DialogService {
     if (typeof settings.overlayDismiss !== 'boolean') {
       settings.overlayDismiss = !settings.lock;
     }
+    Object.defineProperty(settings, 'rejectOnCancel', {
+      writable: false,
+      configurable: true,
+      enumerable: true
+    });
     this.validateSettings(settings);
     return settings;
   }

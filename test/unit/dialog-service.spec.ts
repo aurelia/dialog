@@ -166,7 +166,7 @@ describe('DialogService', () => {
     it('resolves with "DialogCloseResult" when ".cancel" closed and ".rejectOnCancel" is "false"', async done => {
       const { controller, closeResult } = await _success(() => openDialog(done), done);
       const expectedOutput = 'expected cancel output';
-      controller.settings.rejectOnCancel = false;
+      Object.defineProperty(controller.settings, 'rejectOnCancel', { value: false });
       controller.cancel(expectedOutput);
       const result = await _success(() => closeResult, done);
       expect(result.wasCancelled).toBe(true);
@@ -177,7 +177,7 @@ describe('DialogService', () => {
     it('gets rejected with "DialogCancelError" when ".cancel" closed and ".rejectOnCancel" is "true"', async done => {
       const { controller, closeResult } = await _success(() => openDialog(done), done);
       const expectedOutput = 'expected cancel error output';
-      controller.settings.rejectOnCancel = true;
+      Object.defineProperty(controller.settings, 'rejectOnCancel', { value: true });
       controller.cancel(expectedOutput);
       const result = await _failure(() => closeResult, done) as DialogCancelError;
       expect(result.message).toBeDefined();
@@ -220,11 +220,21 @@ describe('DialogService', () => {
       expect(dialogService.createSettings(settings).overlayDismiss).toBe(expected);
     });
 
+    it('should make ".rejectOnCancel" readonly', () => {
+      let settings = Object.assign({}, container.get(DefaultDialogSettings) as DialogSettings);
+      function negateRejectOnCancel() {
+        settings.rejectOnCancel = !settings.rejectOnCancel;
+      }
+      expect(negateRejectOnCancel).not.toThrow();
+      settings = dialogService.createSettings(settings);
+      expect(negateRejectOnCancel).toThrow();
+    });
+
     describe('when ".lock" is "false"', () => {
       let settings: DialogSettings;
 
       beforeEach(() => {
-         settings = { lock: false };
+        settings = { lock: false };
       });
 
       it('should set ".keyboard" to "true" if not set', () => {
@@ -240,7 +250,7 @@ describe('DialogService', () => {
       let settings: DialogSettings;
 
       beforeEach(() => {
-         settings = { lock: true };
+        settings = { lock: true };
       });
 
       it('should set ".keyboard" to "false" if not set', () => {
@@ -375,7 +385,9 @@ describe('DialogService', () => {
     }
 
     function setRejectOnCancelForOpenDialogs(rejectOnCancel: boolean): void {
-      dialogService.controllers.forEach(ctrl => ctrl.settings.rejectOnCancel = rejectOnCancel);
+      dialogService.controllers.forEach(ctrl => {
+        Object.defineProperty(ctrl.settings, 'rejectOnCancel', { value: rejectOnCancel });
+      });
     }
 
     describe('resolves to an empty array when all dialogs closed successfully', () => {
