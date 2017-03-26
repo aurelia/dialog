@@ -104,7 +104,7 @@ There are a few ways you can take advantage of the Aurelia dialog.
       this.dialogService = dialogService;
     }
     submit(){
-      this.dialogService.open({ viewModel: Prompt, model: 'Good or Bad?'}).then(response => {
+      this.dialogService.open({ viewModel: Prompt, model: 'Good or Bad?', lock: false }).whenClosed(response => {
         if (!response.wasCancelled) {
           console.log('good');
         } else {
@@ -134,7 +134,7 @@ There is also an `output` property that gets returned with the outcome of the us
     }
     person = { firstName: 'Wade', middleName: 'Owen', lastName: 'Watts' };
     submit(){
-      this.dialogService.open({ viewModel: EditPerson, model: this.person}).then(response => {
+      this.dialogService.open({ viewModel: EditPerson, model: this.person, lock: false }).whenClosed(response => {
         if (!response.wasCancelled) {
           console.log('good - ', response.output);
         } else {
@@ -171,17 +171,17 @@ There is also an `output` property that gets returned with the outcome of the us
 <code-listing heading="edit-person.html">
   <source-code lang="HTML">
   <template>
-    <ai-dialog>
-      <ai-dialog-body>
+    <ux-dialog>
+      <ux-dialog-body>
         <h2>Edit first name</h2>
         <input value.bind="person.firstName" />
-      </ai-dialog-body>
+      </ux-dialog-body>
 
-      <ai-dialog-footer>
+      <ux-dialog-footer>
         <button click.trigger="controller.cancel()">Cancel</button>
         <button click.trigger="controller.ok(person)">Ok</button>
-      </ai-dialog-footer>
-    </ai-dialog>
+      </ux-dialog-footer>
+    </ux-dialog>
   </template>
   </source-code>
 </code-listing>
@@ -193,12 +193,12 @@ The library exposes an `attach-focus` custom attribute that allows focusing in o
 <code-listing heading="edit-person.html">
   <source-code lang="HTML">
   <template>
-    <ai-dialog>
-      <ai-dialog-body>
+    <ux-dialog>
+      <ux-dialog-body>
         <h2>Edit first name</h2>
         <input attach-focus="true" value.bind="person.firstName" />
-      </ai-dialog-body>
-    </ai-dialog>
+      </ux-dialog-body>
+    </ux-dialog>
   </template>
   </source-code>
 </code-listing>
@@ -229,7 +229,7 @@ export function configure(aurelia) {
       config.settings.lock = true;
       config.settings.centerHorizontalOnly = false;
       config.settings.startingZIndex = 5;
-      config.settings.enableEscClose = true;
+      config.settings.keyboard = true;
     });
 
   aurelia.start().then(a => a.setRoot());
@@ -237,20 +237,24 @@ export function configure(aurelia) {
   </source-code>
 </code-listing>
 
-> Note: The startingZIndex will only be assignable during initial configuration.  This is because we stack everything on that Z-index after bootstrapping the modal.
-
 ### Settings
 
 The settings available for the dialog are set on the dialog controller on a per-dialog basis.
+- `viewModel` can be url, class reference or instance.
+- `view` can be url or view strategy to override the default view location convention.
+- `model` the data to be passed to the `canActivate` and `activate` methods of the view model if implemented.
+- `host` allows providing the element which will parent the dialog - if not provided the body will be used.
+- `childConainer` allows specifing the DI Container instance to be used for the dialog.
+If not provided a new child container will be created from the root one.
 - `lock` makes the dialog modal, and removes the close button from the top-right hand corner. (defaults to true)
+- `keyboard` allows configuring keyboard keys that close the dialog. To disable set to `false`. To cancel close a dialog when the *ESC* key is pressed set to `true`, `'Escape'` or and array containing `'Escape'` - `['Escape']`. To close with confirmation when the *ENTER* key is pressed set to `'Enter'` or an array containing `'Enter'` - `['Enter']`. To combine the *ESC* and *ENTER* keys set to `['Enter', 'Escape']` - the order is irrelevant. (takes precedence over `lock`)
+- `overlayDismiss` if set to `true` cancel closes the dialog when clicked outside of it. (takes precedence over `lock`)
 - `centerHorizontalOnly` means that the dialog will be centered horizontally, and the vertical alignment is left up to you. (defaults to false)
 - `position` a callback that is called right before showing the modal with the signature: `(modalContainer: Element, modalOverlay: Element) => void`. This allows you to setup special classes, play with the position, etc... If specified, `centerHorizontalOnly` is ignored. (optional)
 - `ignoreTransitions` is a Boolean you must set to `true` if you disable css animation of your dialog. (optional, default to false)
-- `yieldController` is a Boolean you must set to `true` if you want to execute some logic when the dialog gets open and/or get access to the dialog controller
-- `rejectOnCancel` is a Boolean you must set to `true` if you want to handle cancellations as rejection. The reason will be instance of `DialogCancelError` - the property `wasCancelled` will be set to `true` and if cancellation data was provided it will be set to the `reason` property.
-- `enableEscClose` allows pressings escape to close the modal without `lock: false`. (optional, defaults to true)
+- `rejectOnCancel` is a Boolean you must set to `true` if you want to handle cancellations as rejection. The reason will be a `DialogCancelError` - the property `wasCancelled` will be set to `true` and if cancellation data was provided it will be set to the `output` property.
 
-> Warning: Plugin authors are advised to be explicit with settings that change behavior(`yieldController` and `rejectOnCancel`).
+> Warning: Plugin authors are advised to be explicit with settings that change behavior(`rejectOnCancel`).
 
 <code-listing heading="prompt.js">
   <source-code lang="ES 2015">
@@ -283,25 +287,21 @@ It is possible to resolve and close (using cancel/ok/error methods) dialog in th
     }
     person = { firstName: 'Wade', middleName: 'Owen', lastName: 'Watts' };
     submit(){
-      this.dialogService.open({yieldController: true, viewModel: EditPerson, model: this.person}).then(openDialogResult => {
+      this.dialogService.open({viewModel: EditPerson, model: this.person}).then(openDialogResult => {
         // Note you get here when the dialog is opened, and you are able to close dialog
-        // Promise for the result is stored in openDialogResult.closeResult property
-        openDialogResult.closeResult.then((response) => {
-
-          if (!response.wasCancelled) {
-            console.log('good');
-          } else {
-            console.log('bad');
-          }
-
-          console.log(response);
-
-        })
-
         setTimeout(() => {
           openDialogResult.controller.cancel('canceled outside after 3 sec')
-        }, 3000)
+        }, 3000);
 
+        // Promise for the result is stored in openDialogResult.closeResult property
+        return openDialogResult.closeResult;
+      }).then((response) => {
+        if (!response.wasCancelled) {
+          console.log('good');
+        } else {
+          console.log('bad');
+        }
+        console.log(response);
       });
     }
   }
@@ -316,7 +316,7 @@ Bootstrap adds 50% opacity and a background color of black to the modal.  To ach
 
 <code-listing heading="welcome.js">
   <source-code lang="CSS">
-ai-dialog-overlay.active {
+ux-dialog-overlay.active {
   background-color: black;
   opacity: .5;
 }
