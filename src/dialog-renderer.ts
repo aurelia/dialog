@@ -160,8 +160,8 @@ export class DialogRenderer implements Renderer {
         dialogController.cancel();
         return;
       }
-      if (e && typeof e.stopPropagation === 'function') {
-        e.stopPropagation();
+      if (e && typeof e.preventDefault === 'function') {
+        e.preventDefault();
       }
       return false;
     };
