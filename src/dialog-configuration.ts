@@ -2,16 +2,16 @@ import { FrameworkConfiguration } from 'aurelia-framework';
 import { Renderer, RendererStatic } from './renderer';
 import { DialogSettings, DefaultDialogSettings } from './dialog-settings';
 import { DialogRenderer } from './dialog-renderer';
-import { DOM } from 'aurelia-pal';
+import { DOM, PLATFORM } from 'aurelia-pal';
 
 const defaultRenderer: RendererStatic = DialogRenderer;
 
 const resources: { [key: string]: string } = {
-  'ux-dialog': './ux-dialog',
-  'ux-dialog-header': './ux-dialog-header',
-  'ux-dialog-body': './ux-dialog-body',
-  'ux-dialog-footer': './ux-dialog-footer',
-  'attach-focus': './attach-focus'
+  'ux-dialog': PLATFORM.moduleName('./ux-dialog'),
+  'ux-dialog-header': PLATFORM.moduleName('./ux-dialog-header'),
+  'ux-dialog-body': PLATFORM.moduleName('./ux-dialog-body'),
+  'ux-dialog-footer': PLATFORM.moduleName('./ux-dialog-footer'),
+  'attach-focus': PLATFORM.moduleName('./attach-focus')
 };
 
 // tslint:disable-next-line:max-line-length
