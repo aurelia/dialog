@@ -97,7 +97,7 @@ describe('DialogController', () => {
       const expectedResult = {};
       spyOn(dialogController, 'close').and.returnValue(expectedResult);
       const actualResult = dialogController.ok();
-      expect(actualResult).toBe(expectedResult);
+      expect(actualResult as any).toBe(expectedResult);
     });
   });
 
@@ -119,7 +119,7 @@ describe('DialogController', () => {
       const expectedResult = {};
       spyOn(dialogController, 'close').and.returnValue(expectedResult);
       const actualResult = dialogController.cancel();
-      expect(actualResult).toBe(expectedResult);
+      expect(actualResult as any).toBe(expectedResult);
     });
   });
 
@@ -194,7 +194,7 @@ describe('DialogController', () => {
       rejectCallback.and.callFake((reason: DialogCancelError) => rejectionReason = reason);
       await _success(() => dialogController.close(false, output), done);
       expect(rejectCallback).toHaveBeenCalledWith(jasmine.any(Error));
-      expect(rejectionReason).toEqual(jasmine.objectContaining({ wasCancelled: true, output }));
+      expect(rejectionReason as any).toEqual(jasmine.objectContaining({ wasCancelled: true, output }));
       done();
     });
 

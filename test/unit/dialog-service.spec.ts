@@ -134,7 +134,7 @@ describe('DialogService', () => {
       const expectdError = new Error('Expected error.');
       spyOn(TestElement.prototype, 'canActivate').and.callFake(() => { throw expectdError; });
       const result = await _failure(() => dialogService.open(), done) as DialogCancelError;
-      expect(result).toBe(expectdError);
+      expect(result as any).toBe(expectdError);
       done();
     });
   });
@@ -200,7 +200,7 @@ describe('DialogService', () => {
       const expectdError = new Error('Expected error.');
       spyOn(TestElement.prototype, 'canActivate').and.callFake(() => { throw expectdError; });
       const result = await _failure(() => dialogService.open().whenClosed(), done) as DialogCancelError;
-      expect(result).toBe(expectdError);
+      expect(result as any).toBe(expectdError);
       done();
     });
   });
