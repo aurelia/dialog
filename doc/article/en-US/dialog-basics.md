@@ -322,3 +322,41 @@ ux-dialog-overlay.active {
 }
   </source-code>
 </code-listing>
+
+## [Lifecycle Hooks](aurelia-doc://section/8/version/1.0.0)
+
+In adition to the lifecycle hooks defined by `aurelia-templating`, the `aurelia-dialog` defines additional ones. All dialog specific hooks can return a `Promise`, that resolves to the appropriate value for the hook, and will be awaited.
+
+### `.canActivate()`
+
+With this hook you can cancel the opening of a dialog. It is ivoked with one parameter - the value of the `model` setting passed to `.open()`. To cancel the opening of the dialog return `false` - `null` and `undefined` will be coerced to `true`.
+
+### `.activate()`
+
+This hook can be used to do any necessary init work. The hook is ivoked with one parameter - the value of the `model` setting passed to `.open()`.
+
+### `.canDeactivate()`
+
+With this hook you can cancel the closing of a dialog. To do so return `false` - `null` and `undefined` will be coerced to `true`.
+
+> Warning
+> When `DialogController.prototype.error()` is called this hook will be skipped.
+
+### `.deactivate()`
+
+This hook can be used to do any clean up work.
+
+### Order of Invocation
+
+Each dialog insance goes through the full lifecycle once.
+
+1. constructor call
+2. `.canActivate()` - `aurelia-dialog` *specific*
+3. `.activate()` - `aurelia-dialog` *specific*
+4. `.created()` - as defined by `aurelia-templating` 
+5. `.bind()` - as defined by `aurelia-templating`
+6. `.attached()` - as defined by `aurelia-templating`
+7. `.canDeactivate()` - `aurelia-dialog` *specific*
+8. `.deactivate()` - `aurelia-dialog` *specific*
+9. `.detached()` - as defined by `aurelia-templating`
+10. `.unbind()` - as defined by `aurelia-templating`
