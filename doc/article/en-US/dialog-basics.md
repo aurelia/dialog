@@ -348,7 +348,7 @@ This hook can be used to do any clean up work.
 
 ### Order of Invocation
 
-Each dialog insance goes through the full lifecycle once.
+Each dialog instance goes through the full lifecycle once.
 
 1. constructor call
 2. `.canActivate()` - `aurelia-dialog` *specific*
