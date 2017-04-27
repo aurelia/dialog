@@ -244,7 +244,7 @@ The settings available for the dialog are set on the dialog controller on a per-
 - `view` can be url or view strategy to override the default view location convention.
 - `model` the data to be passed to the `canActivate` and `activate` methods of the view model if implemented.
 - `host` allows providing the element which will parent the dialog - if not provided the body will be used.
-- `childConainer` allows specifing the DI Container instance to be used for the dialog.
+- `childConainer` allows specifying the DI Container instance to be used for the dialog.
 If not provided a new child container will be created from the root one.
 - `lock` makes the dialog modal, and removes the close button from the top-right hand corner. (defaults to true)
 - `keyboard` allows configuring keyboard keys that close the dialog. To disable set to `false`. To cancel close a dialog when the *ESC* key is pressed set to `true`, `'Escape'` or and array containing `'Escape'` - `['Escape']`. To close with confirmation when the *ENTER* key is pressed set to `'Enter'` or an array containing `'Enter'` - `['Enter']`. To combine the *ESC* and *ENTER* keys set to `['Enter', 'Escape']` - the order is irrelevant. (takes precedence over `lock`)
@@ -329,11 +329,11 @@ In adition to the lifecycle hooks defined by `aurelia-templating`, the `aurelia-
 
 ### `.canActivate()`
 
-With this hook you can cancel the opening of a dialog. It is ivoked with one parameter - the value of the `model` setting passed to `.open()`. To cancel the opening of the dialog return `false` - `null` and `undefined` will be coerced to `true`.
+With this hook you can cancel the opening of a dialog. It is invoked with one parameter - the value of the `model` setting passed to `.open()`. To cancel the opening of the dialog return `false` - `null` and `undefined` will be coerced to `true`.
 
 ### `.activate()`
 
-This hook can be used to do any necessary init work. The hook is ivoked with one parameter - the value of the `model` setting passed to `.open()`.
+This hook can be used to do any necessary init work. The hook is invoked with one parameter - the value of the `model` setting passed to `.open()`.
 
 ### `.canDeactivate()`
 
@@ -353,7 +353,7 @@ Each dialog instance goes through the full lifecycle once.
 1. constructor call
 2. `.canActivate()` - `aurelia-dialog` *specific*
 3. `.activate()` - `aurelia-dialog` *specific*
-4. `.created()` - as defined by `aurelia-templating` 
+4. `.created()` - as defined by `aurelia-templating`
 5. `.bind()` - as defined by `aurelia-templating`
 6. `.attached()` - as defined by `aurelia-templating`
 7. `.canDeactivate()` - `aurelia-dialog` *specific*
