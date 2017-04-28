@@ -1,34 +1,33 @@
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.AttachFocus = undefined;
-
-var _dec, _class, _class2, _temp;
-
-var _aureliaTemplating = require('aurelia-templating');
-
-
-
-var AttachFocus = exports.AttachFocus = (_dec = (0, _aureliaTemplating.customAttribute)('attach-focus'), _dec(_class = (_temp = _class2 = function () {
-  function AttachFocus(element) {
-    
-
-    this.value = true;
-
-    this.element = element;
-  }
-
-  AttachFocus.prototype.attached = function attached() {
-    if (this.value && this.value !== 'false') {
-      this.element.focus();
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var aurelia_templating_1 = require("aurelia-templating");
+var aurelia_pal_1 = require("aurelia-pal");
+var AttachFocus = (function () {
+    function AttachFocus(element) {
+        this.element = element;
+        this.value = true;
     }
-  };
-
-  AttachFocus.prototype.valueChanged = function valueChanged(newValue) {
-    this.value = newValue;
-  };
-
-  return AttachFocus;
-}(), _class2.inject = [Element], _temp)) || _class);
+    AttachFocus.prototype.attached = function () {
+        if (this.value && this.value !== 'false') {
+            this.element.focus();
+        }
+    };
+    AttachFocus.prototype.valueChanged = function (newValue) {
+        this.value = newValue;
+    };
+    return AttachFocus;
+}());
+/**
+ * @internal
+ */
+AttachFocus.inject = [aurelia_pal_1.DOM.Element];
+AttachFocus = __decorate([
+    aurelia_templating_1.customAttribute('attach-focus')
+], AttachFocus);
+exports.AttachFocus = AttachFocus;

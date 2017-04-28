@@ -1,36 +1,40 @@
-'use strict';
-
-System.register([], function (_export, _context) {
-  "use strict";
-
-  var Renderer;
-
-  
-
-  return {
-    setters: [],
-    execute: function () {
-      _export('Renderer', Renderer = function () {
-        function Renderer() {
-          
+System.register([], function (exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    var Renderer;
+    return {
+        setters: [],
+        execute: function () {
+            /**
+             * An abstract base class for implementors of the basic Renderer API.
+             */
+            Renderer = (function () {
+                function Renderer() {
+                }
+                /**
+                 * Gets an anchor for the ViewSlot to insert a view into.
+                 * @returns A DOM element.
+                 */
+                Renderer.prototype.getDialogContainer = function () {
+                    throw new Error('DialogRenderer must implement getDialogContainer().');
+                };
+                /**
+                 * Displays the dialog.
+                 * @returns Promise A promise that resolves when the dialog has been displayed.
+                 */
+                Renderer.prototype.showDialog = function (dialogController) {
+                    throw new Error('DialogRenderer must implement showDialog().');
+                };
+                /**
+                 * Hides the dialog.
+                 * @returns Promise A promise that resolves when the dialog has been hidden.
+                 */
+                Renderer.prototype.hideDialog = function (dialogController) {
+                    throw new Error('DialogRenderer must implement hideDialog().');
+                };
+                return Renderer;
+            }());
+            exports_1("Renderer", Renderer);
         }
-
-        Renderer.prototype.getDialogContainer = function getDialogContainer() {
-          throw new Error('DialogRenderer must implement getDialogContainer().');
-        };
-
-        Renderer.prototype.showDialog = function showDialog(dialogController) {
-          throw new Error('DialogRenderer must implement showDialog().');
-        };
-
-        Renderer.prototype.hideDialog = function hideDialog(dialogController) {
-          throw new Error('DialogRenderer must implement hideDialog().');
-        };
-
-        return Renderer;
-      }());
-
-      _export('Renderer', Renderer);
-    }
-  };
+    };
 });

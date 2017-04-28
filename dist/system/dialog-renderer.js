@@ -1,205 +1,242 @@
-'use strict';
-
-System.register(['aurelia-pal', 'aurelia-dependency-injection'], function (_export, _context) {
-  "use strict";
-
-  var DOM, transient, _dec, _class, containerTagName, overlayTagName, transitionEvent, DialogRenderer;
-
-  
-
-  function centerDialog(modalContainer) {
-    var child = modalContainer.children[0];
-    var vh = Math.max(DOM.querySelectorAll('html')[0].clientHeight, window.innerHeight || 0);
-
-    child.style.marginTop = Math.max((vh - child.offsetHeight) / 2, 30) + 'px';
-    child.style.marginBottom = Math.max((vh - child.offsetHeight) / 2, 30) + 'px';
-  }
-  return {
-    setters: [function (_aureliaPal) {
-      DOM = _aureliaPal.DOM;
-    }, function (_aureliaDependencyInjection) {
-      transient = _aureliaDependencyInjection.transient;
-    }],
-    execute: function () {
-      containerTagName = 'ai-dialog-container';
-      overlayTagName = 'ai-dialog-overlay';
-
-      transitionEvent = function () {
-        var transition = null;
-
-        return function () {
-          if (transition) return transition;
-
-          var t = void 0;
-          var el = DOM.createElement('fakeelement');
-          var transitions = {
-            'transition': 'transitionend',
-            'OTransition': 'oTransitionEnd',
-            'MozTransition': 'transitionend',
-            'WebkitTransition': 'webkitTransitionEnd'
-          };
-          for (t in transitions) {
-            if (el.style[t] !== undefined) {
-              transition = transitions[t];
-              return transition;
-            }
-          }
-        };
-      }();
-
-      _export('DialogRenderer', DialogRenderer = (_dec = transient(), _dec(_class = function () {
-        function DialogRenderer() {
-          var _this = this;
-
-          
-
-          this._escapeKeyEventHandler = function (e) {
-            if (e.keyCode === 27) {
-              var top = _this._dialogControllers[_this._dialogControllers.length - 1];
-              if (top && top.settings.lock !== true) {
-                top.cancel();
-              }
-            }
-          };
+System.register(["aurelia-pal", "aurelia-dependency-injection"], function (exports_1, context_1) {
+    "use strict";
+    var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+        var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+        if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+        else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+        return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
+    var __moduleName = context_1 && context_1.id;
+    function getActionKey(e) {
+        if ((e.code || e.key) === 'Escape' || e.keyCode === 27) {
+            return 'Escape';
         }
-
-        DialogRenderer.prototype.getDialogContainer = function getDialogContainer() {
-          return DOM.createElement('div');
-        };
-
-        DialogRenderer.prototype.showDialog = function showDialog(dialogController) {
-          var _this2 = this;
-
-          var settings = dialogController.settings;
-          var body = DOM.querySelectorAll('body')[0];
-          var wrapper = document.createElement('div');
-
-          this.modalOverlay = DOM.createElement(overlayTagName);
-          this.modalContainer = DOM.createElement(containerTagName);
-          this.anchor = dialogController.slot.anchor;
-          wrapper.appendChild(this.anchor);
-          this.modalContainer.appendChild(wrapper);
-
-          this.stopPropagation = function (e) {
-            e._aureliaDialogHostClicked = true;
-          };
-          this.closeModalClick = function (e) {
-            if (!settings.lock && !e._aureliaDialogHostClicked) {
-              dialogController.cancel();
-            } else {
-              return false;
-            }
-          };
-
-          dialogController.centerDialog = function () {
-            if (settings.centerHorizontalOnly) return;
-            centerDialog(_this2.modalContainer);
-          };
-
-          this.modalOverlay.style.zIndex = settings.startingZIndex;
-          this.modalContainer.style.zIndex = settings.startingZIndex;
-
-          var lastContainer = Array.from(body.querySelectorAll(containerTagName)).pop();
-
-          if (lastContainer) {
-            lastContainer.parentNode.insertBefore(this.modalContainer, lastContainer.nextSibling);
-            lastContainer.parentNode.insertBefore(this.modalOverlay, lastContainer.nextSibling);
-          } else {
-            body.insertBefore(this.modalContainer, body.firstChild);
-            body.insertBefore(this.modalOverlay, body.firstChild);
-          }
-
-          if (!this._dialogControllers.length) {
-            DOM.addEventListener('keyup', this._escapeKeyEventHandler);
-          }
-
-          this._dialogControllers.push(dialogController);
-
-          dialogController.slot.attached();
-
-          if (typeof settings.position === 'function') {
-            settings.position(this.modalContainer, this.modalOverlay);
-          } else {
-            dialogController.centerDialog();
-          }
-
-          this.modalContainer.addEventListener('click', this.closeModalClick);
-          this.anchor.addEventListener('click', this.stopPropagation);
-
-          return new Promise(function (resolve) {
-            var renderer = _this2;
-            if (settings.ignoreTransitions) {
-              resolve();
-            } else {
-              _this2.modalContainer.addEventListener(transitionEvent(), onTransitionEnd);
-            }
-
-            _this2.modalOverlay.classList.add('active');
-            _this2.modalContainer.classList.add('active');
-            body.classList.add('ai-dialog-open');
-
-            function onTransitionEnd(e) {
-              if (e.target !== renderer.modalContainer) {
-                return;
-              }
-              renderer.modalContainer.removeEventListener(transitionEvent(), onTransitionEnd);
-              resolve();
-            }
-          });
-        };
-
-        DialogRenderer.prototype.hideDialog = function hideDialog(dialogController) {
-          var _this3 = this;
-
-          var settings = dialogController.settings;
-          var body = DOM.querySelectorAll('body')[0];
-
-          this.modalContainer.removeEventListener('click', this.closeModalClick);
-          this.anchor.removeEventListener('click', this.stopPropagation);
-
-          var i = this._dialogControllers.indexOf(dialogController);
-          if (i !== -1) {
-            this._dialogControllers.splice(i, 1);
-          }
-
-          if (!this._dialogControllers.length) {
-            DOM.removeEventListener('keyup', this._escapeKeyEventHandler);
-          }
-
-          return new Promise(function (resolve) {
-            var renderer = _this3;
-            if (settings.ignoreTransitions) {
-              resolve();
-            } else {
-              _this3.modalContainer.addEventListener(transitionEvent(), onTransitionEnd);
-            }
-
-            _this3.modalOverlay.classList.remove('active');
-            _this3.modalContainer.classList.remove('active');
-
-            function onTransitionEnd() {
-              renderer.modalContainer.removeEventListener(transitionEvent(), onTransitionEnd);
-              resolve();
-            }
-          }).then(function () {
-            body.removeChild(_this3.modalOverlay);
-            body.removeChild(_this3.modalContainer);
-            dialogController.slot.detached();
-
-            if (!_this3._dialogControllers.length) {
-              body.classList.remove('ai-dialog-open');
-            }
-
-            return Promise.resolve();
-          });
-        };
-
-        return DialogRenderer;
-      }()) || _class));
-
-      _export('DialogRenderer', DialogRenderer);
-
-      DialogRenderer.prototype._dialogControllers = [];
+        if ((e.code || e.key) === 'Enter' || e.keyCode === 13) {
+            return 'Enter';
+        }
+        return undefined;
     }
-  };
+    var aurelia_pal_1, aurelia_dependency_injection_1, containerTagName, overlayTagName, transitionEvent, hasTransition, body, DialogRenderer, DialogRenderer_1;
+    return {
+        setters: [
+            function (aurelia_pal_1_1) {
+                aurelia_pal_1 = aurelia_pal_1_1;
+            },
+            function (aurelia_dependency_injection_1_1) {
+                aurelia_dependency_injection_1 = aurelia_dependency_injection_1_1;
+            }
+        ],
+        execute: function () {
+            containerTagName = 'ux-dialog-container';
+            overlayTagName = 'ux-dialog-overlay';
+            exports_1("transitionEvent", transitionEvent = (function () {
+                var transition;
+                return function () {
+                    if (transition) {
+                        return transition;
+                    }
+                    var el = aurelia_pal_1.DOM.createElement('fakeelement');
+                    var transitions = {
+                        transition: 'transitionend',
+                        OTransition: 'oTransitionEnd',
+                        MozTransition: 'transitionend',
+                        WebkitTransition: 'webkitTransitionEnd'
+                    };
+                    for (var t in transitions) {
+                        if (el.style[t] !== undefined) {
+                            transition = transitions[t];
+                            return transition;
+                        }
+                    }
+                    return '';
+                };
+            })());
+            exports_1("hasTransition", hasTransition = (function () {
+                var unprefixedName = 'transitionDuration';
+                var el = aurelia_pal_1.DOM.createElement('fakeelement');
+                var prefixedNames = ['webkitTransitionDuration', 'oTransitionDuration'];
+                var transitionDurationName;
+                if (unprefixedName in el.style) {
+                    transitionDurationName = unprefixedName;
+                }
+                else {
+                    transitionDurationName = prefixedNames.find(function (prefixed) { return (prefixed in el.style); });
+                }
+                return function (element) {
+                    return !!transitionDurationName && !!(aurelia_pal_1.DOM.getComputedStyle(element)[transitionDurationName]
+                        .split(',')
+                        .find(function (duration) { return !!parseFloat(duration); }));
+                };
+            })());
+            body = aurelia_pal_1.DOM.querySelectorAll('body')[0];
+            DialogRenderer = DialogRenderer_1 = (function () {
+                function DialogRenderer() {
+                }
+                DialogRenderer.keyboardEventHandler = function (e) {
+                    var key = getActionKey(e);
+                    if (!key) {
+                        return;
+                    }
+                    var top = DialogRenderer_1.dialogControllers[DialogRenderer_1.dialogControllers.length - 1];
+                    if (!top || !top.settings.keyboard) {
+                        return;
+                    }
+                    var keyboard = top.settings.keyboard;
+                    if (key === 'Escape'
+                        && (keyboard === true || keyboard === key || (Array.isArray(keyboard) && keyboard.indexOf(key) > -1))) {
+                        top.cancel();
+                    }
+                    else if (key === 'Enter' && (keyboard === key || (Array.isArray(keyboard) && keyboard.indexOf(key) > -1))) {
+                        top.ok();
+                    }
+                };
+                DialogRenderer.trackController = function (dialogController) {
+                    if (!DialogRenderer_1.dialogControllers.length) {
+                        aurelia_pal_1.DOM.addEventListener('keyup', DialogRenderer_1.keyboardEventHandler, false);
+                    }
+                    DialogRenderer_1.dialogControllers.push(dialogController);
+                };
+                DialogRenderer.untrackController = function (dialogController) {
+                    var i = DialogRenderer_1.dialogControllers.indexOf(dialogController);
+                    if (i !== -1) {
+                        DialogRenderer_1.dialogControllers.splice(i, 1);
+                    }
+                    if (!DialogRenderer_1.dialogControllers.length) {
+                        aurelia_pal_1.DOM.removeEventListener('keyup', DialogRenderer_1.keyboardEventHandler, false);
+                    }
+                };
+                DialogRenderer.prototype.getOwnElements = function (parent, selector) {
+                    var elements = parent.querySelectorAll(selector);
+                    var own = [];
+                    for (var i = 0; i < elements.length; i++) {
+                        if (elements[i].parentElement === parent) {
+                            own.push(elements[i]);
+                        }
+                    }
+                    return own;
+                };
+                DialogRenderer.prototype.attach = function (dialogController) {
+                    var spacingWrapper = aurelia_pal_1.DOM.createElement('div'); // TODO: check if redundant
+                    spacingWrapper.appendChild(this.anchor);
+                    this.dialogContainer = aurelia_pal_1.DOM.createElement(containerTagName);
+                    this.dialogContainer.appendChild(spacingWrapper);
+                    this.dialogOverlay = aurelia_pal_1.DOM.createElement(overlayTagName);
+                    var zIndex = typeof dialogController.settings.startingZIndex === 'number'
+                        ? dialogController.settings.startingZIndex + ''
+                        : null;
+                    this.dialogOverlay.style.zIndex = zIndex;
+                    this.dialogContainer.style.zIndex = zIndex;
+                    var lastContainer = this.getOwnElements(this.host, containerTagName).pop();
+                    if (lastContainer && lastContainer.parentElement) {
+                        this.host.insertBefore(this.dialogContainer, lastContainer.nextSibling);
+                        this.host.insertBefore(this.dialogOverlay, lastContainer.nextSibling);
+                    }
+                    else {
+                        this.host.insertBefore(this.dialogContainer, this.host.firstChild);
+                        this.host.insertBefore(this.dialogOverlay, this.host.firstChild);
+                    }
+                    dialogController.controller.attached();
+                    this.host.classList.add('ux-dialog-open');
+                };
+                DialogRenderer.prototype.detach = function (dialogController) {
+                    this.host.removeChild(this.dialogOverlay);
+                    this.host.removeChild(this.dialogContainer);
+                    dialogController.controller.detached();
+                    if (!DialogRenderer_1.dialogControllers.length) {
+                        this.host.classList.remove('ux-dialog-open');
+                    }
+                };
+                DialogRenderer.prototype.setAsActive = function () {
+                    this.dialogOverlay.classList.add('active');
+                    this.dialogContainer.classList.add('active');
+                };
+                DialogRenderer.prototype.setAsInactive = function () {
+                    this.dialogOverlay.classList.remove('active');
+                    this.dialogContainer.classList.remove('active');
+                };
+                DialogRenderer.prototype.setupClickHandling = function (dialogController) {
+                    this.stopPropagation = function (e) { e._aureliaDialogHostClicked = true; };
+                    this.closeDialogClick = function (e) {
+                        if (dialogController.settings.overlayDismiss && !e._aureliaDialogHostClicked) {
+                            dialogController.cancel();
+                            return;
+                        }
+                        if (e && typeof e.preventDefault === 'function') {
+                            e.preventDefault();
+                        }
+                        return false;
+                    };
+                    this.dialogContainer.addEventListener('click', this.closeDialogClick);
+                    this.anchor.addEventListener('click', this.stopPropagation);
+                };
+                DialogRenderer.prototype.clearClickHandling = function () {
+                    this.dialogContainer.removeEventListener('click', this.closeDialogClick);
+                    this.anchor.removeEventListener('click', this.stopPropagation);
+                };
+                DialogRenderer.prototype.centerDialog = function () {
+                    var child = this.dialogContainer.children[0];
+                    var vh = Math.max(aurelia_pal_1.DOM.querySelectorAll('html')[0].clientHeight, window.innerHeight || 0);
+                    child.style.marginTop = Math.max((vh - child.offsetHeight) / 2, 30) + 'px';
+                    child.style.marginBottom = Math.max((vh - child.offsetHeight) / 2, 30) + 'px';
+                };
+                DialogRenderer.prototype.awaitTransition = function (setActiveInactive, ignore) {
+                    var _this = this;
+                    return new Promise(function (resolve) {
+                        var renderer = _this;
+                        var eventName = transitionEvent();
+                        function onTransitionEnd(e) {
+                            if (e.target !== renderer.dialogContainer) {
+                                return;
+                            }
+                            renderer.dialogContainer.removeEventListener(eventName, onTransitionEnd);
+                            resolve();
+                        }
+                        if (ignore || !hasTransition(_this.dialogContainer)) {
+                            resolve();
+                        }
+                        else {
+                            _this.dialogContainer.addEventListener(eventName, onTransitionEnd);
+                        }
+                        setActiveInactive();
+                    });
+                };
+                DialogRenderer.prototype.getDialogContainer = function () {
+                    return this.anchor || (this.anchor = aurelia_pal_1.DOM.createElement('div'));
+                };
+                DialogRenderer.prototype.showDialog = function (dialogController) {
+                    var _this = this;
+                    if (dialogController.settings.host) {
+                        this.host = dialogController.settings.host;
+                    }
+                    else {
+                        this.host = body;
+                    }
+                    var settings = dialogController.settings;
+                    this.attach(dialogController);
+                    if (typeof settings.position === 'function') {
+                        settings.position(this.dialogContainer, this.dialogOverlay);
+                    }
+                    else if (!settings.centerHorizontalOnly) {
+                        this.centerDialog();
+                    }
+                    DialogRenderer_1.trackController(dialogController);
+                    this.setupClickHandling(dialogController);
+                    return this.awaitTransition(function () { return _this.setAsActive(); }, dialogController.settings.ignoreTransitions);
+                };
+                DialogRenderer.prototype.hideDialog = function (dialogController) {
+                    var _this = this;
+                    this.clearClickHandling();
+                    DialogRenderer_1.untrackController(dialogController);
+                    return this.awaitTransition(function () { return _this.setAsInactive(); }, dialogController.settings.ignoreTransitions)
+                        .then(function () { _this.detach(dialogController); });
+                };
+                return DialogRenderer;
+            }());
+            DialogRenderer.dialogControllers = [];
+            DialogRenderer = DialogRenderer_1 = __decorate([
+                aurelia_dependency_injection_1.transient()
+            ], DialogRenderer);
+            exports_1("DialogRenderer", DialogRenderer);
+        }
+    };
 });

@@ -1,3 +1,34 @@
+<a name="1.0.0-rc.1"></a>
+# [1.0.0-rc.1](https://github.com/aurelia/dialog/compare/1.0.0-beta.3.0.1...v1.0.0-rc.1) (2017-04-28)
+
+
+### Bug Fixes
+
+* **dialog-configuration:** fix [#264](https://github.com/aurelia/dialog/issues/264) add missing padding unit ([902c921](https://github.com/aurelia/dialog/commit/902c921))
+* **dialog-configuration:** use PLATFORM.moduleName ([9dc62ff](https://github.com/aurelia/dialog/commit/9dc62ff))
+* **dialog-renderer:** check for transitions ([ed77c85](https://github.com/aurelia/dialog/commit/ed77c85))
+* **dialog-renderer:** let click events bubble ([6a03bbd](https://github.com/aurelia/dialog/commit/6a03bbd))
+* **enableescclose:** default to true ([58bfc88](https://github.com/aurelia/dialog/commit/58bfc88))
+* **lefecycle:** handle thrown errors ([e7f1284](https://github.com/aurelia/dialog/commit/e7f1284))
+* **lifecycle:** fix lifecycle methods default value ([67a5c64](https://github.com/aurelia/dialog/commit/67a5c64))
+
+
+### Features
+
+* **all:** migrate to TS ([5a68ca3](https://github.com/aurelia/dialog/commit/5a68ca3))
+* **all:** remove "lock" setting ([a0fd54a](https://github.com/aurelia/dialog/commit/a0fd54a))
+* **all:** switch prefix - "ai" => "ux" ([817be7f](https://github.com/aurelia/dialog/commit/817be7f))
+* **dialog options:** allow esc to close dialog without lock: false ([c0baaf5](https://github.com/aurelia/dialog/commit/c0baaf5))
+* **dialog-service:** add .closeAll() ([76048e6](https://github.com/aurelia/dialog/commit/76048e6))
+* **dialog-service:** add .closeAll() ([f59dfc7](https://github.com/aurelia/dialog/commit/f59dfc7))
+* **dialog-service:** refactor consolidate open methods in one ([676ee58](https://github.com/aurelia/dialog/commit/676ee58))
+* **dialog-service:** refactor consolidate open methods in one ([dc44a34](https://github.com/aurelia/dialog/commit/dc44a34))
+* **dialog-service, dialog-controller:** add "rejectOnCancel" ([e8cd8e5](https://github.com/aurelia/dialog/commit/e8cd8e5))
+* **dialog-settings, dialog-renderer:** add host ([4aebd63](https://github.com/aurelia/dialog/commit/4aebd63))
+* **dialog-settings, dialog-service:** add childContainer ([db0aca5](https://github.com/aurelia/dialog/commit/db0aca5))
+
+
+
 # 1.0.0-beta.3.0.1
 
 ## Bug Fixes
