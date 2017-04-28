@@ -19,41 +19,41 @@
 This article covers the dialog plugin for Aurelia.  This plugin is created for showing dialogs (sometimes referred to as modals) in your application.  The plugin supports the use of dynamic content for all aspects and is easily configurable / overridable.
 
 
-## [Installing the plugin](aurelia-doc://section/2/version/1.0.0)
+## [Installing The Plugin](aurelia-doc://section/2/version/1.0.0)
 
 1. In your **JSPM**-based project install the plugin via `jspm` with following command
 
-  ```shell
+```shell
 jspm install aurelia-dialog
-  ```
+```
 
 If you use **Webpack**, install the plugin with the following command
 
-  ```shell
+```shell
 npm install aurelia-dialog --save
-  ```
+```
 
 If you use the **Aurelia CLI**, install the plugin with the following command
 
-  ```shell
+```shell
 npm install aurelia-dialog --save
-  ```
+```
 
 and then add a section in your `aurelia.json` for the plugin
 
 <code-listing heading="aurelia.json">
   <source-code lang="ES 2015">
   {
-  dependencies: [
-  //...
-    {
-      "name": "aurelia-dialog",
-      "path": "../node_modules/aurelia-dialog/dist/amd",
-      "main": "aurelia-dialog"
-    }
-  //...
-  ]
-}
+    dependencies: [
+    //...
+      {
+        "name": "aurelia-dialog",
+        "path": "../node_modules/aurelia-dialog/dist/amd",
+        "main": "aurelia-dialog"
+      }
+    //...
+    ]
+  }
   </source-code>
 </code-listing>
 
@@ -61,7 +61,7 @@ If you use TypeScript, install the plugin's typings with the following command
 
 ```shell
 typings install github:aurelia/dialog --save
-  ```
+```
 
 2. Make sure you use [manual bootstrapping](http://aurelia.io/docs#startup-and-configuration). In order to do so open your `index.html` and locate the element with the attribute aurelia-app. Change it to look like this:
 
@@ -88,7 +88,7 @@ typings install github:aurelia/dialog --save
 
 > Note: If you are using WebPack it is possible that the plugin is installed before Aurelia has replaced the `<body>` element, if that is where your `aurelia-app="main"` is defined, which results in some of the dialog components getting overwritten.  In this case you can move the `aurelia-app` attribute to a `<div>` inside of the `<body>`.  Example - `<body><div aurelia-app="main"></div></body>`.
 
-## [Using the plugin](aurelia-doc://section/3/version/1.0.0)
+## [Using The Plugin](aurelia-doc://section/3/version/1.0.0)
 
 There are a few ways you can take advantage of the Aurelia dialog.
 
@@ -186,7 +186,7 @@ There is also an `output` property that gets returned with the outcome of the us
   </source-code>
 </code-listing>
 
-## [Attach Focus custom attribute](aurelia-doc://section/4/version/1.0.0)
+## [Attach Focus Custom Attribute](aurelia-doc://section/4/version/1.0.0)
 
 The library exposes an `attach-focus` custom attribute that allows focusing in on an element in the modal when it is loaded.  You can use this to focus a button, input, etc...  Example usage -
 
@@ -220,24 +220,24 @@ You can specify global settings as well for all dialogs to use when installing t
 
 <code-listing heading="main.js">
   <source-code lang="ES 2015">
-export function configure(aurelia) {
-  aurelia.use
-    .standardConfiguration()
-    .developmentLogging()
-    .plugin('aurelia-dialog', config => {
-      config.useDefaults();
-      config.settings.lock = true;
-      config.settings.centerHorizontalOnly = false;
-      config.settings.startingZIndex = 5;
-      config.settings.keyboard = true;
-    });
+  export function configure(aurelia) {
+    aurelia.use
+      .standardConfiguration()
+      .developmentLogging()
+      .plugin('aurelia-dialog', config => {
+        config.useDefaults();
+        config.settings.lock = true;
+        config.settings.centerHorizontalOnly = false;
+        config.settings.startingZIndex = 5;
+        config.settings.keyboard = true;
+      });
 
-  aurelia.start().then(a => a.setRoot());
-}
+    aurelia.start().then(a => a.setRoot());
+  }
   </source-code>
 </code-listing>
 
-### Settings
+### Controller Settings
 
 The settings available for the dialog are set on the dialog controller on a per-dialog basis.
 - `viewModel` can be url, class reference or instance.
@@ -254,25 +254,25 @@ If not provided a new child container will be created from the root one.
 - `ignoreTransitions` is a Boolean you must set to `true` if you disable css animation of your dialog. (optional, default to false)
 - `rejectOnCancel` is a Boolean you must set to `true` if you want to handle cancellations as rejection. The reason will be a `DialogCancelError` - the property `wasCancelled` will be set to `true` and if cancellation data was provided it will be set to the `output` property.
 
-> Warning: Plugin authors are advised to be explicit with settings that change behavior(`rejectOnCancel`).
+> Warning: Plugin authors are advised to be explicit with settings that change behavior (`rejectOnCancel`).
 
 <code-listing heading="prompt.js">
   <source-code lang="ES 2015">
-export class Prompt {
-  static inject = [DialogController];
+  export class Prompt {
+    static inject = [DialogController];
 
-  constructor(controller){
-    this.controller = controller;
-    this.answer = null;
+    constructor(controller){
+      this.controller = controller;
+      this.answer = null;
 
-    controller.settings.lock = false;
-    controller.settings.centerHorizontalOnly = true;
+      controller.settings.lock = false;
+      controller.settings.centerHorizontalOnly = true;
+    }
   }
-}
   </source-code>
 </code-listing>
 
-## [Accessing DialogController API](aurelia-doc://section/6/version/1.0.0)
+## [Accessing The DialogController API](aurelia-doc://section/6/version/1.0.0)
 
 It is possible to resolve and close (using cancel/ok/error methods) dialog in the same context where you open it.
 
@@ -308,9 +308,9 @@ It is possible to resolve and close (using cancel/ok/error methods) dialog in th
   </source-code>
 </code-listing>
 
-## [Styling the Dialog](aurelia-doc://section/7/version/1.0.0)
+## [Styling The Dialog](aurelia-doc://section/7/version/1.0.0)
 
-## Overlay with 50% opacity
+### Overlay With 50% Opacity
 
 Bootstrap adds 50% opacity and a background color of black to the modal.  To achieve this in dialog you can simply add the following CSS -
 
