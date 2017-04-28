@@ -1,6 +1,6 @@
 {
   "name": "aurelia-dialog",
-  "main": "dist/aurelia-dialog.d.ts",
+  "main": "dist/commonjs/aurelia-dialog.d.ts",
   "dependencies": {
       "aurelia-dependency-injection": "github:aurelia/dependency-injection",
       "aurelia-metadata": "github:aurelia/metadata",
