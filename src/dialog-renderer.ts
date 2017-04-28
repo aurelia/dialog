@@ -158,12 +158,7 @@ export class DialogRenderer implements Renderer {
     this.closeDialogClick = e => {
       if (dialogController.settings.overlayDismiss && !e._aureliaDialogHostClicked) {
         dialogController.cancel();
-        return;
       }
-      if (e && typeof e.preventDefault === 'function') {
-        e.preventDefault();
-      }
-      return false;
     };
     this.dialogContainer.addEventListener('click', this.closeDialogClick);
     this.anchor.addEventListener('click', this.stopPropagation);
