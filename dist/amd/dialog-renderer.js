@@ -148,12 +148,7 @@ define(["require", "exports", "aurelia-pal", "aurelia-dependency-injection"], fu
             this.closeDialogClick = function (e) {
                 if (dialogController.settings.overlayDismiss && !e._aureliaDialogHostClicked) {
                     dialogController.cancel();
-                    return;
                 }
-                if (e && typeof e.preventDefault === 'function') {
-                    e.preventDefault();
-                }
-                return false;
             };
             this.dialogContainer.addEventListener('click', this.closeDialogClick);
             this.anchor.addEventListener('click', this.stopPropagation);

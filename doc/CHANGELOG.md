@@ -1,3 +1,13 @@
+<a name="1.0.0-rc.1.0.3"></a>
+# [1.0.0-rc.1.0.3](https://github.com/aurelia/dialog/compare/1.0.0-rc.1.0.2...v1.0.0-rc.1.0.3) (2017-05-05)
+
+
+### Bug Fixes
+
+* **dialog-renderer:** don't cancel events fix [#281](https://github.com/aurelia/dialog/issues/281) ([9a92123](https://github.com/aurelia/dialog/commit/9a92123))
+
+
+
 <a name="1.0.0-rc.1"></a>
 # [1.0.0-rc.1](https://github.com/aurelia/dialog/compare/1.0.0-beta.3.0.1...v1.0.0-rc.1) (2017-04-28)
 
