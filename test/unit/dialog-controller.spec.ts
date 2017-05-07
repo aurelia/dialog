@@ -1,7 +1,9 @@
-import {DefaultDialogSettings} from '../../src/dialog-settings';
-import {Renderer} from '../../src/renderer';
-import {DialogController} from '../../src/dialog-controller';
-import {DialogCancelError} from '../../src/dialog-cancel-error';
+import { DialogCloseResult } from './../../src/dialog-result';
+import { DialogComponentCanDeactivate } from './../../src/interfaces';
+import { DefaultDialogSettings } from '../../src/dialog-settings';
+import { Renderer } from '../../src/renderer';
+import { DialogController } from '../../src/dialog-controller';
+import { DialogCancelError } from '../../src/dialog-cancel-error';
 
 describe('DialogController', () => {
   let resolveCallback: jasmine.Spy;
@@ -43,13 +45,14 @@ describe('DialogController', () => {
   });
 
   describe('".releaseResources" should', () => {
+    const expectedDeactivateArg = {} as any;
     beforeEach(async done => {
-      await _success(() => dialogController.releaseResources(), done);
+      await _success(() => dialogController.releaseResources(expectedDeactivateArg), done);
       done();
     });
 
     it('call ".deactivate" on the view model', () => {
-      expect((dialogController.controller.viewModel as any).deactivate).toHaveBeenCalled();
+      expect((dialogController.controller.viewModel as any).deactivate).toHaveBeenCalledWith(expectedDeactivateArg);
     });
 
     it('call ".hideDialog" on the renderer', () => {
@@ -176,6 +179,16 @@ describe('DialogController', () => {
       const expected = 'success output';
       await _success(() => dialogController.close(true, expected), done);
       expect(resolveCallback).toHaveBeenCalledWith(jasmine.objectContaining({ wasCancelled: false, output: expected }));
+      done();
+    });
+
+    it('call ".canDeactivate" with the close result', async done => {
+      const output = 'expected output';
+      await _success(() => dialogController.close(true, output), done);
+      const vm = dialogController.controller.viewModel as DialogComponentCanDeactivate;
+      const expectedResult = (vm.canDeactivate as jasmine.Spy).calls.argsFor(0)[0] as DialogCloseResult;
+      expect(expectedResult).toBeDefined();
+      expect(expectedResult.output).toBe(output);
       done();
     });
 
