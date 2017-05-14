@@ -244,7 +244,7 @@ The settings available for the dialog are set on the dialog controller on a per-
 - `view` can be url or view strategy to override the default view location convention.
 - `model` the data to be passed to the `canActivate` and `activate` methods of the view model if implemented.
 - `host` allows providing the element which will parent the dialog - if not provided the body will be used.
-- `childConainer` allows specifying the DI Container instance to be used for the dialog.
+- `childContainer` allows specifying the DI Container instance to be used for the dialog.
 If not provided a new child container will be created from the root one.
 - `lock` makes the dialog modal, and removes the close button from the top-right hand corner. (defaults to true)
 - `keyboard` allows configuring keyboard keys that close the dialog. To disable set to `false`. To cancel close a dialog when the *ESC* key is pressed set to `true`, `'Escape'` or and array containing `'Escape'` - `['Escape']`. To close with confirmation when the *ENTER* key is pressed set to `'Enter'` or an array containing `'Enter'` - `['Enter']`. To combine the *ESC* and *ENTER* keys set to `['Enter', 'Escape']` - the order is irrelevant. (takes precedence over `lock`)
