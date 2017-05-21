@@ -133,10 +133,13 @@ describe('DialogController', () => {
       reason = new Error('Test reason');
     });
 
-    it('should call ".releaseResources"', async done => {
+    it('should call ".releaseResources" with "DialogCloseError"', async done => {
       spyOn(dialogController, 'releaseResources').and.returnValue(Promise.resolve());
       await _success(() => dialogController.error(reason), done);
-      expect(dialogController.releaseResources).toHaveBeenCalled();
+      expect(dialogController.releaseResources).toHaveBeenCalledWith(jasmine.objectContaining({
+        wasCancelled: false,
+        output: reason
+      }));
       done();
     });
 
@@ -147,7 +150,10 @@ describe('DialogController', () => {
       });
 
       it('call the reject callback', () => {
-        expect(rejectCallback).toHaveBeenCalledWith(reason);
+        expect(rejectCallback).toHaveBeenCalledWith(jasmine.objectContaining({
+          wasCancelled: false,
+          output: reason
+        }));
       });
 
       it('not call the resolve callback', () => {

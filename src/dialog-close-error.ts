@@ -1,15 +1,17 @@
 /**
- * The error is thrown when the dialog is closed with the `DialogController.prototype.error` method.
+ * The error thrown when the dialog is closed with the `DialogController.prototype.error` method.
  */
 export interface DialogCloseError extends Error {
-    reason: any;
+    wasCancelled: false;
+    output: any;
 }
 
 /**
  * @internal
  */
-export function createDialogCloseError(reason: any): DialogCloseError {
+export function createDialogCloseError(output: any): DialogCloseError {
     const error = new Error() as DialogCloseError;
-    error.reason = reason;
+    error.wasCancelled = false;
+    error.output = output;
     return error;
 }

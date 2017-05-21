@@ -192,7 +192,10 @@ describe('DialogService', () => {
       const expectedError = new Error('expected test error');
       controller.error(expectedError);
       const result = await _failure(() => closeResult, done);
-      expect(result).toBe(expectedError);
+      expect(result).toEqual(jasmine.objectContaining({
+        wasCancelled: false,
+        output: expectedError
+      }));
       done();
     });
 

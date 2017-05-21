@@ -79,12 +79,12 @@ export class DialogController {
   }
 
   /**
-   * Closes the dialog with an error result.
-   * @param reason A reason for closing with an error.
+   * Closes the dialog with an error output.
+   * @param output A reason for closing with an error.
    * @returns Promise An empty promise object.
    */
-  public error(reason: any): Promise<void> {
-    const closeError = createDialogCloseError(reason);
+  public error(output: any): Promise<void> {
+    const closeError = createDialogCloseError(output);
     return this.releaseResources(closeError).then(() => { this.reject(closeError); });
   }
 
