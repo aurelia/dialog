@@ -3,6 +3,7 @@ import { Renderer } from './renderer';
 import { DialogCancelableOperationResult, DialogCloseResult, DialogCancelResult } from './dialog-result';
 import { DialogSettings } from './dialog-settings';
 import { invokeLifecycle } from './lifecycle';
+import { createDialogCloseError, DialogCloseError } from './dialog-close-error';
 import { createDialogCancelError } from './dialog-cancel-error';
 
 /**
@@ -45,8 +46,8 @@ export class DialogController {
   /**
    * @internal
    */
-  public releaseResources(dialogResult?: any): Promise<void> {
-    return invokeLifecycle(this.controller.viewModel || {}, 'deactivate', dialogResult)
+  public releaseResources(result: DialogCloseResult | DialogCloseError): Promise<void> {
+    return invokeLifecycle(this.controller.viewModel || {}, 'deactivate', result)
       .then(() => this.renderer.hideDialog(this))
       .then(() => { this.controller.unbind(); });
   }
@@ -78,12 +79,13 @@ export class DialogController {
   }
 
   /**
-   * Closes the dialog with an error result.
-   * @param message An error message.
+   * Closes the dialog with an error output.
+   * @param output A reason for closing with an error.
    * @returns Promise An empty promise object.
    */
-  public error(message: any): Promise<void> {
-    return this.releaseResources().then(() => { this.reject(message); });
+  public error(output: any): Promise<void> {
+    const closeError = createDialogCloseError(output);
+    return this.releaseResources(closeError).then(() => { this.reject(closeError); });
   }
 
   /**
@@ -119,6 +121,6 @@ export class DialogController {
           this.closePromise = undefined;
           return Promise.reject(reason);
         });
-    });
+      });
   }
 }
