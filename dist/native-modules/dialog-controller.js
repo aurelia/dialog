@@ -1,64 +1,97 @@
-
-
+import { Renderer } from './renderer';
 import { invokeLifecycle } from './lifecycle';
-import { DialogResult } from './dialog-result';
-
-export var DialogController = function () {
-  function DialogController(renderer, settings, resolve, reject) {
-    
-
-    this.renderer = renderer;
-    this.settings = settings;
-    this._resolve = resolve;
-    this._reject = reject;
-  }
-
-  DialogController.prototype.ok = function ok(output) {
-    return this.close(true, output);
-  };
-
-  DialogController.prototype.cancel = function cancel(output) {
-    return this.close(false, output);
-  };
-
-  DialogController.prototype.error = function error(message) {
-    var _this = this;
-
-    return invokeLifecycle(this.viewModel, 'deactivate').then(function () {
-      return _this.renderer.hideDialog(_this);
-    }).then(function () {
-      _this.controller.unbind();
-      _this._reject(message);
-    });
-  };
-
-  DialogController.prototype.close = function close(ok, output) {
-    var _this2 = this;
-
-    if (this._closePromise) {
-      return this._closePromise;
+import { createDialogCancelError } from './dialog-cancel-error';
+/**
+ * A controller object for a Dialog instance.
+ */
+var DialogController = (function () {
+    /**
+     * Creates an instance of DialogController.
+     */
+    function DialogController(renderer, settings, resolve, reject) {
+        this.resolve = resolve;
+        this.reject = reject;
+        this.settings = settings;
+        this.renderer = renderer;
     }
-
-    this._closePromise = invokeLifecycle(this.viewModel, 'canDeactivate').then(function (canDeactivate) {
-      if (canDeactivate) {
-        return invokeLifecycle(_this2.viewModel, 'deactivate').then(function () {
-          return _this2.renderer.hideDialog(_this2);
-        }).then(function () {
-          var result = new DialogResult(!ok, output);
-          _this2.controller.unbind();
-          _this2._resolve(result);
-          return result;
+    /**
+     * @internal
+     */
+    DialogController.prototype.releaseResources = function () {
+        var _this = this;
+        return invokeLifecycle(this.controller.viewModel || {}, 'deactivate')
+            .then(function () { return _this.renderer.hideDialog(_this); })
+            .then(function () { _this.controller.unbind(); });
+    };
+    /**
+     * @internal
+     */
+    DialogController.prototype.cancelOperation = function () {
+        if (!this.settings.rejectOnCancel) {
+            return { wasCancelled: true };
+        }
+        throw createDialogCancelError();
+    };
+    /**
+     * Closes the dialog with a successful output.
+     * @param output The returned success output.
+     */
+    DialogController.prototype.ok = function (output) {
+        return this.close(true, output);
+    };
+    /**
+     * Closes the dialog with a cancel output.
+     * @param output The returned cancel output.
+     */
+    DialogController.prototype.cancel = function (output) {
+        return this.close(false, output);
+    };
+    /**
+     * Closes the dialog with an error result.
+     * @param message An error message.
+     * @returns Promise An empty promise object.
+     */
+    DialogController.prototype.error = function (message) {
+        var _this = this;
+        return this.releaseResources().then(function () { _this.reject(message); });
+    };
+    /**
+     * Closes the dialog.
+     * @param ok Whether or not the user input signified success.
+     * @param output The specified output.
+     * @returns Promise An empty promise object.
+     */
+    DialogController.prototype.close = function (ok, output) {
+        var _this = this;
+        if (this.closePromise) {
+            return this.closePromise;
+        }
+        return this.closePromise = invokeLifecycle(this.controller.viewModel || {}, 'canDeactivate').catch(function (reason) {
+            _this.closePromise = undefined;
+            return Promise.reject(reason);
+        }).then(function (canDeactivate) {
+            if (!canDeactivate) {
+                _this.closePromise = undefined; // we are done, do not block consecutive calls
+                return _this.cancelOperation();
+            }
+            return _this.releaseResources().then(function () {
+                if (!_this.settings.rejectOnCancel || ok) {
+                    _this.resolve({ wasCancelled: !ok, output: output });
+                }
+                else {
+                    _this.reject(createDialogCancelError(output));
+                }
+                return { wasCancelled: false };
+            }).catch(function (reason) {
+                _this.closePromise = undefined;
+                return Promise.reject(reason);
+            });
         });
-      }
-
-      _this2._closePromise = undefined;
-    }, function (e) {
-      _this2._closePromise = undefined;
-      return Promise.reject(e);
-    });
-
-    return this._closePromise;
-  };
-
-  return DialogController;
-}();
+    };
+    return DialogController;
+}());
+export { DialogController };
+/**
+ * @internal
+ */
+DialogController.inject = [Renderer];

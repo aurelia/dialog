@@ -1,10 +1,9 @@
-"use strict";
-
-System.register([], function (_export, _context) {
-  "use strict";
-
-  return {
-    setters: [],
-    execute: function () {}
-  };
+System.register([], function (exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [],
+        execute: function () {
+        }
+    };
 });

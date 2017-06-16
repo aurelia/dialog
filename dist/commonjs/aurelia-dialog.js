@@ -1,99 +1,29 @@
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.DialogResult = exports.DialogController = exports.DialogService = exports.DialogConfiguration = exports.AttachFocus = exports.AiDialogFooter = exports.AiDialogBody = exports.AiDialogHeader = exports.AiDialog = undefined;
-
-var _aiDialog = require('./ai-dialog');
-
-Object.defineProperty(exports, 'AiDialog', {
-  enumerable: true,
-  get: function get() {
-    return _aiDialog.AiDialog;
-  }
-});
-
-var _aiDialogHeader = require('./ai-dialog-header');
-
-Object.defineProperty(exports, 'AiDialogHeader', {
-  enumerable: true,
-  get: function get() {
-    return _aiDialogHeader.AiDialogHeader;
-  }
-});
-
-var _aiDialogBody = require('./ai-dialog-body');
-
-Object.defineProperty(exports, 'AiDialogBody', {
-  enumerable: true,
-  get: function get() {
-    return _aiDialogBody.AiDialogBody;
-  }
-});
-
-var _aiDialogFooter = require('./ai-dialog-footer');
-
-Object.defineProperty(exports, 'AiDialogFooter', {
-  enumerable: true,
-  get: function get() {
-    return _aiDialogFooter.AiDialogFooter;
-  }
-});
-
-var _attachFocus = require('./attach-focus');
-
-Object.defineProperty(exports, 'AttachFocus', {
-  enumerable: true,
-  get: function get() {
-    return _attachFocus.AttachFocus;
-  }
-});
-exports.configure = configure;
-
-var _dialogConfiguration = require('./dialog-configuration');
-
-Object.defineProperty(exports, 'DialogConfiguration', {
-  enumerable: true,
-  get: function get() {
-    return _dialogConfiguration.DialogConfiguration;
-  }
-});
-
-var _dialogService = require('./dialog-service');
-
-Object.defineProperty(exports, 'DialogService', {
-  enumerable: true,
-  get: function get() {
-    return _dialogService.DialogService;
-  }
-});
-
-var _dialogController = require('./dialog-controller');
-
-Object.defineProperty(exports, 'DialogController', {
-  enumerable: true,
-  get: function get() {
-    return _dialogController.DialogController;
-  }
-});
-
-var _dialogResult = require('./dialog-result');
-
-Object.defineProperty(exports, 'DialogResult', {
-  enumerable: true,
-  get: function get() {
-    return _dialogResult.DialogResult;
-  }
-});
-function configure(aurelia, callback) {
-  var config = new _dialogConfiguration.DialogConfiguration(aurelia);
-
-  if (typeof callback === 'function') {
-    callback(config);
-  } else {
-    config.useDefaults();
-  }
-
-  config._apply();
+"use strict";
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
+Object.defineProperty(exports, "__esModule", { value: true });
+var dialog_configuration_1 = require("./dialog-configuration");
+function configure(frameworkConfig, callback) {
+    var applyConfig = null;
+    var config = new dialog_configuration_1.DialogConfiguration(frameworkConfig, function (apply) { applyConfig = apply; });
+    if (typeof callback === 'function') {
+        callback(config);
+    }
+    else {
+        config.useDefaults();
+    }
+    applyConfig();
+}
+exports.configure = configure;
+__export(require("./ux-dialog"));
+__export(require("./ux-dialog-header"));
+__export(require("./ux-dialog-body"));
+__export(require("./ux-dialog-footer"));
+__export(require("./attach-focus"));
+__export(require("./dialog-settings"));
+__export(require("./dialog-configuration"));
+__export(require("./renderer"));
+__export(require("./dialog-cancel-error"));
+__export(require("./dialog-service"));
+__export(require("./dialog-controller"));

@@ -1,6 +1,6 @@
 {
   "name": "aurelia-dialog",
-  "version": "1.0.0-beta.3.0.1",
+  "version": "1.0.0-rc.1.0.3",
   "description": "A dialog plugin for Aurelia.",
   "keywords": [
     "aurelia",
@@ -114,35 +114,20 @@
     "typescript": "~2.2.1"
   },
   "aurelia": {
-    "usedBy": [],
     "documentation": {
-      "links": [
+      "articles": [
         {
-          "rel": "license",
-          "mediaType": "text/plain",
-          "title": "The MIT License (MIT)",
-          "href": "LICENSE"
-        },
-        {
-          "rel": "describedby",
-          "mediaType": "application/aurelia-doc+json",
-          "title": "API",
-          "href": "doc/api.json"
-        },
-        {
-          "rel": "version-history",
-          "mediaType": "text/markdown",
-          "title": "Change Log",
-          "href": "doc/CHANGELOG.md"
+          "title": "Dialog: Basics",
+          "href": "doc/article/en-US/dialog-basics.md"
         }
       ]
     },
     "build": {
       "resources": [
-        "aurelia-dialog/ai-dialog",
-        "aurelia-dialog/ai-dialog-header",
-        "aurelia-dialog/ai-dialog-body",
-        "aurelia-dialog/ai-dialog-footer",
+        "aurelia-dialog/ux-dialog",
+        "aurelia-dialog/ux-dialog-header",
+        "aurelia-dialog/ux-dialog-body",
+        "aurelia-dialog/ux-dialog-footer",
         "aurelia-dialog/attach-focus"
       ]
     }

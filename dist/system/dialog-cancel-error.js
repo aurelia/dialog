@@ -1,59 +1,19 @@
-'use strict';
-
-System.register([], function (_export, _context) {
+System.register([], function (exports_1, context_1) {
     "use strict";
-
-    var DialogCancelError;
-
-    
-
-    function _possibleConstructorReturn(self, call) {
-        if (!self) {
-            throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-        }
-
-        return call && (typeof call === "object" || typeof call === "function") ? call : self;
+    var __moduleName = context_1 && context_1.id;
+    /**
+     * @internal
+     */
+    function createDialogCancelError(output) {
+        var error = new Error('Operation cancelled.');
+        error.wasCancelled = true;
+        error.output = output;
+        return error;
     }
-
-    function _inherits(subClass, superClass) {
-        if (typeof superClass !== "function" && superClass !== null) {
-            throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
-        }
-
-        subClass.prototype = Object.create(superClass && superClass.prototype, {
-            constructor: {
-                value: subClass,
-                enumerable: false,
-                writable: true,
-                configurable: true
-            }
-        });
-        if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
-    }
-
+    exports_1("createDialogCancelError", createDialogCancelError);
     return {
         setters: [],
         execute: function () {
-            _export('DialogCancelError', DialogCancelError = function (_Error) {
-                _inherits(DialogCancelError, _Error);
-
-                function DialogCancelError() {
-                    var cancellationReason = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
-
-                    
-
-                    var _this = _possibleConstructorReturn(this, _Error.call(this, 'Dialog cancelled.'));
-
-                    _this.wasCancelled = true;
-
-                    _this.reason = cancellationReason;
-                    return _this;
-                }
-
-                return DialogCancelError;
-            }(Error));
-
-            _export('DialogCancelError', DialogCancelError);
         }
     };
 });
