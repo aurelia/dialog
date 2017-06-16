@@ -45,8 +45,8 @@ export class DialogController {
   /**
    * @internal
    */
-  public releaseResources(): Promise<void> {
-    return invokeLifecycle(this.controller.viewModel || {}, 'deactivate')
+  public releaseResources(dialogResult?: any): Promise<void> {
+    return invokeLifecycle(this.controller.viewModel || {}, 'deactivate', dialogResult)
       .then(() => this.renderer.hideDialog(this))
       .then(() => { this.controller.unbind(); });
   }
@@ -97,25 +97,28 @@ export class DialogController {
       return this.closePromise;
     }
 
-    return this.closePromise = invokeLifecycle(this.controller.viewModel || {}, 'canDeactivate').catch(reason => {
-      this.closePromise = undefined;
-      return Promise.reject(reason);
-    }).then(canDeactivate => {
-      if (!canDeactivate) {
-        this.closePromise = undefined; // we are done, do not block consecutive calls
-        return this.cancelOperation();
-      }
-      return this.releaseResources().then(() => {
-        if (!this.settings.rejectOnCancel || ok) {
-          this.resolve({ wasCancelled: !ok, output } as DialogCloseResult);
-        } else {
-          this.reject(createDialogCancelError(output));
-        }
-        return { wasCancelled: false };
-      }).catch(reason => {
+    const dialogResult = { wasCancelled: !ok, output } as DialogCloseResult;
+
+    return this.closePromise = invokeLifecycle(this.controller.viewModel || {}, 'canDeactivate', dialogResult)
+      .catch(reason => {
         this.closePromise = undefined;
         return Promise.reject(reason);
-      });
+      }).then(canDeactivate => {
+        if (!canDeactivate) {
+          this.closePromise = undefined; // we are done, do not block consecutive calls
+          return this.cancelOperation();
+        }
+        return this.releaseResources(dialogResult).then(() => {
+          if (!this.settings.rejectOnCancel || ok) {
+            this.resolve(dialogResult);
+          } else {
+            this.reject(createDialogCancelError(output));
+          }
+          return { wasCancelled: false };
+        }).catch(reason => {
+          this.closePromise = undefined;
+          return Promise.reject(reason);
+        });
     });
   }
 }
