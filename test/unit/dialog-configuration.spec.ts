@@ -1,9 +1,9 @@
-import {Container} from 'aurelia-dependency-injection';
-import {FrameworkConfiguration} from 'aurelia-framework';
-import {DOM} from 'aurelia-pal';
-import {DialogConfiguration, Renderer} from '../../src/aurelia-dialog';
-import {DefaultDialogSettings} from '../../src/dialog-settings';
-import {DialogRenderer} from '../../src/dialog-renderer';
+import { Container } from 'aurelia-dependency-injection';
+import { FrameworkConfiguration } from 'aurelia-framework';
+import { DOM } from 'aurelia-pal';
+import { DialogConfiguration, Renderer } from '../../src/aurelia-dialog';
+import { DefaultDialogSettings } from '../../src/dialog-settings';
+import { DialogRenderer } from '../../src/dialog-renderer';
 
 describe('DialogConfiguration', () => {
   const frameworkConfig: FrameworkConfiguration = {
@@ -22,12 +22,32 @@ describe('DialogConfiguration', () => {
     configuration = new DialogConfiguration(frameworkConfig, applySetterSpy);
   });
 
-  describe('the constructor', () => {
+  describe('when instantiated', () => {
     it('should get the default settings from the container', () => {
       spyOn(frameworkConfig.container, 'get').and.callThrough();
       // tslint:disable-next-line:no-unused-new
       new DialogConfiguration(frameworkConfig, () => { return; });
       expect(frameworkConfig.container.get).toHaveBeenCalledWith(DefaultDialogSettings);
+    });
+  });
+
+  describe('even when ".useDefaults" is not called', () => {
+    it('a default Renderer should be registered', () => {
+      let applyConfig: () => void = null as any;
+      // tslint:disable-next-line:no-unused-new
+      new DialogConfiguration(frameworkConfig, apply => { applyConfig = apply; });
+      spyOn(frameworkConfig, 'transient');
+      applyConfig();
+      expect(frameworkConfig.transient).toHaveBeenCalledWith(Renderer, DialogRenderer);
+    });
+
+    it('the default css styles should be applied', () => {
+      let applyConfig: () => void = null as any;
+      // tslint:disable-next-line:no-unused-new
+      new DialogConfiguration(frameworkConfig, apply => { applyConfig = apply; });
+      spyOn(DOM, 'injectStyles');
+      applyConfig();
+      expect(DOM.injectStyles).toHaveBeenCalledWith(jasmine.any(String));
     });
   });
 
