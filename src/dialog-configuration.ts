@@ -25,12 +25,12 @@ const defaultCSSText = `ux-dialog-container,ux-dialog-overlay{position:fixed;top
  */
 export class DialogConfiguration {
   private fwConfig: FrameworkConfiguration;
-  private renderer: RendererStatic;
-  private cssText: string;
+  private renderer: RendererStatic = defaultRenderer;
+  private cssText: string = defaultCSSText;
   private resources: string[] = [];
 
   /**
-   * The configuration settings.
+   * The global configuration settings.
    */
   public settings: DialogSettings;
 
@@ -96,7 +96,7 @@ export class DialogConfiguration {
   }
 
   /**
-   * Configures the plugin to use specific css.
+   * Configures the plugin to use specific css. You can pass an empty string to clear any set css.
    * @param cssText The css to use in place of the default styles.
    * @return This instance.
    */
