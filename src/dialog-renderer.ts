@@ -30,22 +30,25 @@ export const transitionEvent = (() => {
 
 export const hasTransition = (() => {
   const unprefixedName: any = 'transitionDuration';
-  const el = DOM.createElement('fakeelement') as HTMLElement;
   const prefixedNames = ['webkitTransitionDuration', 'oTransitionDuration'];
+  let el: HTMLElement;
   let transitionDurationName: string | undefined;
-  if (unprefixedName in el.style) {
-    transitionDurationName = unprefixedName;
-  } else {
-    transitionDurationName = prefixedNames.find(prefixed => (prefixed in el.style));
-  }
   return (element: Element) => {
+    if (!el) {
+      el = DOM.createElement('fakeelement') as HTMLElement;
+      if (unprefixedName in el.style) {
+        transitionDurationName = unprefixedName;
+      } else {
+        transitionDurationName = prefixedNames.find(prefixed => (prefixed in el.style));
+      }
+    }
     return !!transitionDurationName && !!((DOM.getComputedStyle(element) as any)[transitionDurationName]
       .split(',')
       .find((duration: string) => !!parseFloat(duration)));
   };
 })();
 
-const body = DOM.querySelectorAll('body')[0] as HTMLBodyElement;
+let body: HTMLBodyElement;
 
 function getActionKey(e: KeyboardEvent): ActionKey | undefined {
   if ((e.code || e.key) === 'Escape' || e.keyCode === 27) {
@@ -202,6 +205,9 @@ export class DialogRenderer implements Renderer {
   }
 
   public showDialog(dialogController: DialogController): Promise<void> {
+    if (!body) {
+      body = DOM.querySelectorAll('body')[0] as HTMLBodyElement;
+    }
     if (dialogController.settings.host) {
       this.host = dialogController.settings.host;
     } else {
