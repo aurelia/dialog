@@ -78,7 +78,11 @@ export class DialogService {
 
   private ensureViewModel(compositionContext: CompositionContext): Promise<CompositionContext> {
     if (typeof compositionContext.viewModel === 'function') {
-      compositionContext.viewModel = Origin.get(compositionContext.viewModel).moduleId;
+      const moduleId = Origin.get(compositionContext.viewModel).moduleId;
+      if (!moduleId) {
+        return Promise.reject(new Error(`Can not resolve "moduleId" of "${compositionContext.viewModel.name}".`));
+      }
+      compositionContext.viewModel = moduleId;
     }
 
     if (typeof compositionContext.viewModel === 'string') {
