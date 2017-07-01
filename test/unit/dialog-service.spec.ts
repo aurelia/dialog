@@ -130,6 +130,12 @@ describe('DialogService', () => {
       done();
     });
 
+    it('should get rejected when the "moduleId" of the provided view model can not be resolved ', async done => {
+      const settings = { viewModel: class {} };
+      await _failure(() => dialogService.open(settings), done);
+      done();
+    });
+
     it('propagates errors', async done => {
       const expectdError = new Error('Expected error.');
       spyOn(TestElement.prototype, 'canActivate').and.callFake(() => { throw expectdError; });
