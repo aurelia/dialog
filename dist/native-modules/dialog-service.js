@@ -1,108 +1,177 @@
-var _class, _temp;
-
-
-
-import { Origin } from 'aurelia-metadata';
 import { Container } from 'aurelia-dependency-injection';
+import { Origin } from 'aurelia-metadata';
 import { CompositionEngine, ViewSlot } from 'aurelia-templating';
-import { DialogController } from './dialog-controller';
-import { Renderer } from './renderer';
+import { DefaultDialogSettings } from './dialog-settings';
+import { createDialogCancelError } from './dialog-cancel-error';
 import { invokeLifecycle } from './lifecycle';
-import { DialogResult } from './dialog-result';
-import { dialogOptions } from './dialog-options';
-
-export var DialogService = (_temp = _class = function () {
-  function DialogService(container, compositionEngine) {
-    
-
-    this.container = container;
-    this.compositionEngine = compositionEngine;
-    this.controllers = [];
-    this.hasActiveDialog = false;
-  }
-
-  DialogService.prototype.open = function open(settings) {
-    return this.openAndYieldController(settings).then(function (controller) {
-      return controller.result;
-    });
-  };
-
-  DialogService.prototype.openAndYieldController = function openAndYieldController(settings) {
-    var _this = this;
-
-    var childContainer = this.container.createChild();
-    var dialogController = void 0;
-    var promise = new Promise(function (resolve, reject) {
-      dialogController = new DialogController(childContainer.get(Renderer), _createSettings(settings), resolve, reject);
-    });
-    childContainer.registerInstance(DialogController, dialogController);
-    dialogController.result = promise;
-    dialogController.result.then(function () {
-      _removeController(_this, dialogController);
-    }, function () {
-      _removeController(_this, dialogController);
-    });
-    return _openDialog(this, childContainer, dialogController).then(function () {
-      return dialogController;
-    });
-  };
-
-  return DialogService;
-}(), _class.inject = [Container, CompositionEngine], _temp);
-
-function _createSettings(settings) {
-  settings = Object.assign({}, dialogOptions, settings);
-  settings.startingZIndex = dialogOptions.startingZIndex;
-  return settings;
+import { DialogController } from './dialog-controller';
+/* tslint:enable:max-line-length */
+function whenClosed(onfulfilled, onrejected) {
+    return this.then(function (r) { return r.wasCancelled ? r : r.closeResult; }).then(onfulfilled, onrejected);
 }
-
-function _openDialog(service, childContainer, dialogController) {
-  var host = dialogController.renderer.getDialogContainer();
-  var instruction = {
-    container: service.container,
-    childContainer: childContainer,
-    model: dialogController.settings.model,
-    view: dialogController.settings.view,
-    viewModel: dialogController.settings.viewModel,
-    viewSlot: new ViewSlot(host, true),
-    host: host
-  };
-
-  return _getViewModel(instruction, service.compositionEngine).then(function (returnedInstruction) {
-    dialogController.viewModel = returnedInstruction.viewModel;
-    dialogController.slot = returnedInstruction.viewSlot;
-
-    return invokeLifecycle(dialogController.viewModel, 'canActivate', dialogController.settings.model).then(function (canActivate) {
-      if (canActivate) {
-        return service.compositionEngine.compose(returnedInstruction).then(function (controller) {
-          service.controllers.push(dialogController);
-          service.hasActiveDialog = !!service.controllers.length;
-          dialogController.controller = controller;
-          dialogController.view = controller.view;
-
-          return dialogController.renderer.showDialog(dialogController);
+function asDialogOpenPromise(promise) {
+    promise.whenClosed = whenClosed;
+    return promise;
+}
+/**
+ * A service allowing for the creation of dialogs.
+ */
+var DialogService = (function () {
+    function DialogService(container, compositionEngine, defaultSettings) {
+        /**
+         * The current dialog controllers
+         */
+        this.controllers = [];
+        /**
+         * Is there an open dialog
+         */
+        this.hasOpenDialog = false;
+        this.hasActiveDialog = false;
+        this.container = container;
+        this.compositionEngine = compositionEngine;
+        this.defaultSettings = defaultSettings;
+    }
+    DialogService.prototype.validateSettings = function (settings) {
+        if (!settings.viewModel && !settings.view) {
+            throw new Error('Invalid Dialog Settings. You must provide "viewModel", "view" or both.');
+        }
+    };
+    // tslint:disable-next-line:max-line-length
+    DialogService.prototype.createCompositionContext = function (childContainer, host, settings) {
+        return {
+            container: childContainer.parent,
+            childContainer: childContainer,
+            bindingContext: null,
+            viewResources: null,
+            model: settings.model,
+            view: settings.view,
+            viewModel: settings.viewModel,
+            viewSlot: new ViewSlot(host, true),
+            host: host
+        };
+    };
+    DialogService.prototype.ensureViewModel = function (compositionContext) {
+        if (typeof compositionContext.viewModel === 'function') {
+            compositionContext.viewModel = Origin.get(compositionContext.viewModel).moduleId;
+        }
+        if (typeof compositionContext.viewModel === 'string') {
+            return this.compositionEngine.ensureViewModel(compositionContext);
+        }
+        return Promise.resolve(compositionContext);
+    };
+    DialogService.prototype._cancelOperation = function (rejectOnCancel) {
+        if (!rejectOnCancel) {
+            return { wasCancelled: true };
+        }
+        throw createDialogCancelError();
+    };
+    // tslint:disable-next-line:max-line-length
+    DialogService.prototype.composeAndShowDialog = function (compositionContext, dialogController) {
+        var _this = this;
+        if (!compositionContext.viewModel) {
+            // provide access to the dialog controller for view only dialogs
+            compositionContext.bindingContext = { controller: dialogController };
+        }
+        return this.compositionEngine.compose(compositionContext).then(function (controller) {
+            dialogController.controller = controller;
+            return dialogController.renderer.showDialog(dialogController).then(function () {
+                _this.controllers.push(dialogController);
+                _this.hasActiveDialog = _this.hasOpenDialog = !!_this.controllers.length;
+            }, function (reason) {
+                if (controller.viewModel) {
+                    invokeLifecycle(controller.viewModel, 'deactivate');
+                }
+                return Promise.reject(reason);
+            });
         });
-      }
-    });
-  });
-}
-
-function _getViewModel(instruction, compositionEngine) {
-  if (typeof instruction.viewModel === 'function') {
-    instruction.viewModel = Origin.get(instruction.viewModel).moduleId;
-  }
-
-  if (typeof instruction.viewModel === 'string') {
-    return compositionEngine.ensureViewModel(instruction);
-  }
-
-  return Promise.resolve(instruction);
-}
-
-function _removeController(service, controller) {
-  var i = service.controllers.indexOf(controller);
-  if (i !== -1) {
-    service.controllers.splice(i, 1);
-    service.hasActiveDialog = !!service.controllers.length;
-  }
+    };
+    /**
+     * @internal
+     */
+    DialogService.prototype.createSettings = function (settings) {
+        settings = Object.assign({}, this.defaultSettings, settings);
+        if (typeof settings.keyboard !== 'boolean' && !settings.keyboard) {
+            settings.keyboard = !settings.lock;
+        }
+        if (typeof settings.overlayDismiss !== 'boolean') {
+            settings.overlayDismiss = !settings.lock;
+        }
+        Object.defineProperty(settings, 'rejectOnCancel', {
+            writable: false,
+            configurable: true,
+            enumerable: true
+        });
+        this.validateSettings(settings);
+        return settings;
+    };
+    DialogService.prototype.open = function (settings) {
+        var _this = this;
+        if (settings === void 0) { settings = {}; }
+        // tslint:enable:max-line-length
+        settings = this.createSettings(settings);
+        var childContainer = settings.childContainer || this.container.createChild();
+        var resolveCloseResult;
+        var rejectCloseResult;
+        var closeResult = new Promise(function (resolve, reject) {
+            resolveCloseResult = resolve;
+            rejectCloseResult = reject;
+        });
+        var dialogController = childContainer.invoke(DialogController, [settings, resolveCloseResult, rejectCloseResult]);
+        childContainer.registerInstance(DialogController, dialogController);
+        closeResult.then(function () {
+            removeController(_this, dialogController);
+        }, function () {
+            removeController(_this, dialogController);
+        });
+        var compositionContext = this.createCompositionContext(childContainer, dialogController.renderer.getDialogContainer(), dialogController.settings);
+        var openResult = this.ensureViewModel(compositionContext).then(function (compositionContext) {
+            if (!compositionContext.viewModel) {
+                return true;
+            }
+            return invokeLifecycle(compositionContext.viewModel, 'canActivate', dialogController.settings.model);
+        }).then(function (canActivate) {
+            if (!canActivate) {
+                return _this._cancelOperation(dialogController.settings.rejectOnCancel);
+            }
+            // if activation granted, compose and show
+            return _this.composeAndShowDialog(compositionContext, dialogController)
+                .then(function () { return ({ controller: dialogController, closeResult: closeResult, wasCancelled: false }); });
+        });
+        return asDialogOpenPromise(openResult);
+    };
+    /**
+     * Closes all open dialogs at the time of invocation.
+     * @return Promise<DialogController[]> All controllers whose close operation was cancelled.
+     */
+    DialogService.prototype.closeAll = function () {
+        return Promise.all(this.controllers.slice(0).map(function (controller) {
+            if (!controller.settings.rejectOnCancel) {
+                return controller.cancel().then(function (result) {
+                    if (result.wasCancelled) {
+                        return controller;
+                    }
+                    return;
+                });
+            }
+            return controller.cancel().then(function () { return; }).catch(function (reason) {
+                if (reason.wasCancelled) {
+                    return controller;
+                }
+                return Promise.reject(reason);
+            });
+        })).then(function (unclosedControllers) { return unclosedControllers.filter(function (unclosed) { return !!unclosed; }); });
+    };
+    return DialogService;
+}());
+export { DialogService };
+/**
+ * @internal
+ */
+DialogService.inject = [Container, CompositionEngine, DefaultDialogSettings];
+function removeController(service, dialogController) {
+    var i = service.controllers.indexOf(dialogController);
+    if (i !== -1) {
+        service.controllers.splice(i, 1);
+        service.hasActiveDialog = service.hasOpenDialog = !!service.controllers.length;
+    }
 }

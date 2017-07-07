@@ -1,71 +1,67 @@
-'use strict';
-
-System.register(['./dialog-configuration', './ai-dialog', './ai-dialog-header', './ai-dialog-body', './ai-dialog-footer', './attach-focus', './dialog-service', './dialog-controller', './dialog-result'], function (_export, _context) {
-  "use strict";
-
-  var DialogConfiguration;
-  function configure(aurelia, callback) {
-    var config = new DialogConfiguration(aurelia);
-
-    if (typeof callback === 'function') {
-      callback(config);
-    } else {
-      config.useDefaults();
+System.register(["./dialog-configuration", "./ux-dialog", "./ux-dialog-header", "./ux-dialog-body", "./ux-dialog-footer", "./attach-focus", "./dialog-settings", "./renderer", "./dialog-cancel-error", "./dialog-service", "./dialog-controller"], function (exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    function configure(frameworkConfig, callback) {
+        var applyConfig = null;
+        var config = new dialog_configuration_1.DialogConfiguration(frameworkConfig, function (apply) { applyConfig = apply; });
+        if (typeof callback === 'function') {
+            callback(config);
+        }
+        else {
+            config.useDefaults();
+        }
+        applyConfig();
     }
-
-    config._apply();
-  }
-
-  _export('configure', configure);
-
-  return {
-    setters: [function (_dialogConfiguration) {
-      DialogConfiguration = _dialogConfiguration.DialogConfiguration;
-      var _exportObj = {};
-      _exportObj.DialogConfiguration = _dialogConfiguration.DialogConfiguration;
-
-      _export(_exportObj);
-    }, function (_aiDialog) {
-      var _exportObj2 = {};
-      _exportObj2.AiDialog = _aiDialog.AiDialog;
-
-      _export(_exportObj2);
-    }, function (_aiDialogHeader) {
-      var _exportObj3 = {};
-      _exportObj3.AiDialogHeader = _aiDialogHeader.AiDialogHeader;
-
-      _export(_exportObj3);
-    }, function (_aiDialogBody) {
-      var _exportObj4 = {};
-      _exportObj4.AiDialogBody = _aiDialogBody.AiDialogBody;
-
-      _export(_exportObj4);
-    }, function (_aiDialogFooter) {
-      var _exportObj5 = {};
-      _exportObj5.AiDialogFooter = _aiDialogFooter.AiDialogFooter;
-
-      _export(_exportObj5);
-    }, function (_attachFocus) {
-      var _exportObj6 = {};
-      _exportObj6.AttachFocus = _attachFocus.AttachFocus;
-
-      _export(_exportObj6);
-    }, function (_dialogService) {
-      var _exportObj7 = {};
-      _exportObj7.DialogService = _dialogService.DialogService;
-
-      _export(_exportObj7);
-    }, function (_dialogController) {
-      var _exportObj8 = {};
-      _exportObj8.DialogController = _dialogController.DialogController;
-
-      _export(_exportObj8);
-    }, function (_dialogResult) {
-      var _exportObj9 = {};
-      _exportObj9.DialogResult = _dialogResult.DialogResult;
-
-      _export(_exportObj9);
-    }],
-    execute: function () {}
-  };
+    exports_1("configure", configure);
+    var dialog_configuration_1;
+    var exportedNames_1 = {
+        "configure": true
+    };
+    function exportStar_1(m) {
+        var exports = {};
+        for (var n in m) {
+            if (n !== "default" && !exportedNames_1.hasOwnProperty(n)) exports[n] = m[n];
+        }
+        exports_1(exports);
+    }
+    return {
+        setters: [
+            function (dialog_configuration_1_1) {
+                dialog_configuration_1 = dialog_configuration_1_1;
+                exportStar_1(dialog_configuration_1_1);
+            },
+            function (ux_dialog_1_1) {
+                exportStar_1(ux_dialog_1_1);
+            },
+            function (ux_dialog_header_1_1) {
+                exportStar_1(ux_dialog_header_1_1);
+            },
+            function (ux_dialog_body_1_1) {
+                exportStar_1(ux_dialog_body_1_1);
+            },
+            function (ux_dialog_footer_1_1) {
+                exportStar_1(ux_dialog_footer_1_1);
+            },
+            function (attach_focus_1_1) {
+                exportStar_1(attach_focus_1_1);
+            },
+            function (dialog_settings_1_1) {
+                exportStar_1(dialog_settings_1_1);
+            },
+            function (renderer_1_1) {
+                exportStar_1(renderer_1_1);
+            },
+            function (dialog_cancel_error_1_1) {
+                exportStar_1(dialog_cancel_error_1_1);
+            },
+            function (dialog_service_1_1) {
+                exportStar_1(dialog_service_1_1);
+            },
+            function (dialog_controller_1_1) {
+                exportStar_1(dialog_controller_1_1);
+            }
+        ],
+        execute: function () {
+        }
+    };
 });
