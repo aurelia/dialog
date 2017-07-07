@@ -1,10 +1,13 @@
 {
-  "name": "aurelia-dialog",
-  "main": "dist/commonjs/aurelia-dialog.d.ts",
-  "dependencies": {
-      "aurelia-dependency-injection": "github:aurelia/dependency-injection",
-      "aurelia-metadata": "github:aurelia/metadata",
-      "aurelia-pal": "github:aurelia/pal",
-      "aurelia-templating": "github:aurelia/templating"    
-  }
+    "name": "aurelia-dialog",
+    "main": "dist/aurelia-dialog.d.ts",
+    "dependencies": {
+        "aurelia-dependency-injection": "github:aurelia/dependency-injection",
+        "aurelia-logging": "github:aurelia/logging",
+        "aurelia-metadata": "github:aurelia/metadata",
+        "aurelia-pal": "github:aurelia/pal",
+        "aurelia-path": "github:aurelia/path",
+        "aurelia-templating": "github:aurelia/templating",
+        "aurelia-templating-binding": "github:aurelia/templating-binding"
+    }
 }
