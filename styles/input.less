@@ -1,4 +1,4 @@
-ai-dialog-overlay {
+ux-dialog-overlay {
   bottom: 0;
   left: 0;
   position: fixed;
@@ -11,7 +11,7 @@ ai-dialog-overlay {
   }
 }
 
-ai-dialog-container {
+ux-dialog-container {
   display: block;
   transition: opacity .2s linear;
   opacity: 0;
@@ -52,7 +52,7 @@ ai-dialog-container {
   }
 }
 
-ai-dialog {
+ux-dialog {
   width: 100%;
   display: table;
   box-shadow: 0 5px 15px rgba(0,0,0,.5);
@@ -74,7 +74,7 @@ ai-dialog {
   border-image-repeat: initial;
   background: white;
 
-  > ai-dialog-header {
+  > ux-dialog-header {
     display: block;
     padding: 16px;
     border-bottom: 1px solid #e5e5e5;
@@ -94,12 +94,12 @@ ai-dialog {
     }
   }
 
-  > ai-dialog-body {
+  > ux-dialog-body {
     display: block;
     padding: 16px;
   }
 
-  > ai-dialog-footer {
+  > ux-dialog-footer {
     display: block;
     padding: 6px;
     border-top: 1px solid #e5e5e5;
@@ -136,6 +136,6 @@ ai-dialog {
   }
 }
 
-.ai-dialog-open {
+.ux-dialog-open {
   overflow: hidden;
 }
