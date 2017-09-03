@@ -42,8 +42,6 @@ window.require.config({
     'aurelia-dependency-injection': '/base/node_modules/aurelia-dependency-injection/dist/amd/aurelia-dependency-injection',
     'aurelia-event-aggregator': '/base/node_modules/aurelia-event-aggregator/dist/amd/aurelia-event-aggregator',
     'aurelia-framework': '/base/node_modules/aurelia-framework/dist/amd/aurelia-framework',
-    'aurelia-history': '/base/node_modules/aurelia-history/dist/amd/aurelia-history',
-    'aurelia-history-browser': '/base/node_modules/aurelia-history-browser/dist/amd/aurelia-history-browser',
     'aurelia-loader': '/base/node_modules/aurelia-loader/dist/amd/aurelia-loader',
     'aurelia-loader-default': '/base/node_modules/aurelia-loader-default/dist/amd/aurelia-loader-default',
     'aurelia-logging': '/base/node_modules/aurelia-logging/dist/amd/aurelia-logging',
@@ -53,8 +51,6 @@ window.require.config({
     'aurelia-pal-browser': '/base/node_modules/aurelia-pal-browser/dist/amd/aurelia-pal-browser',
     'aurelia-path': '/base/node_modules/aurelia-path/dist/amd/aurelia-path',
     'aurelia-polyfills': '/base/node_modules/aurelia-polyfills/dist/amd/aurelia-polyfills',
-    'aurelia-router': '/base/node_modules/aurelia-router/dist/amd/aurelia-router',
-    'aurelia-route-recognizer': '/base/node_modules/aurelia-route-recognizer/dist/amd/aurelia-route-recognizer',
     'aurelia-task-queue': '/base/node_modules/aurelia-task-queue/dist/amd/aurelia-task-queue',
     'aurelia-templating': '/base/node_modules/aurelia-templating/dist/amd/aurelia-templating',
     'aurelia-templating-binding': '/base/node_modules/aurelia-templating-binding/dist/amd/aurelia-templating-binding',
@@ -65,11 +61,6 @@ window.require.config({
   },
   packages: [
     {
-      name: 'aurelia-templating-router',
-      location: '/base/node_modules/aurelia-templating-router/dist/amd',
-      main: 'aurelia-templating-router'
-    },
-    {
       name: 'aurelia-templating-resources',
       location: '/base/node_modules/aurelia-templating-resources/dist/amd',
       main: 'aurelia-templating-resources'
@@ -79,11 +70,5 @@ window.require.config({
       location: '/base/node_modules/aurelia-testing/dist/amd',
       main: 'aurelia-testing'
     }
-    // ,
-    // {
-    //   name: 'dist/test/src/aurelia-dialog',
-    //   location: '/base/dist/test/src',
-    //   main: 'aurelia-dialog'
-    // }
   ]
 });

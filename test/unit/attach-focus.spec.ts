@@ -1,5 +1,6 @@
 import { StageComponent } from 'aurelia-testing';
 import { bootstrap } from 'aurelia-bootstrapper';
+import { Aurelia } from 'aurelia-framework';
 
 describe('modal gets focused when attached', () => {
   let component: any;
@@ -11,17 +12,19 @@ describe('modal gets focused when attached', () => {
 
   beforeEach(() => {
     viewModel = new ViewModel();
+    component = StageComponent
+      .withResources('dist/test/src/attach-focus')
+      .boundTo(viewModel);
+    component.bootstrap((aurelia: Aurelia) => aurelia.use.basicConfiguration());
   });
 
   describe('when using attribute without .bind', () => {
     beforeEach(() => {
-      component = StageComponent
-        .withResources('dist/test/src/attach-focus')
-        .inView('\
-          <div>\
-            <input attach-focus="true" ref="noValueEl" />\
-          </div>')
-        .boundTo(viewModel);
+      component.inView(`
+        <div>
+          <input attach-focus="true" ref="noValueEl" />
+        </div>
+      `);
     });
 
     it('sets focus to no value element', done => {
@@ -34,14 +37,12 @@ describe('modal gets focused when attached', () => {
 
   describe('when binding to vm property', () => {
     beforeEach(() => {
-      component = StageComponent
-        .withResources('dist/test/src/attach-focus')
-        .inView('\
-          <div>\
-            <input attach-focus.bind="first" ref="firstEl" />\
-            <input attach-focus.bind="!first" ref="secondEl" />\
-          </div>')
-        .boundTo(viewModel);
+      component.inView(`
+        <div>
+          <input attach-focus.bind="first" ref="firstEl" />
+          <input attach-focus.bind="!first" ref="secondEl" />
+        </div>
+      `);
     });
 
     it('sets focus to first element when true', done => {
