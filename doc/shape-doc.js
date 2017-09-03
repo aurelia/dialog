@@ -2,20 +2,20 @@
 
 const path = require('path');
 const fs = require('fs');
-const packageJsonPath = path.resolve(__dirname, '../package.json');
 const apiJsonPath = path.resolve(__dirname, './api.json');
 
 try {
-  const packageName = require(packageJsonPath).name;
-  let json = require(apiJsonPath).children[0];
+  let json = require(apiJsonPath);
 
   json = {
-    name: packageName,
-    children: json.children,
-    groups: json.groups
+    name: json.name,
+    children: json.children[0].children,
+    groups: json.children[0].groups
   };
 
-  const str = JSON.stringify(json) + '\n';
+  let str = JSON.stringify(json) + '\n';
+  // typedoc adds the absolute path for lib.*.d.ts(lib.es5.d.ts, ...) files, leave only file name
+  str = str.replace(/("fileName":\s*")[^"]+(lib\.[^"]+\.d\.ts)(",)/g, '$1$2$3');
   fs.writeFileSync(apiJsonPath, str);
   console.log('Shaped the doc/api.json file.');
 } catch (e) {
