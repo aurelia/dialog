@@ -1,5 +1,5 @@
-import {StageComponent} from 'aurelia-testing';
-import {bootstrap} from 'aurelia-bootstrapper';
+import { StageComponent } from 'aurelia-testing';
+import { bootstrap } from 'aurelia-bootstrapper';
 
 describe('modal gets focused when attached', () => {
   let component: any;

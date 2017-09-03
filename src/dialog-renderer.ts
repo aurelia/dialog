@@ -181,6 +181,7 @@ export class DialogRenderer implements Renderer {
 
   private awaitTransition(setActiveInactive: () => void, ignore: boolean): Promise<void> {
     return new Promise<void>(resolve => {
+      // tslint:disable-next-line:no-this-assignment
       const renderer = this;
       const eventName = transitionEvent();
       function onTransitionEnd(e: TransitionEvent): void {

@@ -25,7 +25,7 @@ describe('DialogConfiguration', () => {
   describe('when instantiated', () => {
     it('should get the default settings from the container', () => {
       spyOn(frameworkConfig.container, 'get').and.callThrough();
-      // tslint:disable-next-line:no-unused-new
+      // tslint:disable-next-line:no-unused-expression
       new DialogConfiguration(frameworkConfig, () => { return; });
       expect(frameworkConfig.container.get).toHaveBeenCalledWith(DefaultDialogSettings);
     });
@@ -34,7 +34,7 @@ describe('DialogConfiguration', () => {
   describe('even when ".useDefaults" is not called', () => {
     it('a default Renderer should be registered', () => {
       let applyConfig: () => void = null as any;
-      // tslint:disable-next-line:no-unused-new
+      // tslint:disable-next-line:no-unused-expression
       new DialogConfiguration(frameworkConfig, apply => { applyConfig = apply; });
       spyOn(frameworkConfig, 'transient');
       applyConfig();
@@ -43,7 +43,7 @@ describe('DialogConfiguration', () => {
 
     it('the default css styles should be applied', () => {
       let applyConfig: () => void = null as any;
-      // tslint:disable-next-line:no-unused-new
+      // tslint:disable-next-line:no-unused-expression
       new DialogConfiguration(frameworkConfig, apply => { applyConfig = apply; });
       spyOn(DOM, 'injectStyles');
       applyConfig();

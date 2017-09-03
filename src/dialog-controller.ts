@@ -28,6 +28,7 @@ export class DialogController {
   /**
    * @internal
    */
+  // tslint:disable-next-line:member-ordering
   public static inject = [Renderer];
   /**
    * Creates an instance of DialogController.
@@ -99,7 +100,7 @@ export class DialogController {
       return this.closePromise;
     }
 
-    const dialogResult = { wasCancelled: !ok, output } as DialogCloseResult;
+    const dialogResult: DialogCloseResult = { wasCancelled: !ok, output };
 
     return this.closePromise = invokeLifecycle(this.controller.viewModel || {}, 'canDeactivate', dialogResult)
       .catch(reason => {

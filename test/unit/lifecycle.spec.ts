@@ -1,4 +1,4 @@
-import {invokeLifecycle} from '../../src/lifecycle';
+import { invokeLifecycle } from '../../src/lifecycle';
 
 describe('invokeLifecycle', () => {
   const DEFAULT_LEFECYCLE_RESULT = true;

@@ -30,6 +30,7 @@ export class UxDialogFooter {
   /**
    * @internal
    */
+  // tslint:disable-next-line:member-ordering
   public static inject = [DialogController];
   constructor(public controller: DialogController) { }
 

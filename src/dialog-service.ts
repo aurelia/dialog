@@ -48,6 +48,7 @@ export class DialogService {
   /**
    * @internal
    */
+  // tslint:disable-next-line:member-ordering
   public static inject = [Container, CompositionEngine, DefaultDialogSettings];
   constructor(container: Container, compositionEngine: CompositionEngine, defaultSettings: DialogSettings) {
     this.container = container;
