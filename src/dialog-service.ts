@@ -196,16 +196,16 @@ export class DialogService {
           if (result.wasCancelled) {
             return controller;
           }
-          return;
+          return null;
         });
       }
-      return controller.cancel().then(() => { return; }).catch<DialogController>(reason => {
+      return controller.cancel().then(() => null).catch<DialogController>(reason => {
         if (reason.wasCancelled) {
           return controller;
         }
-        return Promise.reject(reason);
+        throw reason;
       });
-    })).then(unclosedControllers => unclosedControllers.filter(unclosed => !!unclosed));
+    })).then(unclosedControllers => unclosedControllers.filter(unclosed => !!unclosed) as DialogController[]);
   }
 }
 
