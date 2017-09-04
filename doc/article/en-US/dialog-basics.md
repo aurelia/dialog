@@ -75,18 +75,21 @@ typings install github:aurelia/dialog --save
 
 <code-listing heading="main.js">
   <source-code lang="ES 2015">
+  import {PLATFORM} from 'aurelia-pal';
   export function configure(aurelia) {
     aurelia.use
       .standardConfiguration()
       .developmentLogging()
-      .plugin('aurelia-dialog');
+      .plugin(PLATFORM.moduleName('aurelia-dialog'));
 
     aurelia.start().then(a => a.setRoot());
   }
   </source-code>
 </code-listing>
 
-> Note: If you are using WebPack it is possible that the plugin is installed before Aurelia has replaced the `<body>` element, if that is where your `aurelia-app="main"` is defined, which results in some of the dialog components getting overwritten.  In this case you can move the `aurelia-app` attribute to a `<div>` inside of the `<body>`.  Example - `<body><div aurelia-app="main"></div></body>`.
+> Warning: When the `<body>` is marked with the `aurelia-app` attribute any dialog open prior to the app being attached to the DOM(before `Aurelia.prototype.setRoot` completes), will be *removed* from the DOM. Opening a dialog in the `canActivate` or `activate` hooks is *OK* in any scenario *if* you *await* it to close *before continuing*. If you just want to open a dialog, without awaiting it to close, do it the `attached` hook instead.
+
+> Warning: `PLATFORM.moduleName` should *not* be omitted if you are using Webpack.
 
 ## [Using The Plugin](aurelia-doc://section/3/version/1.0.0)
 
@@ -152,7 +155,6 @@ There is also an `output` property that gets returned with the outcome of the us
 <code-listing heading="edit-person.js">
   <source-code lang="ES 2015">
   import {DialogController} from 'aurelia-dialog';
-
   export class EditPerson {
     static inject = [DialogController];
     person = { firstName: '' };
@@ -220,11 +222,13 @@ You can specify global settings as well for all dialogs to use when installing t
 
 <code-listing heading="main.js">
   <source-code lang="ES 2015">
+  import {PLATFORM} from 'aurelia-pal';
+
   export function configure(aurelia) {
     aurelia.use
       .standardConfiguration()
       .developmentLogging()
-      .plugin('aurelia-dialog', config => {
+      .plugin(PLATFORM.moduleName('aurelia-dialog'), config => {
         config.useDefaults();
         config.settings.lock = true;
         config.settings.centerHorizontalOnly = false;
@@ -237,10 +241,32 @@ You can specify global settings as well for all dialogs to use when installing t
   </source-code>
 </code-listing>
 
-### Controller Settings
+### Dialog Settings
 
 The settings available for the dialog are set on the dialog controller on a per-dialog basis.
 - `viewModel` can be url, class reference or instance.
+  - url - path relative to the application root.
+    ```
+    .
+    +-- app.js
+    +-- forms
+        +-- consent-form.js
+        +-- consent-form.html
+    +-- prompts
+        +-- prompt.js
+        +-- prompt.html
+    ```
+    If you want to open a `prompt` from `consent-form` the path will be `prompts/prompt`.
+
+    > Warning: Webpack users should *always* mark dynamically loaded dependencies with `PLATFORM.moduleName`. For more details do check the `aurelia-webpack-plugin` [wiki](https://github.com/aurelia/webpack-plugin/wiki).
+
+  - object - it will be used as the view model. In this case `view` must also be specified.
+  - class - the view model *class* or *constructor function*.
+    > Note: This approach depends on being able resolve the origin of the class.
+
+    > Note: Webpack users are advised to use the string overload, wrapped with `PLATFORM.moduleName`, instead of this one.
+
+    > Warning: This approach might not work for Webpack users when using *DLLPlugin* or *ModuleConcatenationPlugin*.
 - `view` can be url or view strategy to override the default view location convention.
 - `model` the data to be passed to the `canActivate` and `activate` methods of the view model if implemented.
 - `host` allows providing the element which will parent the dialog - if not provided the body will be used.
