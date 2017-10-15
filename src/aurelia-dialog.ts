@@ -28,3 +28,4 @@ export * from './dialog-result';
 export * from './dialog-service';
 export * from './dialog-controller';
 export { NativeDialogRenderer } from './native-dialog-renderer';
+export * from './infrastructure-dialog-controller';
