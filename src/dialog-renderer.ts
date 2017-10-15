@@ -2,51 +2,10 @@ import { DOM } from 'aurelia-pal';
 import { transient } from 'aurelia-dependency-injection';
 import { ActionKey } from './dialog-settings';
 import { Renderer } from './renderer';
-import { DialogController } from './dialog-controller';
+import { InfrastructureDialogController } from './infrastructure-dialog-controller';
 
 const containerTagName = 'ux-dialog-container';
 const overlayTagName = 'ux-dialog-overlay';
-
-export const transitionEvent = (() => {
-  let transition: string | undefined;
-  return (): string => {
-    if (transition) { return transition; }
-    const el = DOM.createElement('fakeelement') as HTMLElement;
-    const transitions: { [key: string]: string; } = {
-      transition: 'transitionend',
-      OTransition: 'oTransitionEnd',
-      MozTransition: 'transitionend',
-      WebkitTransition: 'webkitTransitionEnd'
-    };
-    for (let t in transitions) { // tslint:disable-line:prefer-const
-      if ((el.style as any)[t] !== undefined) {
-        transition = transitions[t];
-        return transition;
-      }
-    }
-    return '';
-  };
-})();
-
-export const hasTransition = (() => {
-  const unprefixedName: any = 'transitionDuration';
-  const prefixedNames = ['webkitTransitionDuration', 'oTransitionDuration'];
-  let el: HTMLElement;
-  let transitionDurationName: string | undefined;
-  return (element: Element) => {
-    if (!el) {
-      el = DOM.createElement('fakeelement') as HTMLElement;
-      if (unprefixedName in el.style) {
-        transitionDurationName = unprefixedName;
-      } else {
-        transitionDurationName = prefixedNames.find(prefixed => (prefixed in el.style));
-      }
-    }
-    return !!transitionDurationName && !!((DOM.getComputedStyle(element) as any)[transitionDurationName]
-      .split(',')
-      .find((duration: string) => !!parseFloat(duration)));
-  };
-})();
 
 let body: HTMLBodyElement;
 
@@ -62,7 +21,7 @@ function getActionKey(e: KeyboardEvent): ActionKey | undefined {
 
 @transient()
 export class DialogRenderer implements Renderer {
-  public static dialogControllers: DialogController[] = [];
+  public static dialogControllers: InfrastructureDialogController[] = [];
 
   public static keyboardEventHandler(e: KeyboardEvent) {
     const key = getActionKey(e);
@@ -78,14 +37,14 @@ export class DialogRenderer implements Renderer {
     }
   }
 
-  public static trackController(dialogController: DialogController): void {
+  public static trackController(dialogController: InfrastructureDialogController): void {
     if (!DialogRenderer.dialogControllers.length) {
       DOM.addEventListener('keyup', DialogRenderer.keyboardEventHandler, false);
     }
     DialogRenderer.dialogControllers.push(dialogController);
   }
 
-  public static untrackController(dialogController: DialogController): void {
+  public static untrackController(dialogController: InfrastructureDialogController): void {
     const i = DialogRenderer.dialogControllers.indexOf(dialogController);
     if (i !== -1) {
       DialogRenderer.dialogControllers.splice(i, 1);
@@ -114,7 +73,7 @@ export class DialogRenderer implements Renderer {
     return own;
   }
 
-  private attach(dialogController: DialogController): void {
+  private attach(dialogController: InfrastructureDialogController): void {
     const spacingWrapper = DOM.createElement('div'); // TODO: check if redundant
     spacingWrapper.appendChild(this.anchor);
     this.dialogContainer = DOM.createElement(containerTagName) as HTMLElement;
@@ -133,30 +92,18 @@ export class DialogRenderer implements Renderer {
       this.host.insertBefore(this.dialogContainer, this.host.firstChild);
       this.host.insertBefore(this.dialogOverlay, this.host.firstChild);
     }
-    dialogController.controller.attached();
-    this.host.classList.add('ux-dialog-open');
+    this.host.classList.add('ux-dialog-open'); // TODO: probably set after the animation is done
   }
 
-  private detach(dialogController: DialogController): void {
+  private detach(): void {
     this.host.removeChild(this.dialogOverlay);
     this.host.removeChild(this.dialogContainer);
-    dialogController.controller.detached();
     if (!DialogRenderer.dialogControllers.length) {
       this.host.classList.remove('ux-dialog-open');
     }
   }
 
-  private setAsActive(): void {
-    this.dialogOverlay.classList.add('active');
-    this.dialogContainer.classList.add('active');
-  }
-
-  private setAsInactive(): void {
-    this.dialogOverlay.classList.remove('active');
-    this.dialogContainer.classList.remove('active');
-  }
-
-  private setupClickHandling(dialogController: DialogController): void {
+  private setupClickHandling(dialogController: InfrastructureDialogController): void {
     this.stopPropagation = e => { e._aureliaDialogHostClicked = true; };
     this.closeDialogClick = e => {
       if (dialogController.settings.overlayDismiss && !e._aureliaDialogHostClicked) {
@@ -179,44 +126,22 @@ export class DialogRenderer implements Renderer {
     child.style.marginBottom = Math.max((vh - child.offsetHeight) / 2, 30) + 'px';
   }
 
-  private awaitTransition(setActiveInactive: () => void, ignore: boolean): Promise<void> {
-    return new Promise<void>(resolve => {
-      // tslint:disable-next-line:no-this-assignment
-      const renderer = this;
-      const eventName = transitionEvent();
-      function onTransitionEnd(e: TransitionEvent): void {
-        if (e.target !== renderer.dialogContainer) {
-          return;
-        }
-        renderer.dialogContainer.removeEventListener(eventName, onTransitionEnd);
-        resolve();
-      }
-
-      if (ignore || !hasTransition(this.dialogContainer)) {
-        resolve();
-      } else {
-        this.dialogContainer.addEventListener(eventName, onTransitionEnd);
-      }
-      setActiveInactive();
-    });
-  }
-
   public getDialogContainer(): Element {
     return this.anchor || (this.anchor = DOM.createElement('div'));
   }
 
-  public showDialog(dialogController: DialogController): Promise<void> {
+  public showDialog(dialogController: InfrastructureDialogController): Promise<void> {
     if (!body) {
       body = DOM.querySelectorAll('body')[0] as HTMLBodyElement;
     }
-    if (dialogController.settings.host) {
-      this.host = dialogController.settings.host;
+    const settings = dialogController.settings;
+    if (settings.host) {
+      this.host = settings.host;
     } else {
       this.host = body;
     }
-    const settings = dialogController.settings;
+    dialogController.viewSlot.remove(dialogController.view, false, true);
     this.attach(dialogController);
-
     if (typeof settings.position === 'function') {
       settings.position(this.dialogContainer, this.dialogOverlay);
     } else if (!settings.centerHorizontalOnly) {
@@ -225,13 +150,18 @@ export class DialogRenderer implements Renderer {
 
     DialogRenderer.trackController(dialogController);
     this.setupClickHandling(dialogController);
-    return this.awaitTransition(() => this.setAsActive(), dialogController.settings.ignoreTransitions as boolean);
+    dialogController.viewSlot.attached();
+    return Promise.resolve(dialogController.viewSlot.add(dialogController.view));
   }
 
-  public hideDialog(dialogController: DialogController) {
+  public hideDialog(dialogController: InfrastructureDialogController): Promise<void> {
     this.clearClickHandling();
     DialogRenderer.untrackController(dialogController);
-    return this.awaitTransition(() => this.setAsInactive(), dialogController.settings.ignoreTransitions as boolean)
-      .then(() => { this.detach(dialogController); });
+    const removeResult = dialogController.viewSlot.remove(dialogController.view);
+    if (!removeResult) {
+      this.detach();
+      return Promise.resolve();
+    }
+    return removeResult.then(() => this.detach());
   }
 }
