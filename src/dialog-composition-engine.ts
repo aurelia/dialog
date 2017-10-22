@@ -23,6 +23,26 @@ function canActivate(instruction: DialogCompositionInstruction): Promise<DialogC
         });
 }
 
+// tslint:disable:no-empty
+const noopViewSlot: ViewSlot = {
+    animateView() { },
+    add() { },
+    insert() { },
+    move() { },
+    remove() { },
+    removeAt() { return {} as any; },
+    removeMany() { },
+    removeAll() { },
+    projectTo() { },
+    bind() { },
+    attached() { },
+    detached() { },
+    unbind() { },
+    transformChildNodesIntoView() { }
+};
+// tslint:enable:no-empty
+(noopViewSlot as any).children = [];
+
 /**
  * @internal
  */
@@ -43,7 +63,6 @@ export class DialogCompositionEngine {
         childContainer: Container,
         controller: InfrastructureDialogController
     ): CompositionContext {
-        const hostElement = controller.renderer.getDialogContainer();
         const context: CompositionContext = {
             container: childContainer.parent,
             childContainer,
@@ -53,8 +72,10 @@ export class DialogCompositionEngine {
             model: controller.settings.model,
             view: controller.settings.view,
             viewModel: controller.settings.viewModel,
-            viewSlot: new ViewSlot(hostElement, true),
-            host: hostElement
+            // we don't want the CompositionEngine to add the View to a ViewSlot,
+            // that's the job of the Renderer
+            viewSlot: noopViewSlot,
+            host: controller.renderer.getDialogContainer()
         };
         if (typeof context.viewModel === 'function') {
             const moduleId = Origin.get(context.viewModel).moduleId;
@@ -93,7 +114,7 @@ export class DialogCompositionEngine {
     ): Promise<DialogCompositionInstruction> {
         const result = this.compositionEngine.compose(instruction.context);
         return result.then(controllerOrView => {
-            instruction.controller.initialize(controllerOrView, instruction.context.viewSlot);
+            instruction.controller.initialize(controllerOrView);
             return instruction;
         });
     }

@@ -1,5 +1,6 @@
 import { DOM } from 'aurelia-pal';
 import { transient } from 'aurelia-dependency-injection';
+import { ViewSlot, Animator } from 'aurelia-templating';
 import { ActionKey } from './dialog-settings';
 import { Renderer } from './renderer';
 import { InfrastructureDialogController } from './infrastructure-dialog-controller';
@@ -56,6 +57,7 @@ export class DialogRenderer implements Renderer {
 
   private stopPropagation: (e: MouseEvent & { _aureliaDialogHostClicked: boolean }) => void;
   private closeDialogClick: (e: MouseEvent & { _aureliaDialogHostClicked: boolean }) => void;
+  private viewSlot: ViewSlot;
 
   public dialogContainer: HTMLElement;
   public dialogOverlay: HTMLElement;
@@ -140,7 +142,7 @@ export class DialogRenderer implements Renderer {
     } else {
       this.host = body;
     }
-    dialogController.viewSlot.remove(dialogController.view, false, true);
+    this.viewSlot = new ViewSlot(this.anchor, true);
     this.attach(dialogController);
     if (typeof settings.position === 'function') {
       settings.position(this.dialogContainer, this.dialogOverlay);
@@ -150,18 +152,28 @@ export class DialogRenderer implements Renderer {
 
     DialogRenderer.trackController(dialogController);
     this.setupClickHandling(dialogController);
-    dialogController.viewSlot.attached();
-    return Promise.resolve(dialogController.viewSlot.add(dialogController.view));
+    this.viewSlot.attached();
+    const addResult = this.viewSlot.add(dialogController.view);
+    if (!addResult) {
+      return Promise.resolve();
+    }
+    return Promise.all([
+      addResult,
+      (this.viewSlot as ViewSlot & { animator: Animator }).animator.enter(this.dialogOverlay)
+    ]) as any;
   }
 
   public hideDialog(dialogController: InfrastructureDialogController): Promise<void> {
     this.clearClickHandling();
     DialogRenderer.untrackController(dialogController);
-    const removeResult = dialogController.viewSlot.remove(dialogController.view);
+    const removeResult = this.viewSlot.remove(dialogController.view);
     if (!removeResult) {
       this.detach();
       return Promise.resolve();
     }
-    return removeResult.then(() => this.detach());
+    return Promise.all([
+      removeResult,
+      (this.viewSlot as any).animator.leave(this.dialogOverlay)
+    ]).then(() => this.detach());
   }
 }

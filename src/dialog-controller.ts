@@ -1,4 +1,4 @@
-import { Controller, View, ViewSlot } from 'aurelia-templating';
+import { Controller, View } from 'aurelia-templating';
 import { Renderer } from './renderer';
 import {
   DialogCancelableOperationResult, DialogOpenResult,
@@ -43,11 +43,6 @@ export class DialogController {
   /**
    * @internal
    */
-  public viewSlot: ViewSlot;
-
-  /**
-   * @internal
-   */
   public closePromise: Promise<any> | undefined;
 
   /**
@@ -66,8 +61,7 @@ export class DialogController {
   /**
    * @internal
    */
-  public initialize(controllerOrView: Controller | View, slot: ViewSlot): void {
-    this.viewSlot = slot;
+  public initialize(controllerOrView: Controller | View): void {
     if (isController(controllerOrView)) {
       this.controller = controllerOrView;
       this.view = this.controller.view;
