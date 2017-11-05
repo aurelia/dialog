@@ -7,7 +7,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 define(["require", "exports", "aurelia-templating", "aurelia-pal"], function (require, exports, aurelia_templating_1, aurelia_pal_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    var AttachFocus = (function () {
+    var AttachFocus = /** @class */ (function () {
         function AttachFocus(element) {
             this.element = element;
             this.value = true;
@@ -20,14 +20,15 @@ define(["require", "exports", "aurelia-templating", "aurelia-pal"], function (re
         AttachFocus.prototype.valueChanged = function (newValue) {
             this.value = newValue;
         };
+        /**
+         * @internal
+         */
+        // tslint:disable-next-line:member-ordering
+        AttachFocus.inject = [aurelia_pal_1.DOM.Element];
+        AttachFocus = __decorate([
+            aurelia_templating_1.customAttribute('attach-focus')
+        ], AttachFocus);
         return AttachFocus;
     }());
-    /**
-     * @internal
-     */
-    AttachFocus.inject = [aurelia_pal_1.DOM.Element];
-    AttachFocus = __decorate([
-        aurelia_templating_1.customAttribute('attach-focus')
-    ], AttachFocus);
     exports.AttachFocus = AttachFocus;
 });

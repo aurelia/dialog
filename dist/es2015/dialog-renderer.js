@@ -32,22 +32,25 @@ export const transitionEvent = (() => {
 })();
 export const hasTransition = (() => {
     const unprefixedName = 'transitionDuration';
-    const el = DOM.createElement('fakeelement');
     const prefixedNames = ['webkitTransitionDuration', 'oTransitionDuration'];
+    let el;
     let transitionDurationName;
-    if (unprefixedName in el.style) {
-        transitionDurationName = unprefixedName;
-    }
-    else {
-        transitionDurationName = prefixedNames.find(prefixed => (prefixed in el.style));
-    }
     return (element) => {
+        if (!el) {
+            el = DOM.createElement('fakeelement');
+            if (unprefixedName in el.style) {
+                transitionDurationName = unprefixedName;
+            }
+            else {
+                transitionDurationName = prefixedNames.find(prefixed => (prefixed in el.style));
+            }
+        }
         return !!transitionDurationName && !!(DOM.getComputedStyle(element)[transitionDurationName]
             .split(',')
             .find((duration) => !!parseFloat(duration)));
     };
 })();
-const body = DOM.querySelectorAll('body')[0];
+let body;
 function getActionKey(e) {
     if ((e.code || e.key) === 'Escape' || e.keyCode === 27) {
         return 'Escape';
@@ -162,6 +165,7 @@ let DialogRenderer = DialogRenderer_1 = class DialogRenderer {
     }
     awaitTransition(setActiveInactive, ignore) {
         return new Promise(resolve => {
+            // tslint:disable-next-line:no-this-assignment
             const renderer = this;
             const eventName = transitionEvent();
             function onTransitionEnd(e) {
@@ -184,6 +188,9 @@ let DialogRenderer = DialogRenderer_1 = class DialogRenderer {
         return this.anchor || (this.anchor = DOM.createElement('div'));
     }
     showDialog(dialogController) {
+        if (!body) {
+            body = DOM.querySelectorAll('body')[0];
+        }
         if (dialogController.settings.host) {
             this.host = dialogController.settings.host;
         }

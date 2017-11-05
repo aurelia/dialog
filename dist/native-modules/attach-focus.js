@@ -6,7 +6,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { customAttribute } from 'aurelia-templating';
 import { DOM } from 'aurelia-pal';
-var AttachFocus = (function () {
+var AttachFocus = /** @class */ (function () {
     function AttachFocus(element) {
         this.element = element;
         this.value = true;
@@ -19,13 +19,14 @@ var AttachFocus = (function () {
     AttachFocus.prototype.valueChanged = function (newValue) {
         this.value = newValue;
     };
+    /**
+     * @internal
+     */
+    // tslint:disable-next-line:member-ordering
+    AttachFocus.inject = [DOM.Element];
+    AttachFocus = __decorate([
+        customAttribute('attach-focus')
+    ], AttachFocus);
     return AttachFocus;
 }());
-/**
- * @internal
- */
-AttachFocus.inject = [DOM.Element];
-AttachFocus = __decorate([
-    customAttribute('attach-focus')
-], AttachFocus);
 export { AttachFocus };

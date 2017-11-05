@@ -31,9 +31,11 @@ System.register(["./renderer", "./dialog-settings", "./dialog-renderer", "aureli
             /**
              * A configuration builder for the dialog plugin.
              */
-            DialogConfiguration = (function () {
+            DialogConfiguration = /** @class */ (function () {
                 function DialogConfiguration(frameworkConfiguration, applySetter) {
                     var _this = this;
+                    this.renderer = defaultRenderer;
+                    this.cssText = defaultCSSText;
                     this.resources = [];
                     this.fwConfig = frameworkConfiguration;
                     this.settings = this.fwConfig.container.get(dialog_settings_1.DefaultDialogSettings);
@@ -90,7 +92,7 @@ System.register(["./renderer", "./dialog-settings", "./dialog-renderer", "aureli
                     return this;
                 };
                 /**
-                 * Configures the plugin to use specific css.
+                 * Configures the plugin to use specific css. You can pass an empty string to clear any set css.
                  * @param cssText The css to use in place of the default styles.
                  * @return This instance.
                  */

@@ -1,7 +1,7 @@
 /**
  * @internal
  */
-var DefaultDialogSettings = (function () {
+var DefaultDialogSettings = /** @class */ (function () {
     function DefaultDialogSettings() {
         this.lock = true;
         this.startingZIndex = 1000;

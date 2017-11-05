@@ -8,7 +8,7 @@ System.register([], function (exports_1, context_1) {
             /**
              * @internal
              */
-            DefaultDialogSettings = (function () {
+            DefaultDialogSettings = /** @class */ (function () {
                 function DefaultDialogSettings() {
                     this.lock = true;
                     this.startingZIndex = 1000;

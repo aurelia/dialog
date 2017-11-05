@@ -16,7 +16,7 @@ function asDialogOpenPromise(promise) {
 /**
  * A service allowing for the creation of dialogs.
  */
-var DialogService = (function () {
+var DialogService = /** @class */ (function () {
     function DialogService(container, compositionEngine, defaultSettings) {
         /**
          * The current dialog controllers
@@ -52,7 +52,11 @@ var DialogService = (function () {
     };
     DialogService.prototype.ensureViewModel = function (compositionContext) {
         if (typeof compositionContext.viewModel === 'function') {
-            compositionContext.viewModel = Origin.get(compositionContext.viewModel).moduleId;
+            var moduleId = Origin.get(compositionContext.viewModel).moduleId;
+            if (!moduleId) {
+                return Promise.reject(new Error("Can not resolve \"moduleId\" of \"" + compositionContext.viewModel.name + "\"."));
+            }
+            compositionContext.viewModel = moduleId;
         }
         if (typeof compositionContext.viewModel === 'string') {
             return this.compositionEngine.ensureViewModel(compositionContext);
@@ -150,24 +154,25 @@ var DialogService = (function () {
                     if (result.wasCancelled) {
                         return controller;
                     }
-                    return;
+                    return null;
                 });
             }
-            return controller.cancel().then(function () { return; }).catch(function (reason) {
+            return controller.cancel().then(function () { return null; }).catch(function (reason) {
                 if (reason.wasCancelled) {
                     return controller;
                 }
-                return Promise.reject(reason);
+                throw reason;
             });
         })).then(function (unclosedControllers) { return unclosedControllers.filter(function (unclosed) { return !!unclosed; }); });
     };
+    /**
+     * @internal
+     */
+    // tslint:disable-next-line:member-ordering
+    DialogService.inject = [Container, CompositionEngine, DefaultDialogSettings];
     return DialogService;
 }());
 export { DialogService };
-/**
- * @internal
- */
-DialogService.inject = [Container, CompositionEngine, DefaultDialogSettings];
 function removeController(service, dialogController) {
     var i = service.controllers.indexOf(dialogController);
     if (i !== -1) {

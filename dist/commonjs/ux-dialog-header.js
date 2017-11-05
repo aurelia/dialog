@@ -8,7 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 var aurelia_templating_1 = require("aurelia-templating");
 var dialog_controller_1 = require("./dialog-controller");
-var UxDialogHeader = (function () {
+var UxDialogHeader = /** @class */ (function () {
     function UxDialogHeader(controller) {
         this.controller = controller;
     }
@@ -17,17 +17,18 @@ var UxDialogHeader = (function () {
             this.showCloseButton = !this.controller.settings.lock;
         }
     };
+    /**
+     * @internal
+     */
+    // tslint:disable-next-line:member-ordering
+    UxDialogHeader.inject = [dialog_controller_1.DialogController];
+    __decorate([
+        aurelia_templating_1.bindable()
+    ], UxDialogHeader.prototype, "showCloseButton", void 0);
+    UxDialogHeader = __decorate([
+        aurelia_templating_1.customElement('ux-dialog-header'),
+        aurelia_templating_1.inlineView("\n  <template>\n    <button\n      type=\"button\"\n      class=\"dialog-close\"\n      aria-label=\"Close\"\n      if.bind=\"showCloseButton\"\n      click.trigger=\"controller.cancel()\">\n      <span aria-hidden=\"true\">&times;</span>\n    </button>\n\n    <div class=\"dialog-header-content\">\n      <slot></slot>\n    </div>\n  </template>\n")
+    ], UxDialogHeader);
     return UxDialogHeader;
 }());
-/**
- * @internal
- */
-UxDialogHeader.inject = [dialog_controller_1.DialogController];
-__decorate([
-    aurelia_templating_1.bindable()
-], UxDialogHeader.prototype, "showCloseButton", void 0);
-UxDialogHeader = __decorate([
-    aurelia_templating_1.customElement('ux-dialog-header'),
-    aurelia_templating_1.inlineView("\n  <template>\n    <button\n      type=\"button\"\n      class=\"dialog-close\"\n      aria-label=\"Close\"\n      if.bind=\"showCloseButton\"\n      click.trigger=\"controller.cancel()\">\n      <span aria-hidden=\"true\">&times;</span>\n    </button>\n\n    <div class=\"dialog-header-content\">\n      <slot></slot>\n    </div>\n  </template>\n")
-], UxDialogHeader);
 exports.UxDialogHeader = UxDialogHeader;

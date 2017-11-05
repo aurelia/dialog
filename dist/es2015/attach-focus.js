@@ -23,6 +23,7 @@ let AttachFocus = class AttachFocus {
 /**
  * @internal
  */
+// tslint:disable-next-line:member-ordering
 AttachFocus.inject = [DOM.Element];
 AttachFocus = __decorate([
     customAttribute('attach-focus')

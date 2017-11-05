@@ -1,5 +1,6 @@
 import { Renderer } from './renderer';
 import { invokeLifecycle } from './lifecycle';
+import { createDialogCloseError } from './dialog-close-error';
 import { createDialogCancelError } from './dialog-cancel-error';
 /**
  * A controller object for a Dialog instance.
@@ -17,8 +18,8 @@ export class DialogController {
     /**
      * @internal
      */
-    releaseResources() {
-        return invokeLifecycle(this.controller.viewModel || {}, 'deactivate')
+    releaseResources(result) {
+        return invokeLifecycle(this.controller.viewModel || {}, 'deactivate', result)
             .then(() => this.renderer.hideDialog(this))
             .then(() => { this.controller.unbind(); });
     }
@@ -46,12 +47,13 @@ export class DialogController {
         return this.close(false, output);
     }
     /**
-     * Closes the dialog with an error result.
-     * @param message An error message.
+     * Closes the dialog with an error output.
+     * @param output A reason for closing with an error.
      * @returns Promise An empty promise object.
      */
-    error(message) {
-        return this.releaseResources().then(() => { this.reject(message); });
+    error(output) {
+        const closeError = createDialogCloseError(output);
+        return this.releaseResources(closeError).then(() => { this.reject(closeError); });
     }
     /**
      * Closes the dialog.
@@ -63,7 +65,9 @@ export class DialogController {
         if (this.closePromise) {
             return this.closePromise;
         }
-        return this.closePromise = invokeLifecycle(this.controller.viewModel || {}, 'canDeactivate').catch(reason => {
+        const dialogResult = { wasCancelled: !ok, output };
+        return this.closePromise = invokeLifecycle(this.controller.viewModel || {}, 'canDeactivate', dialogResult)
+            .catch(reason => {
             this.closePromise = undefined;
             return Promise.reject(reason);
         }).then(canDeactivate => {
@@ -71,9 +75,9 @@ export class DialogController {
                 this.closePromise = undefined; // we are done, do not block consecutive calls
                 return this.cancelOperation();
             }
-            return this.releaseResources().then(() => {
+            return this.releaseResources(dialogResult).then(() => {
                 if (!this.settings.rejectOnCancel || ok) {
-                    this.resolve({ wasCancelled: !ok, output });
+                    this.resolve(dialogResult);
                 }
                 else {
                     this.reject(createDialogCancelError(output));
@@ -89,4 +93,5 @@ export class DialogController {
 /**
  * @internal
  */
+// tslint:disable-next-line:member-ordering
 DialogController.inject = [Renderer];

@@ -5,13 +5,13 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { customElement, inlineView } from 'aurelia-templating';
-var UxDialog = (function () {
+var UxDialog = /** @class */ (function () {
     function UxDialog() {
     }
+    UxDialog = __decorate([
+        customElement('ux-dialog'),
+        inlineView("\n  <template>\n    <slot></slot>\n  </template>\n")
+    ], UxDialog);
     return UxDialog;
 }());
-UxDialog = __decorate([
-    customElement('ux-dialog'),
-    inlineView("\n  <template>\n    <slot></slot>\n  </template>\n")
-], UxDialog);
 export { UxDialog };

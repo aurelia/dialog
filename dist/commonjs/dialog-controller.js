@@ -2,11 +2,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var renderer_1 = require("./renderer");
 var lifecycle_1 = require("./lifecycle");
+var dialog_close_error_1 = require("./dialog-close-error");
 var dialog_cancel_error_1 = require("./dialog-cancel-error");
 /**
  * A controller object for a Dialog instance.
  */
-var DialogController = (function () {
+var DialogController = /** @class */ (function () {
     /**
      * Creates an instance of DialogController.
      */
@@ -19,9 +20,9 @@ var DialogController = (function () {
     /**
      * @internal
      */
-    DialogController.prototype.releaseResources = function () {
+    DialogController.prototype.releaseResources = function (result) {
         var _this = this;
-        return lifecycle_1.invokeLifecycle(this.controller.viewModel || {}, 'deactivate')
+        return lifecycle_1.invokeLifecycle(this.controller.viewModel || {}, 'deactivate', result)
             .then(function () { return _this.renderer.hideDialog(_this); })
             .then(function () { _this.controller.unbind(); });
     };
@@ -49,13 +50,14 @@ var DialogController = (function () {
         return this.close(false, output);
     };
     /**
-     * Closes the dialog with an error result.
-     * @param message An error message.
+     * Closes the dialog with an error output.
+     * @param output A reason for closing with an error.
      * @returns Promise An empty promise object.
      */
-    DialogController.prototype.error = function (message) {
+    DialogController.prototype.error = function (output) {
         var _this = this;
-        return this.releaseResources().then(function () { _this.reject(message); });
+        var closeError = dialog_close_error_1.createDialogCloseError(output);
+        return this.releaseResources(closeError).then(function () { _this.reject(closeError); });
     };
     /**
      * Closes the dialog.
@@ -68,7 +70,9 @@ var DialogController = (function () {
         if (this.closePromise) {
             return this.closePromise;
         }
-        return this.closePromise = lifecycle_1.invokeLifecycle(this.controller.viewModel || {}, 'canDeactivate').catch(function (reason) {
+        var dialogResult = { wasCancelled: !ok, output: output };
+        return this.closePromise = lifecycle_1.invokeLifecycle(this.controller.viewModel || {}, 'canDeactivate', dialogResult)
+            .catch(function (reason) {
             _this.closePromise = undefined;
             return Promise.reject(reason);
         }).then(function (canDeactivate) {
@@ -76,9 +80,9 @@ var DialogController = (function () {
                 _this.closePromise = undefined; // we are done, do not block consecutive calls
                 return _this.cancelOperation();
             }
-            return _this.releaseResources().then(function () {
+            return _this.releaseResources(dialogResult).then(function () {
                 if (!_this.settings.rejectOnCancel || ok) {
-                    _this.resolve({ wasCancelled: !ok, output: output });
+                    _this.resolve(dialogResult);
                 }
                 else {
                     _this.reject(dialog_cancel_error_1.createDialogCancelError(output));
@@ -90,10 +94,11 @@ var DialogController = (function () {
             });
         });
     };
+    /**
+     * @internal
+     */
+    // tslint:disable-next-line:member-ordering
+    DialogController.inject = [renderer_1.Renderer];
     return DialogController;
 }());
-/**
- * @internal
- */
-DialogController.inject = [renderer_1.Renderer];
 exports.DialogController = DialogController;

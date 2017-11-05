@@ -7,14 +7,14 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 define(["require", "exports", "aurelia-templating"], function (require, exports, aurelia_templating_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    var UxDialogBody = (function () {
+    var UxDialogBody = /** @class */ (function () {
         function UxDialogBody() {
         }
+        UxDialogBody = __decorate([
+            aurelia_templating_1.customElement('ux-dialog-body'),
+            aurelia_templating_1.inlineView("\n  <template>\n    <slot></slot>\n  </template>\n")
+        ], UxDialogBody);
         return UxDialogBody;
     }());
-    UxDialogBody = __decorate([
-        aurelia_templating_1.customElement('ux-dialog-body'),
-        aurelia_templating_1.inlineView("\n  <template>\n    <slot></slot>\n  </template>\n")
-    ], UxDialogBody);
     exports.UxDialogBody = UxDialogBody;
 });

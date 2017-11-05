@@ -1,7 +1,7 @@
-System.register(["./renderer", "./lifecycle", "./dialog-cancel-error"], function (exports_1, context_1) {
+System.register(["./renderer", "./lifecycle", "./dialog-close-error", "./dialog-cancel-error"], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var renderer_1, lifecycle_1, dialog_cancel_error_1, DialogController;
+    var renderer_1, lifecycle_1, dialog_close_error_1, dialog_cancel_error_1, DialogController;
     return {
         setters: [
             function (renderer_1_1) {
@@ -10,15 +10,15 @@ System.register(["./renderer", "./lifecycle", "./dialog-cancel-error"], function
             function (lifecycle_1_1) {
                 lifecycle_1 = lifecycle_1_1;
             },
+            function (dialog_close_error_1_1) {
+                dialog_close_error_1 = dialog_close_error_1_1;
+            },
             function (dialog_cancel_error_1_1) {
                 dialog_cancel_error_1 = dialog_cancel_error_1_1;
             }
         ],
         execute: function () {
-            /**
-             * A controller object for a Dialog instance.
-             */
-            DialogController = (function () {
+            DialogController = /** @class */ (function () {
                 /**
                  * Creates an instance of DialogController.
                  */
@@ -31,9 +31,9 @@ System.register(["./renderer", "./lifecycle", "./dialog-cancel-error"], function
                 /**
                  * @internal
                  */
-                DialogController.prototype.releaseResources = function () {
+                DialogController.prototype.releaseResources = function (result) {
                     var _this = this;
-                    return lifecycle_1.invokeLifecycle(this.controller.viewModel || {}, 'deactivate')
+                    return lifecycle_1.invokeLifecycle(this.controller.viewModel || {}, 'deactivate', result)
                         .then(function () { return _this.renderer.hideDialog(_this); })
                         .then(function () { _this.controller.unbind(); });
                 };
@@ -61,13 +61,14 @@ System.register(["./renderer", "./lifecycle", "./dialog-cancel-error"], function
                     return this.close(false, output);
                 };
                 /**
-                 * Closes the dialog with an error result.
-                 * @param message An error message.
+                 * Closes the dialog with an error output.
+                 * @param output A reason for closing with an error.
                  * @returns Promise An empty promise object.
                  */
-                DialogController.prototype.error = function (message) {
+                DialogController.prototype.error = function (output) {
                     var _this = this;
-                    return this.releaseResources().then(function () { _this.reject(message); });
+                    var closeError = dialog_close_error_1.createDialogCloseError(output);
+                    return this.releaseResources(closeError).then(function () { _this.reject(closeError); });
                 };
                 /**
                  * Closes the dialog.
@@ -80,7 +81,9 @@ System.register(["./renderer", "./lifecycle", "./dialog-cancel-error"], function
                     if (this.closePromise) {
                         return this.closePromise;
                     }
-                    return this.closePromise = lifecycle_1.invokeLifecycle(this.controller.viewModel || {}, 'canDeactivate').catch(function (reason) {
+                    var dialogResult = { wasCancelled: !ok, output: output };
+                    return this.closePromise = lifecycle_1.invokeLifecycle(this.controller.viewModel || {}, 'canDeactivate', dialogResult)
+                        .catch(function (reason) {
                         _this.closePromise = undefined;
                         return Promise.reject(reason);
                     }).then(function (canDeactivate) {
@@ -88,9 +91,9 @@ System.register(["./renderer", "./lifecycle", "./dialog-cancel-error"], function
                             _this.closePromise = undefined; // we are done, do not block consecutive calls
                             return _this.cancelOperation();
                         }
-                        return _this.releaseResources().then(function () {
+                        return _this.releaseResources(dialogResult).then(function () {
                             if (!_this.settings.rejectOnCancel || ok) {
-                                _this.resolve({ wasCancelled: !ok, output: output });
+                                _this.resolve(dialogResult);
                             }
                             else {
                                 _this.reject(dialog_cancel_error_1.createDialogCancelError(output));
@@ -102,12 +105,13 @@ System.register(["./renderer", "./lifecycle", "./dialog-cancel-error"], function
                         });
                     });
                 };
+                /**
+                 * @internal
+                 */
+                // tslint:disable-next-line:member-ordering
+                DialogController.inject = [renderer_1.Renderer];
                 return DialogController;
             }());
-            /**
-             * @internal
-             */
-            DialogController.inject = [renderer_1.Renderer];
             exports_1("DialogController", DialogController);
         }
     };

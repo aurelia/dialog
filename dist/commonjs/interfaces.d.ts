@@ -1,3 +1,5 @@
+import { DialogCloseError } from './dialog-close-error';
+import { DialogCloseResult } from './dialog-result';
 /**
  * An optional interface describing the dialog canActivate convention.
  */
@@ -27,7 +29,7 @@ export interface DialogComponentCanDeactivate {
      * To cancel the closing of the dialog return false or a promise that resolves to false.
      * Any other returned value is coerced to true.
      */
-    canDeactivate(): boolean | Promise<boolean> | PromiseLike<boolean>;
+    canDeactivate(result: DialogCloseResult): boolean | Promise<boolean> | PromiseLike<boolean>;
 }
 /**
  * An optional interface describing the dialog deactivate convention.
@@ -36,5 +38,5 @@ export interface DialogComponentDeactivate {
     /**
      * Implement this hook if you want to perform custom logic when the dialog is being closed.
      */
-    deactivate(): void | Promise<void> | PromiseLike<void>;
+    deactivate(result: DialogCloseResult | DialogCloseError): void | Promise<void> | PromiseLike<void>;
 }

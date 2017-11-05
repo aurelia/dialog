@@ -15,15 +15,15 @@ System.register(["aurelia-templating"], function (exports_1, context_1) {
             }
         ],
         execute: function () {
-            UxDialog = (function () {
+            UxDialog = /** @class */ (function () {
                 function UxDialog() {
                 }
+                UxDialog = __decorate([
+                    aurelia_templating_1.customElement('ux-dialog'),
+                    aurelia_templating_1.inlineView("\n  <template>\n    <slot></slot>\n  </template>\n")
+                ], UxDialog);
                 return UxDialog;
             }());
-            UxDialog = __decorate([
-                aurelia_templating_1.customElement('ux-dialog'),
-                aurelia_templating_1.inlineView("\n  <template>\n    <slot></slot>\n  </template>\n")
-            ], UxDialog);
             exports_1("UxDialog", UxDialog);
         }
     };

@@ -35,6 +35,7 @@ let UxDialogFooter = UxDialogFooter_1 = class UxDialogFooter {
 /**
  * @internal
  */
+// tslint:disable-next-line:member-ordering
 UxDialogFooter.inject = [DialogController];
 __decorate([
     bindable

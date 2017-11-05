@@ -29,11 +29,11 @@ export declare class DialogController {
      */
     cancel(output?: any): Promise<DialogCancelableOperationResult>;
     /**
-     * Closes the dialog with an error result.
-     * @param message An error message.
+     * Closes the dialog with an error output.
+     * @param output A reason for closing with an error.
      * @returns Promise An empty promise object.
      */
-    error(message: any): Promise<void>;
+    error(output: any): Promise<void>;
     /**
      * Closes the dialog.
      * @param ok Whether or not the user input signified success.

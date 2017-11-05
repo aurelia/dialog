@@ -4,7 +4,7 @@ define(["require", "exports"], function (require, exports) {
     /**
      * An abstract base class for implementors of the basic Renderer API.
      */
-    var Renderer = (function () {
+    var Renderer = /** @class */ (function () {
         function Renderer() {
         }
         /**

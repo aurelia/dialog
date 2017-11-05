@@ -19,6 +19,7 @@ let UxDialogHeader = class UxDialogHeader {
 /**
  * @internal
  */
+// tslint:disable-next-line:member-ordering
 UxDialogHeader.inject = [DialogController];
 __decorate([
     bindable()

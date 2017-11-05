@@ -1,3 +1,28 @@
+<a name="1.0.0-rc.2.0.0"></a>
+# [1.0.0-rc.2.0.0](https://github.com/aurelia/dialog/compare/1.0.0-rc.1.0.3...1.0.0-rc.2.0.0) (2017-11-05)
+
+
+### Bug Fixes
+
+* **dialog-configuration:** set defaults for ".renderer" and ".cssText" ([fd58f2a](https://github.com/aurelia/dialog/commit/fd58f2a)), closes [#307](https://github.com/aurelia/dialog/issues/307)
+* **dialog-renderer:** lazy DOM access fix [#294](https://github.com/aurelia/dialog/issues/294) ([f71ecf8](https://github.com/aurelia/dialog/commit/f71ecf8))
+* **dialog-service:** fix no fail for undefined moduleId ([e90a9d8](https://github.com/aurelia/dialog/commit/e90a9d8)), closes [#312](https://github.com/aurelia/dialog/issues/312)
+* **typings:** fix as it was in [#280](https://github.com/aurelia/dialog/issues/280) ([c6dd762](https://github.com/aurelia/dialog/commit/c6dd762))
+
+
+### Features
+
+* **dialog-controller:** add param to canDeactivate / deactivate functions. ([42ad7f3](https://github.com/aurelia/dialog/commit/42ad7f3))
+* **dialog-controller:** pass close result to lifecycle hooks ([320504c](https://github.com/aurelia/dialog/commit/320504c))
+
+
+### BREAKING CHANGES
+
+* **dialog-controller:** - DialogController.prototype.error wraps the passed reason
+in DialogCloseError
+
+
+
 <a name="1.0.0-rc.1.0.3"></a>
 # [1.0.0-rc.1.0.3](https://github.com/aurelia/dialog/compare/1.0.0-rc.1.0.2...v1.0.0-rc.1.0.3) (2017-05-05)
 

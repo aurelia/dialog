@@ -16,7 +16,7 @@ System.register(["aurelia-pal", "aurelia-dependency-injection"], function (expor
         }
         return undefined;
     }
-    var aurelia_pal_1, aurelia_dependency_injection_1, containerTagName, overlayTagName, transitionEvent, hasTransition, body, DialogRenderer, DialogRenderer_1;
+    var aurelia_pal_1, aurelia_dependency_injection_1, containerTagName, overlayTagName, transitionEvent, hasTransition, body, DialogRenderer;
     return {
         setters: [
             function (aurelia_pal_1_1) {
@@ -53,25 +53,28 @@ System.register(["aurelia-pal", "aurelia-dependency-injection"], function (expor
             })());
             exports_1("hasTransition", hasTransition = (function () {
                 var unprefixedName = 'transitionDuration';
-                var el = aurelia_pal_1.DOM.createElement('fakeelement');
                 var prefixedNames = ['webkitTransitionDuration', 'oTransitionDuration'];
+                var el;
                 var transitionDurationName;
-                if (unprefixedName in el.style) {
-                    transitionDurationName = unprefixedName;
-                }
-                else {
-                    transitionDurationName = prefixedNames.find(function (prefixed) { return (prefixed in el.style); });
-                }
                 return function (element) {
+                    if (!el) {
+                        el = aurelia_pal_1.DOM.createElement('fakeelement');
+                        if (unprefixedName in el.style) {
+                            transitionDurationName = unprefixedName;
+                        }
+                        else {
+                            transitionDurationName = prefixedNames.find(function (prefixed) { return (prefixed in el.style); });
+                        }
+                    }
                     return !!transitionDurationName && !!(aurelia_pal_1.DOM.getComputedStyle(element)[transitionDurationName]
                         .split(',')
                         .find(function (duration) { return !!parseFloat(duration); }));
                 };
             })());
-            body = aurelia_pal_1.DOM.querySelectorAll('body')[0];
-            DialogRenderer = DialogRenderer_1 = (function () {
+            DialogRenderer = /** @class */ (function () {
                 function DialogRenderer() {
                 }
+                DialogRenderer_1 = DialogRenderer;
                 DialogRenderer.keyboardEventHandler = function (e) {
                     var key = getActionKey(e);
                     if (!key) {
@@ -177,6 +180,7 @@ System.register(["aurelia-pal", "aurelia-dependency-injection"], function (expor
                 DialogRenderer.prototype.awaitTransition = function (setActiveInactive, ignore) {
                     var _this = this;
                     return new Promise(function (resolve) {
+                        // tslint:disable-next-line:no-this-assignment
                         var renderer = _this;
                         var eventName = transitionEvent();
                         function onTransitionEnd(e) {
@@ -200,6 +204,9 @@ System.register(["aurelia-pal", "aurelia-dependency-injection"], function (expor
                 };
                 DialogRenderer.prototype.showDialog = function (dialogController) {
                     var _this = this;
+                    if (!body) {
+                        body = aurelia_pal_1.DOM.querySelectorAll('body')[0];
+                    }
                     if (dialogController.settings.host) {
                         this.host = dialogController.settings.host;
                     }
@@ -225,12 +232,13 @@ System.register(["aurelia-pal", "aurelia-dependency-injection"], function (expor
                     return this.awaitTransition(function () { return _this.setAsInactive(); }, dialogController.settings.ignoreTransitions)
                         .then(function () { _this.detach(dialogController); });
                 };
+                DialogRenderer.dialogControllers = [];
+                DialogRenderer = DialogRenderer_1 = __decorate([
+                    aurelia_dependency_injection_1.transient()
+                ], DialogRenderer);
                 return DialogRenderer;
+                var DialogRenderer_1;
             }());
-            DialogRenderer.dialogControllers = [];
-            DialogRenderer = DialogRenderer_1 = __decorate([
-                aurelia_dependency_injection_1.transient()
-            ], DialogRenderer);
             exports_1("DialogRenderer", DialogRenderer);
         }
     };

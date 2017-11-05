@@ -11,7 +11,7 @@ export declare class DialogConfiguration {
     private cssText;
     private resources;
     /**
-     * The configuration settings.
+     * The global configuration settings.
      */
     settings: DialogSettings;
     constructor(frameworkConfiguration: FrameworkConfiguration, applySetter: (apply: () => void) => void);
@@ -40,7 +40,7 @@ export declare class DialogConfiguration {
      */
     useRenderer(renderer: RendererStatic, settings?: DialogSettings): this;
     /**
-     * Configures the plugin to use specific css.
+     * Configures the plugin to use specific css. You can pass an empty string to clear any set css.
      * @param cssText The css to use in place of the default styles.
      * @return This instance.
      */

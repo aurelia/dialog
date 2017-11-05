@@ -8,7 +8,7 @@ System.register([], function (exports_1, context_1) {
             /**
              * An abstract base class for implementors of the basic Renderer API.
              */
-            Renderer = (function () {
+            Renderer = /** @class */ (function () {
                 function Renderer() {
                 }
                 /**

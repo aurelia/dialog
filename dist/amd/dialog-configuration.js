@@ -14,9 +14,11 @@ define(["require", "exports", "./renderer", "./dialog-settings", "./dialog-rende
     /**
      * A configuration builder for the dialog plugin.
      */
-    var DialogConfiguration = (function () {
+    var DialogConfiguration = /** @class */ (function () {
         function DialogConfiguration(frameworkConfiguration, applySetter) {
             var _this = this;
+            this.renderer = defaultRenderer;
+            this.cssText = defaultCSSText;
             this.resources = [];
             this.fwConfig = frameworkConfiguration;
             this.settings = this.fwConfig.container.get(dialog_settings_1.DefaultDialogSettings);
@@ -73,7 +75,7 @@ define(["require", "exports", "./renderer", "./dialog-settings", "./dialog-rende
             return this;
         };
         /**
-         * Configures the plugin to use specific css.
+         * Configures the plugin to use specific css. You can pass an empty string to clear any set css.
          * @param cssText The css to use in place of the default styles.
          * @return This instance.
          */

@@ -52,7 +52,11 @@ export class DialogService {
     }
     ensureViewModel(compositionContext) {
         if (typeof compositionContext.viewModel === 'function') {
-            compositionContext.viewModel = Origin.get(compositionContext.viewModel).moduleId;
+            const moduleId = Origin.get(compositionContext.viewModel).moduleId;
+            if (!moduleId) {
+                return Promise.reject(new Error(`Can not resolve "moduleId" of "${compositionContext.viewModel.name}".`));
+            }
+            compositionContext.viewModel = moduleId;
         }
         if (typeof compositionContext.viewModel === 'string') {
             return this.compositionEngine.ensureViewModel(compositionContext);
@@ -147,14 +151,14 @@ export class DialogService {
                     if (result.wasCancelled) {
                         return controller;
                     }
-                    return;
+                    return null;
                 });
             }
-            return controller.cancel().then(() => { return; }).catch(reason => {
+            return controller.cancel().then(() => null).catch(reason => {
                 if (reason.wasCancelled) {
                     return controller;
                 }
-                return Promise.reject(reason);
+                throw reason;
             });
         })).then(unclosedControllers => unclosedControllers.filter(unclosed => !!unclosed));
     }
@@ -162,6 +166,7 @@ export class DialogService {
 /**
  * @internal
  */
+// tslint:disable-next-line:member-ordering
 DialogService.inject = [Container, CompositionEngine, DefaultDialogSettings];
 function removeController(service, dialogController) {
     const i = service.controllers.indexOf(dialogController);

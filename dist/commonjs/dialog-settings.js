@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @internal
  */
-var DefaultDialogSettings = (function () {
+var DefaultDialogSettings = /** @class */ (function () {
     function DefaultDialogSettings() {
         this.lock = true;
         this.startingZIndex = 1000;

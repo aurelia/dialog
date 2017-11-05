@@ -7,7 +7,7 @@ System.register(["aurelia-templating", "./dialog-controller"], function (exports
         return c > 3 && r && Object.defineProperty(target, key, r), r;
     };
     var __moduleName = context_1 && context_1.id;
-    var aurelia_templating_1, dialog_controller_1, UxDialogFooter, UxDialogFooter_1;
+    var aurelia_templating_1, dialog_controller_1, UxDialogFooter;
     return {
         setters: [
             function (aurelia_templating_1_1) {
@@ -18,12 +18,13 @@ System.register(["aurelia-templating", "./dialog-controller"], function (exports
             }
         ],
         execute: function () {
-            UxDialogFooter = UxDialogFooter_1 = (function () {
+            UxDialogFooter = /** @class */ (function () {
                 function UxDialogFooter(controller) {
                     this.controller = controller;
                     this.buttons = [];
                     this.useDefaultButtons = false;
                 }
+                UxDialogFooter_1 = UxDialogFooter;
                 UxDialogFooter.isCancelButton = function (value) {
                     return value === 'Cancel';
                 };
@@ -40,22 +41,24 @@ System.register(["aurelia-templating", "./dialog-controller"], function (exports
                         this.buttons = ['Cancel', 'Ok'];
                     }
                 };
+                /**
+                 * @internal
+                 */
+                // tslint:disable-next-line:member-ordering
+                UxDialogFooter.inject = [dialog_controller_1.DialogController];
+                __decorate([
+                    aurelia_templating_1.bindable
+                ], UxDialogFooter.prototype, "buttons", void 0);
+                __decorate([
+                    aurelia_templating_1.bindable
+                ], UxDialogFooter.prototype, "useDefaultButtons", void 0);
+                UxDialogFooter = UxDialogFooter_1 = __decorate([
+                    aurelia_templating_1.customElement('ux-dialog-footer'),
+                    aurelia_templating_1.inlineView("\n  <template>\n    <slot></slot>\n    <template if.bind=\"buttons.length > 0\">\n      <button type=\"button\"\n        class=\"btn btn-default\"\n        repeat.for=\"button of buttons\"\n        click.trigger=\"close(button)\">\n        ${button}\n      </button>\n    </template>\n  </template>\n")
+                ], UxDialogFooter);
                 return UxDialogFooter;
+                var UxDialogFooter_1;
             }());
-            /**
-             * @internal
-             */
-            UxDialogFooter.inject = [dialog_controller_1.DialogController];
-            __decorate([
-                aurelia_templating_1.bindable
-            ], UxDialogFooter.prototype, "buttons", void 0);
-            __decorate([
-                aurelia_templating_1.bindable
-            ], UxDialogFooter.prototype, "useDefaultButtons", void 0);
-            UxDialogFooter = UxDialogFooter_1 = __decorate([
-                aurelia_templating_1.customElement('ux-dialog-footer'),
-                aurelia_templating_1.inlineView("\n  <template>\n    <slot></slot>\n    <template if.bind=\"buttons.length > 0\">\n      <button type=\"button\"\n        class=\"btn btn-default\"\n        repeat.for=\"button of buttons\"\n        click.trigger=\"close(button)\">\n        ${button}\n      </button>\n    </template>\n  </template>\n")
-            ], UxDialogFooter);
             exports_1("UxDialogFooter", UxDialogFooter);
         }
     };

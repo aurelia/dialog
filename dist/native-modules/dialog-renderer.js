@@ -32,22 +32,25 @@ export var transitionEvent = (function () {
 })();
 export var hasTransition = (function () {
     var unprefixedName = 'transitionDuration';
-    var el = DOM.createElement('fakeelement');
     var prefixedNames = ['webkitTransitionDuration', 'oTransitionDuration'];
+    var el;
     var transitionDurationName;
-    if (unprefixedName in el.style) {
-        transitionDurationName = unprefixedName;
-    }
-    else {
-        transitionDurationName = prefixedNames.find(function (prefixed) { return (prefixed in el.style); });
-    }
     return function (element) {
+        if (!el) {
+            el = DOM.createElement('fakeelement');
+            if (unprefixedName in el.style) {
+                transitionDurationName = unprefixedName;
+            }
+            else {
+                transitionDurationName = prefixedNames.find(function (prefixed) { return (prefixed in el.style); });
+            }
+        }
         return !!transitionDurationName && !!(DOM.getComputedStyle(element)[transitionDurationName]
             .split(',')
             .find(function (duration) { return !!parseFloat(duration); }));
     };
 })();
-var body = DOM.querySelectorAll('body')[0];
+var body;
 function getActionKey(e) {
     if ((e.code || e.key) === 'Escape' || e.keyCode === 27) {
         return 'Escape';
@@ -57,9 +60,10 @@ function getActionKey(e) {
     }
     return undefined;
 }
-var DialogRenderer = DialogRenderer_1 = (function () {
+var DialogRenderer = /** @class */ (function () {
     function DialogRenderer() {
     }
+    DialogRenderer_1 = DialogRenderer;
     DialogRenderer.keyboardEventHandler = function (e) {
         var key = getActionKey(e);
         if (!key) {
@@ -165,6 +169,7 @@ var DialogRenderer = DialogRenderer_1 = (function () {
     DialogRenderer.prototype.awaitTransition = function (setActiveInactive, ignore) {
         var _this = this;
         return new Promise(function (resolve) {
+            // tslint:disable-next-line:no-this-assignment
             var renderer = _this;
             var eventName = transitionEvent();
             function onTransitionEnd(e) {
@@ -188,6 +193,9 @@ var DialogRenderer = DialogRenderer_1 = (function () {
     };
     DialogRenderer.prototype.showDialog = function (dialogController) {
         var _this = this;
+        if (!body) {
+            body = DOM.querySelectorAll('body')[0];
+        }
         if (dialogController.settings.host) {
             this.host = dialogController.settings.host;
         }
@@ -213,11 +221,11 @@ var DialogRenderer = DialogRenderer_1 = (function () {
         return this.awaitTransition(function () { return _this.setAsInactive(); }, dialogController.settings.ignoreTransitions)
             .then(function () { _this.detach(dialogController); });
     };
+    DialogRenderer.dialogControllers = [];
+    DialogRenderer = DialogRenderer_1 = __decorate([
+        transient()
+    ], DialogRenderer);
     return DialogRenderer;
+    var DialogRenderer_1;
 }());
-DialogRenderer.dialogControllers = [];
-DialogRenderer = DialogRenderer_1 = __decorate([
-    transient()
-], DialogRenderer);
 export { DialogRenderer };
-var DialogRenderer_1;

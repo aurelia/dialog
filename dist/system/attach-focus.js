@@ -18,7 +18,7 @@ System.register(["aurelia-templating", "aurelia-pal"], function (exports_1, cont
             }
         ],
         execute: function () {
-            AttachFocus = (function () {
+            AttachFocus = /** @class */ (function () {
                 function AttachFocus(element) {
                     this.element = element;
                     this.value = true;
@@ -31,15 +31,16 @@ System.register(["aurelia-templating", "aurelia-pal"], function (exports_1, cont
                 AttachFocus.prototype.valueChanged = function (newValue) {
                     this.value = newValue;
                 };
+                /**
+                 * @internal
+                 */
+                // tslint:disable-next-line:member-ordering
+                AttachFocus.inject = [aurelia_pal_1.DOM.Element];
+                AttachFocus = __decorate([
+                    aurelia_templating_1.customAttribute('attach-focus')
+                ], AttachFocus);
                 return AttachFocus;
             }());
-            /**
-             * @internal
-             */
-            AttachFocus.inject = [aurelia_pal_1.DOM.Element];
-            AttachFocus = __decorate([
-                aurelia_templating_1.customAttribute('attach-focus')
-            ], AttachFocus);
             exports_1("AttachFocus", AttachFocus);
         }
     };
