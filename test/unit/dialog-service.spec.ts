@@ -1,7 +1,7 @@
 import { Container } from 'aurelia-dependency-injection';
 import { Loader } from 'aurelia-loader';
 import { DefaultLoader } from 'aurelia-loader-default';
-import { BindingLanguage, CompositionEngine } from 'aurelia-templating';
+import { BindingLanguage } from 'aurelia-templating';
 import { TemplatingBindingLanguage } from 'aurelia-templating-binding';
 import { DOM } from 'aurelia-pal';
 import { DialogCancelError } from '../../src/dialog-cancel-error';
@@ -15,7 +15,6 @@ import { TestElement } from '../fixtures/test-element';
 describe('DialogService', () => {
   let dialogService: DialogService;
   let container: Container;
-  let compositionEngine: CompositionEngine;
   let renderer: Renderer;
 
   async function _success<T>(action: () => Promise<T>, done: DoneFn): Promise<T> {
@@ -58,7 +57,6 @@ describe('DialogService', () => {
     container.registerInstance(Renderer, renderer);
     container.registerSingleton(DefaultDialogSettings);
     container.get(DefaultDialogSettings).viewModel = TestElement;
-    compositionEngine = container.get(CompositionEngine);
     dialogService = container.get(DialogService);
   });
 
