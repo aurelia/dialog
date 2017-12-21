@@ -23,19 +23,19 @@ This article covers the dialog plugin for Aurelia.  This plugin is created for s
 
 1. In your **JSPM**-based project install the plugin via `jspm` with following command
 
-```shell
+```Shell
 jspm install aurelia-dialog
 ```
 
 If you use **Webpack**, install the plugin with the following command
 
-```shell
+```Shell
 npm install aurelia-dialog --save
 ```
 
 If you use the **Aurelia CLI**, install the plugin with the following command
 
-```shell
+```Shell
 npm install aurelia-dialog --save
 ```
 
@@ -59,7 +59,7 @@ and then add a section in your `aurelia.json` for the plugin
 
 If you use TypeScript, install the plugin's typings with the following command
 
-```shell
+```Shell
 typings install github:aurelia/dialog --save
 ```
 
@@ -87,9 +87,11 @@ typings install github:aurelia/dialog --save
   </source-code>
 </code-listing>
 
-> Warning: When the `<body>` is marked with the `aurelia-app` attribute any dialog open prior to the app being attached to the DOM(before `Aurelia.prototype.setRoot` completes), will be *removed* from the DOM. Opening a dialog in the `canActivate` or `activate` hooks is *OK* in any scenario *if* you *await* it to close *before continuing*. If you just want to open a dialog, without awaiting it to close, do it the `attached` hook instead.
+> Warning
+> When the `<body>` is marked with the `aurelia-app` attribute any dialog open prior to the app being attached to the DOM(before `Aurelia.prototype.setRoot` completes), will be *removed* from the DOM. Opening a dialog in the `canActivate` or `activate` hooks is *OK* in any scenario *if* you *await* it to close *before continuing*. If you just want to open a dialog, without awaiting it to close, do it the `attached` hook instead.
 
-> Warning: `PLATFORM.moduleName` should *not* be omitted if you are using Webpack.
+> Warning
+> `PLATFORM.moduleName` should *not* be omitted if you are using Webpack.
 
 ## [Using The Plugin](aurelia-doc://section/3/version/1.0.0)
 
@@ -246,7 +248,7 @@ You can specify global settings as well for all dialogs to use when installing t
 The settings available for the dialog are set on the dialog controller on a per-dialog basis.
 - `viewModel` can be url, class reference or instance.
   - url - path relative to the application root.
-    ```
+    ```File System
     .
     +-- app.js
     +-- forms
@@ -258,15 +260,19 @@ The settings available for the dialog are set on the dialog controller on a per-
     ```
     If you want to open a `prompt` from `consent-form` the path will be `prompts/prompt`.
 
-    > Warning: Webpack users should *always* mark dynamically loaded dependencies with `PLATFORM.moduleName`. For more details do check the `aurelia-webpack-plugin` [wiki](https://github.com/aurelia/webpack-plugin/wiki).
+    > Warning
+    > Webpack users should *always* mark dynamically loaded dependencies with `PLATFORM.moduleName`. For more details do check the `aurelia-webpack-plugin` [wiki](https://github.com/aurelia/webpack-plugin/wiki).
 
   - object - it will be used as the view model. In this case `view` must also be specified.
   - class - the view model *class* or *constructor function*.
-    > Note: This approach depends on being able resolve the origin of the class.
+    > Info
+    > This approach depends on being able resolve the origin of the class.
 
-    > Note: Webpack users are advised to use the string overload, wrapped with `PLATFORM.moduleName`, instead of this one.
+    > Info
+    > Webpack users are advised to use the string overload, wrapped with `PLATFORM.moduleName`, instead of this one.
 
-    > Warning: This approach might not work for Webpack users when using *DLLPlugin* or *ModuleConcatenationPlugin*.
+    > Warning
+    > This approach might not work for Webpack users when using *DLLPlugin* or *ModuleConcatenationPlugin*.
 - `view` can be url or view strategy to override the default view location convention.
 - `model` the data to be passed to the `canActivate` and `activate` methods of the view model if implemented.
 - `host` allows providing the element which will parent the dialog - if not provided the body will be used.
@@ -280,7 +286,8 @@ If not provided a new child container will be created from the root one.
 - `ignoreTransitions` is a Boolean you must set to `true` if you disable css animation of your dialog. (optional, default to false)
 - `rejectOnCancel` is a Boolean you must set to `true` if you want to handle cancellations as rejection. The reason will be a `DialogCancelError` - the property `wasCancelled` will be set to `true` and if cancellation data was provided it will be set to the `output` property.
 
-> Warning: Plugin authors are advised to be explicit with settings that change behavior (`rejectOnCancel`).
+> Warning
+> Plugin authors are advised to be explicit with settings that change behavior (`rejectOnCancel`).
 
 <code-listing heading="prompt.js">
   <source-code lang="ES 2015">
@@ -338,14 +345,14 @@ It is possible to resolve and close (using cancel/ok/error methods) dialog in th
 
 ### Overlay With 50% Opacity
 
-Bootstrap adds 50% opacity and a background color of black to the modal.  To achieve this in dialog you can simply add the following CSS -
+Bootstrap adds 50% opacity and a background color of black to the modal.  To achieve this in dialog you can simply add the following CSS.
 
-<code-listing heading="welcome.js">
+<code-listing>
   <source-code lang="CSS">
-ux-dialog-overlay.active {
-  background-color: black;
-  opacity: .5;
-}
+    ux-dialog-overlay.active {
+      background-color: black;
+      opacity: .5;
+    }
   </source-code>
 </code-listing>
 
