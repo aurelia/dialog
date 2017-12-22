@@ -1,17 +1,7 @@
 ---
-{
-  "name": "Dialog: Basics",
-  "culture": "en-US",
-  "description": "The basics of the dialog plugin for Aurelia.",
-  "engines" : { "aurelia-doc" : "^1.0.0" },
-  "author": {
-    "name": "Patrick Walters",
-    "url": "http://patrickwalters.net"
-  },
-  "contributors": [],
-  "translators": [],
-  "keywords": ["Dialog", "Modal", "JavaScript", "TypeScript"]
-}
+name: "Dialog: Basics"
+description: The basics of the dialog plugin for Aurelia.
+author: Patrick Walters (http://patrickwalters.net)
 ---
 
 ## [Introduction](aurelia-doc://section/1/version/1.0.0)
