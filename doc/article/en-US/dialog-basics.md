@@ -4,12 +4,12 @@ description: The basics of the dialog plugin for Aurelia.
 author: Patrick Walters (http://patrickwalters.net)
 ---
 
-## [Introduction](aurelia-doc://section/1/version/1.0.0)
+## Introduction
 
 This article covers the dialog plugin for Aurelia.  This plugin is created for showing dialogs (sometimes referred to as modals) in your application.  The plugin supports the use of dynamic content for all aspects and is easily configurable / overridable.
 
 
-## [Installing The Plugin](aurelia-doc://section/2/version/1.0.0)
+## Installing The Plugin
 
 1. In your **JSPM**-based project install the plugin via `jspm` with following command
 
@@ -83,7 +83,7 @@ typings install github:aurelia/dialog --save
 > Warning
 > `PLATFORM.moduleName` should *not* be omitted if you are using Webpack.
 
-## [Using The Plugin](aurelia-doc://section/3/version/1.0.0)
+## Using The Plugin
 
 There are a few ways you can take advantage of the Aurelia dialog.
 
@@ -180,7 +180,7 @@ There is also an `output` property that gets returned with the outcome of the us
   </source-code>
 </code-listing>
 
-## [Attach Focus Custom Attribute](aurelia-doc://section/4/version/1.0.0)
+## Attach Focus Custom Attribute
 
 The library exposes an `attach-focus` custom attribute that allows focusing in on an element in the modal when it is loaded.  You can use this to focus a button, input, etc...  Example usage -
 
@@ -206,7 +206,7 @@ You can also bind the value of the attach-focus attribute if you want to alter w
   </source-code>
 </code-listing>
 
-## [Settings](aurelia-doc://section/5/version/1.0.0)
+## Settings
 
 ### Global Settings
 
@@ -295,7 +295,7 @@ If not provided a new child container will be created from the root one.
   </source-code>
 </code-listing>
 
-## [Accessing The DialogController API](aurelia-doc://section/6/version/1.0.0)
+## Accessing The DialogController API
 
 It is possible to resolve and close (using cancel/ok/error methods) dialog in the same context where you open it.
 
@@ -331,7 +331,7 @@ It is possible to resolve and close (using cancel/ok/error methods) dialog in th
   </source-code>
 </code-listing>
 
-## [Styling The Dialog](aurelia-doc://section/7/version/1.0.0)
+## Styling The Dialog
 
 ### Overlay With 50% Opacity
 
@@ -346,7 +346,7 @@ Bootstrap adds 50% opacity and a background color of black to the modal.  To ach
   </source-code>
 </code-listing>
 
-## [Lifecycle Hooks](aurelia-doc://section/8/version/1.0.0)
+## Lifecycle Hooks
 
 In adition to the lifecycle hooks defined by `aurelia-templating`, the `aurelia-dialog` defines additional ones. All dialog specific hooks can return a `Promise`, that resolves to the appropriate value for the hook, and will be awaited.
 
