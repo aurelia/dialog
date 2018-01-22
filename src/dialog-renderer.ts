@@ -4,8 +4,7 @@ import { ActionKey } from './dialog-settings';
 import { Renderer } from './renderer';
 import { DialogController } from './dialog-controller';
 
-const containerTagName = 'ux-dialog-container';
-const overlayTagName = 'ux-dialog-overlay';
+const containerTagName = 'dialog';
 
 export const transitionEvent = (() => {
   let transition: string | undefined;
@@ -51,9 +50,6 @@ export const hasTransition = (() => {
 let body: HTMLBodyElement;
 
 function getActionKey(e: KeyboardEvent): ActionKey | undefined {
-  if ((e.code || e.key) === 'Escape' || e.keyCode === 27) {
-    return 'Escape';
-  }
   if ((e.code || e.key) === 'Enter' || e.keyCode === 13) {
     return 'Enter';
   }
@@ -70,10 +66,7 @@ export class DialogRenderer implements Renderer {
     const top = DialogRenderer.dialogControllers[DialogRenderer.dialogControllers.length - 1];
     if (!top || !top.settings.keyboard) { return; }
     const keyboard = top.settings.keyboard;
-    if (key === 'Escape'
-      && (keyboard === true || keyboard === key || (Array.isArray(keyboard) && keyboard.indexOf(key) > -1))) {
-      top.cancel();
-    } else if (key === 'Enter' && (keyboard === key || (Array.isArray(keyboard) && keyboard.indexOf(key) > -1))) {
+    if (key === 'Enter' && (keyboard === key || (Array.isArray(keyboard) && keyboard.indexOf(key) > -1))) {
       top.ok();
     }
   }
@@ -97,9 +90,9 @@ export class DialogRenderer implements Renderer {
 
   private stopPropagation: (e: MouseEvent & { _aureliaDialogHostClicked: boolean }) => void;
   private closeDialogClick: (e: MouseEvent & { _aureliaDialogHostClicked: boolean }) => void;
+  private dialogCancel: (e: Event) => void;
 
-  public dialogContainer: HTMLElement;
-  public dialogOverlay: HTMLElement;
+  public dialogContainer: HTMLDialogElement;
   public host: Element;
   public anchor: Element;
 
@@ -117,28 +110,20 @@ export class DialogRenderer implements Renderer {
   private attach(dialogController: DialogController): void {
     const spacingWrapper = DOM.createElement('div'); // TODO: check if redundant
     spacingWrapper.appendChild(this.anchor);
-    this.dialogContainer = DOM.createElement(containerTagName) as HTMLElement;
+    this.dialogContainer = DOM.createElement(containerTagName) as HTMLDialogElement;
     this.dialogContainer.appendChild(spacingWrapper);
-    this.dialogOverlay = DOM.createElement(overlayTagName) as HTMLElement;
-    const zIndex = typeof dialogController.settings.startingZIndex === 'number'
-      ? dialogController.settings.startingZIndex + ''
-      : null;
-    this.dialogOverlay.style.zIndex = zIndex;
-    this.dialogContainer.style.zIndex = zIndex;
+
     const lastContainer = this.getOwnElements(this.host, containerTagName).pop();
     if (lastContainer && lastContainer.parentElement) {
       this.host.insertBefore(this.dialogContainer, lastContainer.nextSibling);
-      this.host.insertBefore(this.dialogOverlay, lastContainer.nextSibling);
     } else {
       this.host.insertBefore(this.dialogContainer, this.host.firstChild);
-      this.host.insertBefore(this.dialogOverlay, this.host.firstChild);
     }
     dialogController.controller.attached();
     this.host.classList.add('ux-dialog-open');
   }
 
   private detach(dialogController: DialogController): void {
-    this.host.removeChild(this.dialogOverlay);
     this.host.removeChild(this.dialogContainer);
     dialogController.controller.detached();
     if (!DialogRenderer.dialogControllers.length) {
@@ -146,37 +131,32 @@ export class DialogRenderer implements Renderer {
     }
   }
 
-  private setAsActive(): void {
-    this.dialogOverlay.classList.add('active');
-    this.dialogContainer.classList.add('active');
-  }
-
-  private setAsInactive(): void {
-    this.dialogOverlay.classList.remove('active');
-    this.dialogContainer.classList.remove('active');
-  }
-
-  private setupClickHandling(dialogController: DialogController): void {
+  private setupEventHandling(dialogController: DialogController): void {
     this.stopPropagation = e => { e._aureliaDialogHostClicked = true; };
     this.closeDialogClick = e => {
       if (dialogController.settings.overlayDismiss && !e._aureliaDialogHostClicked) {
         dialogController.cancel();
       }
     };
+    this.dialogCancel = e => {
+      const keyboard = dialogController.settings.keyboard;
+      const key = 'Escape';
+
+      if (keyboard === true || keyboard === key || (Array.isArray(keyboard) && keyboard.indexOf(key) > -1)) {
+        dialogController.cancel();
+      } else {
+        e.preventDefault();
+      }
+    }
     this.dialogContainer.addEventListener('click', this.closeDialogClick);
+    this.dialogContainer.addEventListener('cancel', this.dialogCancel);
     this.anchor.addEventListener('click', this.stopPropagation);
   }
 
-  private clearClickHandling(): void {
+  private clearEventHandling(): void {
     this.dialogContainer.removeEventListener('click', this.closeDialogClick);
+    this.dialogContainer.removeEventListener('cancel', this.dialogCancel);
     this.anchor.removeEventListener('click', this.stopPropagation);
-  }
-
-  private centerDialog() {
-    const child = this.dialogContainer.children[0] as HTMLElement;
-    const vh = Math.max((DOM.querySelectorAll('html')[0] as HTMLElement).clientHeight, window.innerHeight || 0);
-    child.style.marginTop = Math.max((vh - child.offsetHeight) / 2, 30) + 'px';
-    child.style.marginBottom = Math.max((vh - child.offsetHeight) / 2, 30) + 'px';
   }
 
   private awaitTransition(setActiveInactive: () => void, ignore: boolean): Promise<void> {
@@ -218,20 +198,18 @@ export class DialogRenderer implements Renderer {
     this.attach(dialogController);
 
     if (typeof settings.position === 'function') {
-      settings.position(this.dialogContainer, this.dialogOverlay);
-    } else if (!settings.centerHorizontalOnly) {
-      this.centerDialog();
+      settings.position(this.dialogContainer);
     }
 
     DialogRenderer.trackController(dialogController);
-    this.setupClickHandling(dialogController);
-    return this.awaitTransition(() => this.setAsActive(), dialogController.settings.ignoreTransitions as boolean);
+    this.setupEventHandling(dialogController);
+    return this.awaitTransition(() => this.dialogContainer.showModal(), dialogController.settings.ignoreTransitions as boolean);
   }
 
   public hideDialog(dialogController: DialogController) {
-    this.clearClickHandling();
+    this.clearEventHandling();
     DialogRenderer.untrackController(dialogController);
-    return this.awaitTransition(() => this.setAsInactive(), dialogController.settings.ignoreTransitions as boolean)
+    return this.awaitTransition(() => this.dialogContainer.close(), dialogController.settings.ignoreTransitions as boolean)
       .then(() => { this.detach(dialogController); });
   }
 }
