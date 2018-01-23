@@ -124,6 +124,7 @@ export class DialogRenderer implements Renderer {
   }
 
   private detach(dialogController: DialogController): void {
+    this.dialogContainer.close();
     this.host.removeChild(this.dialogContainer);
     dialogController.controller.detached();
     if (!DialogRenderer.dialogControllers.length) {
@@ -133,10 +134,11 @@ export class DialogRenderer implements Renderer {
 
   private setAsActive(): void {
     this.dialogContainer.showModal();
+    this.dialogContainer.classList.add('active');
   }
 
   private setAsInactive(): void {
-    this.dialogContainer.close();
+    this.dialogContainer.classList.remove('active');
   }
 
   private setupEventHandling(dialogController: DialogController): void {
