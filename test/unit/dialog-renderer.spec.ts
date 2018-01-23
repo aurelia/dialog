@@ -60,10 +60,7 @@ describe('DialogRenderer', () => {
 
   function cleanDOM(): void {
     DialogRenderer.dialogControllers.forEach(controller => {
-      const { dialogContainer, dialogOverlay } = controller.renderer as DialogRenderer;
-      if (dialogOverlay && dialogOverlay.parentElement) {
-        dialogOverlay.parentElement.removeChild(dialogOverlay);
-      }
+      const { dialogContainer } = controller.renderer as DialogRenderer;
       if (dialogContainer && dialogContainer.parentElement) {
         dialogContainer.parentElement.removeChild(dialogContainer);
       }
@@ -81,7 +78,7 @@ describe('DialogRenderer', () => {
         const renderer = createRenderer({ position: jasmine.createSpy('postionSpy') });
         await show(done, renderer);
         expect(renderer.__controller.settings.position)
-          .toHaveBeenCalledWith(renderer.dialogContainer, renderer.dialogOverlay);
+          .toHaveBeenCalledWith(renderer.dialogContainer);
         done();
       });
     });
@@ -92,7 +89,8 @@ describe('DialogRenderer', () => {
         const first = createRenderer(settings);
         const last = createRenderer(settings);
         await show(done, first, last);
-        DOM.dispatchEvent(new KeyboardEvent('keyup', { key: 'Escape' }));
+        first.dialogContainer.dispatchEvent(new Event('cancel'));
+        last.dialogContainer.dispatchEvent(new Event('cancel'));
         expect(first.__controller.cancel).not.toHaveBeenCalled();
         expect(last.__controller.cancel).not.toHaveBeenCalled();
         done();
@@ -102,7 +100,7 @@ describe('DialogRenderer', () => {
         async function closeOnEscSpec(done: DoneFn, settings: DialogSettings) {
           const renderer = createRenderer(settings);
           await show(done, renderer);
-          DOM.dispatchEvent(new KeyboardEvent('keyup', { key: 'Escape' }));
+          renderer.dialogContainer.dispatchEvent(new Event('cancel'));
           expect(renderer.__controller.cancel).toHaveBeenCalled();
           done();
         }
@@ -169,9 +167,7 @@ describe('DialogRenderer', () => {
         const renderer = createRenderer(settings);
         await show(done, renderer);
         expect(host.insertBefore).toHaveBeenCalledWith(renderer.dialogContainer, null);
-        expect(host.insertBefore).toHaveBeenCalledWith(renderer.dialogOverlay, renderer.dialogContainer);
         await hide(done, renderer);
-        expect(host.removeChild).toHaveBeenCalledWith(renderer.dialogOverlay);
         expect(host.removeChild).toHaveBeenCalledWith(renderer.dialogContainer);
         body.removeChild(host);
         done();
@@ -283,10 +279,10 @@ describe('DialogRenderer', () => {
         renderer.dialogContainer.style.opacity = '0';
       });
       Object.defineProperty(renderer, 'dialogContainer', { // is set in ".showDialog()"
-        get: (): HTMLElement => {
+        get: (): HTMLDialogElement => {
           return this.dialogContainer;
         },
-        set: (element: HTMLElement): void => {
+        set: (element: HTMLDialogElement): void => {
           this.dialogContainer = element;
           element.style[durationPropertyName() as any] = transitionDuration;
           element.style.opacity = '0'; // init
@@ -363,28 +359,28 @@ describe('DialogRenderer', () => {
   });
 
   describe('"backdropDismiss" handlers', () => {
-      it('do not stop events propagation', async done => {
-        const renderer = createRenderer();
-        const event = new MouseEvent('click');
-        spyOn(event, 'stopPropagation').and.callThrough();
-        spyOn(event, 'stopImmediatePropagation').and.callThrough();
-        await show(done, renderer);
-        renderer.dialogContainer.dispatchEvent(event);
-        expect(event.stopPropagation).not.toHaveBeenCalled();
-        expect(event.stopImmediatePropagation).not.toHaveBeenCalled();
-        done();
-      });
-
-      it('do not cancel events', async done => {
-        const renderer = createRenderer();
-        const event = new MouseEvent('click');
-        spyOn(event, 'preventDefault').and.callThrough();
-        await show(done, renderer);
-        renderer.dialogContainer.dispatchEvent(event);
-        expect(event.preventDefault).not.toHaveBeenCalled();
-        done();
-      });
+    it('do not stop events propagation', async done => {
+      const renderer = createRenderer();
+      const event = new MouseEvent('click');
+      spyOn(event, 'stopPropagation').and.callThrough();
+      spyOn(event, 'stopImmediatePropagation').and.callThrough();
+      await show(done, renderer);
+      renderer.dialogContainer.dispatchEvent(event);
+      expect(event.stopPropagation).not.toHaveBeenCalled();
+      expect(event.stopImmediatePropagation).not.toHaveBeenCalled();
+      done();
     });
+
+    it('do not cancel events', async done => {
+      const renderer = createRenderer();
+      const event = new MouseEvent('click');
+      spyOn(event, 'preventDefault').and.callThrough();
+      await show(done, renderer);
+      renderer.dialogContainer.dispatchEvent(event);
+      expect(event.preventDefault).not.toHaveBeenCalled();
+      done();
+    });
+  });
 });
 
 describe('"hasTransition"', () => {

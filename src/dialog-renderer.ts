@@ -131,6 +131,14 @@ export class DialogRenderer implements Renderer {
     }
   }
 
+  private setAsActive(): void {
+    this.dialogContainer.showModal();
+  }
+
+  private setAsInactive(): void {
+    this.dialogContainer.close();
+  }
+
   private setupEventHandling(dialogController: DialogController): void {
     this.stopPropagation = e => { e._aureliaDialogHostClicked = true; };
     this.closeDialogClick = e => {
@@ -147,7 +155,7 @@ export class DialogRenderer implements Renderer {
       } else {
         e.preventDefault();
       }
-    }
+    };
     this.dialogContainer.addEventListener('click', this.closeDialogClick);
     this.dialogContainer.addEventListener('cancel', this.dialogCancel);
     this.anchor.addEventListener('click', this.stopPropagation);
@@ -203,13 +211,13 @@ export class DialogRenderer implements Renderer {
 
     DialogRenderer.trackController(dialogController);
     this.setupEventHandling(dialogController);
-    return this.awaitTransition(() => this.dialogContainer.showModal(), dialogController.settings.ignoreTransitions as boolean);
+    return this.awaitTransition(() => this.setAsActive(), dialogController.settings.ignoreTransitions as boolean);
   }
 
-  public hideDialog(dialogController: DialogController) {
+  public hideDialog(dialogController: DialogController): Promise<void> {
     this.clearEventHandling();
     DialogRenderer.untrackController(dialogController);
-    return this.awaitTransition(() => this.dialogContainer.close(), dialogController.settings.ignoreTransitions as boolean)
+    return this.awaitTransition(() => this.setAsInactive(), dialogController.settings.ignoreTransitions as boolean)
       .then(() => { this.detach(dialogController); });
   }
 }
