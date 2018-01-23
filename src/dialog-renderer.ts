@@ -57,12 +57,24 @@ export class DialogRenderer implements Renderer {
 
   private stopPropagation: (e: MouseEvent & { _aureliaDialogHostClicked: boolean }) => void;
   private closeDialogClick: (e: MouseEvent & { _aureliaDialogHostClicked: boolean }) => void;
-  private viewSlot: ViewSlot;
 
   public dialogContainer: HTMLElement;
   public dialogOverlay: HTMLElement;
   public host: Element;
   public anchor: Element;
+  /**
+   * @internal
+   */
+  public viewSlot: ViewSlot;
+
+  constructor() {
+    this.anchor = DOM.createElement('div');
+    this.viewSlot = new ViewSlot(this.anchor, true);
+  }
+
+  private markHostContainingOpenDialog(): void {
+    this.host.classList.add('ux-dialog-open');
+  }
 
   private getOwnElements(parent: Element, selector: string): Element[] {
     const elements = parent.querySelectorAll(selector);
@@ -94,7 +106,6 @@ export class DialogRenderer implements Renderer {
       this.host.insertBefore(this.dialogContainer, this.host.firstChild);
       this.host.insertBefore(this.dialogOverlay, this.host.firstChild);
     }
-    this.host.classList.add('ux-dialog-open'); // TODO: probably set after the animation is done
   }
 
   private detach(): void {
@@ -129,7 +140,7 @@ export class DialogRenderer implements Renderer {
   }
 
   public getDialogContainer(): Element {
-    return this.anchor || (this.anchor = DOM.createElement('div'));
+    return this.anchor;
   }
 
   public showDialog(dialogController: InfrastructureDialogController): Promise<void> {
@@ -142,7 +153,6 @@ export class DialogRenderer implements Renderer {
     } else {
       this.host = body;
     }
-    this.viewSlot = new ViewSlot(this.anchor, true);
     this.attach(dialogController);
     if (typeof settings.position === 'function') {
       settings.position(this.dialogContainer, this.dialogOverlay);
@@ -155,12 +165,15 @@ export class DialogRenderer implements Renderer {
     this.viewSlot.attached();
     const addResult = this.viewSlot.add(dialogController.view);
     if (!addResult) {
+      this.markHostContainingOpenDialog();
       return Promise.resolve();
     }
     return Promise.all([
       addResult,
       (this.viewSlot as ViewSlot & { animator: Animator }).animator.enter(this.dialogOverlay)
-    ]) as any;
+    ]).then(() => {
+      this.markHostContainingOpenDialog();
+    });
   }
 
   public hideDialog(dialogController: InfrastructureDialogController): Promise<void> {
@@ -173,7 +186,7 @@ export class DialogRenderer implements Renderer {
     }
     return Promise.all([
       removeResult,
-      (this.viewSlot as any).animator.leave(this.dialogOverlay)
+      (this.viewSlot as ViewSlot & { animator: Animator }).animator.leave(this.dialogOverlay)
     ]).then(() => this.detach());
   }
 }

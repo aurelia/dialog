@@ -1,3 +1,4 @@
+import { Animator } from 'aurelia-templating';
 import { DOM } from 'aurelia-pal';
 import { DialogController } from '../../src/dialog-controller';
 import { DialogRenderer } from '../../src/dialog-renderer';
@@ -8,6 +9,8 @@ type TestDialogRenderer = DialogRenderer & { [key: string]: any, __controller: D
 const body = DOM.querySelectorAll('body')[0] as HTMLBodyElement;
 
 describe('DialogRenderer', () => {
+  (Animator as any).instance = new Animator();
+
   function createRenderer(settings: DialogSettings = {}): TestDialogRenderer {
     const renderer = new DialogRenderer() as TestDialogRenderer;
     renderer.getDialogContainer();
@@ -21,8 +24,21 @@ describe('DialogRenderer', () => {
     dialogController.settings = Object.assign(new DefaultDialogSettings(), settings);
     dialogController.renderer = renderer;
     dialogController.controller = jasmine.createSpyObj('ControllerSpy', ['attached', 'detached']);
+    // tslint:disable:no-empty
+    dialogController.controller!.view = {
+      attached() { },
+      detached() { },
+      appendNodesTo() { },
+      removeNodes() { }
+    } as any;
+    // tslint:enable:no-empty
+    dialogController.view = dialogController.controller!.view;
     renderer.__controller = dialogController;
     return renderer as any;
+  }
+
+  async function wait(timeout: number): Promise<any> {
+    return new Promise(res => setTimeout(res, timeout));
   }
 
   async function showOrHide(action: 'showDialog' | 'hideDialog', done: DoneFn, ...rendereres: TestDialogRenderer[]) {
@@ -254,121 +270,73 @@ describe('DialogRenderer', () => {
     });
   });
 
-  // TODO: substitue with Animator integration tests
-
-  // describe('accounts for transitions', () => {
-  //   let renderer: TestDialogRenderer;
-  //   let transitionDuration: string;
-
-  //   beforeEach(() => {
-  //     renderer = createRenderer();
-  //     spyOn(renderer, 'setAsActive').and.callFake(() => { // transition trigger
-  //       renderer.dialogContainer.style.opacity = '1';
-  //     });
-  //     spyOn(renderer, 'setAsInactive').and.callFake(() => { // transition trigger
-  //       renderer.dialogContainer.style.opacity = '0';
-  //     });
-  //     Object.defineProperty(renderer, 'dialogContainer', { // is set in ".showDialog()"
-  //       get: (): HTMLElement => {
-  //         return this.dialogContainer;
-  //       },
-  //       set: (element: HTMLElement): void => {
-  //         this.dialogContainer = element;
-  //         element.style[durationPropertyName() as any] = transitionDuration;
-  //         element.style.opacity = '0'; // init
-  //         spyOn(element, 'addEventListener').and.callThrough();
-  //       }
-  //     });
-  //   });
-
-  //   describe('and when "inoreTransitions" is set to "true"', () => {
-  //     it('"showDialog" does not wait', async done => {
-  //       renderer.__controller.settings.ignoreTransitions = true;
-  //       transitionDuration = '1s';
-  //       await show(done, renderer);
-  //       expect(renderer.dialogContainer.addEventListener)
-  //         .not.toHaveBeenCalledWith(transitionEvent(), jasmine.any(Function));
-  //       done();
-  //     });
-
-  //     it('"hideDialog" does not wait', async done => {
-  //       renderer.__controller.settings.ignoreTransitions = true;
-  //       transitionDuration = '1s';
-  //       await show(done, renderer);
-  //       spyOn(renderer.dialogContainer, 'removeEventListener').and.callThrough();
-  //       await hide(done, renderer);
-  //       expect(renderer.dialogContainer.removeEventListener)
-  //         .not.toHaveBeenCalledWith(transitionEvent(), jasmine.any(Function));
-  //       done();
-  //     });
-  //   });
-
-  //   describe('and when the transition duration is zero', () => {
-  //     it('"showDialog" does not await', async done => {
-  //       renderer.__controller.settings.ignoreTransitions = false;
-  //       transitionDuration = '0s';
-  //       await show(done, renderer);
-  //       expect(renderer.dialogContainer.addEventListener)
-  //         .not.toHaveBeenCalledWith(transitionEvent(), jasmine.any(Function));
-  //       done();
-  //     });
-
-  //     it('"hideDialog" does not await', async done => {
-  //       renderer.__controller.settings.ignoreTransitions = false;
-  //       transitionDuration = '0s';
-  //       await show(done, renderer);
-  //       spyOn(renderer.dialogContainer, 'removeEventListener').and.callThrough();
-  //       await hide(done, renderer);
-  //       expect(renderer.dialogContainer.removeEventListener)
-  //         .not.toHaveBeenCalledWith(transitionEvent(), jasmine.any(Function));
-  //       done();
-  //     });
-  //   });
-
-  //   describe('and when the transition duration is non-zero', () => {
-  //     it('"showDialog" awaits', async done => {
-  //       renderer.__controller.settings.ignoreTransitions = false;
-  //       transitionDuration = '1.1s';
-  //       await show(done, renderer);
-  //       expect(renderer.dialogContainer.addEventListener)
-  //         .toHaveBeenCalledWith(transitionEvent(), jasmine.any(Function));
-  //       done();
-  //     });
-
-  //     it('"hideDialog" awaits', async done => {
-  //       renderer.__controller.settings.ignoreTransitions = false;
-  //       transitionDuration = '0.4s';
-  //       await show(done, renderer);
-  //       spyOn(renderer.dialogContainer, 'removeEventListener').and.callThrough();
-  //       await hide(done, renderer);
-  //       expect(renderer.dialogContainer.removeEventListener)
-  //         .toHaveBeenCalledWith(transitionEvent(), jasmine.any(Function));
-  //       done();
-  //     });
-  //   });
-  // });
-
   describe('"backdropDismiss" handlers', () => {
-      it('do not stop events propagation', async done => {
-        const renderer = createRenderer();
-        const event = new MouseEvent('click');
-        spyOn(event, 'stopPropagation').and.callThrough();
-        spyOn(event, 'stopImmediatePropagation').and.callThrough();
-        await show(done, renderer);
-        renderer.dialogContainer.dispatchEvent(event);
-        expect(event.stopPropagation).not.toHaveBeenCalled();
-        expect(event.stopImmediatePropagation).not.toHaveBeenCalled();
-        done();
-      });
-
-      it('do not cancel events', async done => {
-        const renderer = createRenderer();
-        const event = new MouseEvent('click');
-        spyOn(event, 'preventDefault').and.callThrough();
-        await show(done, renderer);
-        renderer.dialogContainer.dispatchEvent(event);
-        expect(event.preventDefault).not.toHaveBeenCalled();
-        done();
-      });
+    it('do not stop events propagation', async done => {
+      const renderer = createRenderer();
+      const event = new MouseEvent('click');
+      spyOn(event, 'stopPropagation').and.callThrough();
+      spyOn(event, 'stopImmediatePropagation').and.callThrough();
+      await show(done, renderer);
+      renderer.dialogContainer.dispatchEvent(event);
+      expect(event.stopPropagation).not.toHaveBeenCalled();
+      expect(event.stopImmediatePropagation).not.toHaveBeenCalled();
+      done();
     });
+
+    it('do not cancel events', async done => {
+      const renderer = createRenderer();
+      const event = new MouseEvent('click');
+      spyOn(event, 'preventDefault').and.callThrough();
+      await show(done, renderer);
+      renderer.dialogContainer.dispatchEvent(event);
+      expect(event.preventDefault).not.toHaveBeenCalled();
+      done();
+    });
+  });
+
+  describe('when showing a dialog', () => {
+    it('adds it to the "ViewSlot"', async done => {
+      const renderer = createRenderer();
+      spyOn(renderer.viewSlot, 'add');
+      await show(done, renderer);
+      expect(renderer.viewSlot.add).toHaveBeenCalledWith(renderer.__controller.view);
+      done();
+    });
+
+    it('awaits adding it to the "ViewSlot"', async done => {
+      const renderer = createRenderer();
+      let asyncWorkDone = false;
+      spyOn(renderer.viewSlot, 'add').and.callFake(async () => {
+        await wait(400);
+        asyncWorkDone = true;
+      });
+      await show(done, renderer);
+      expect(asyncWorkDone).toBe(true);
+      done();
+    });
+  });
+
+  describe('when hiding a dialog', () => {
+    it('removes it from the "ViewSlot"', async done => {
+      const renderer = createRenderer();
+      spyOn(renderer.viewSlot, 'remove');
+      await show(done, renderer);
+      await hide(done, renderer);
+      expect(renderer.viewSlot.remove).toHaveBeenCalledWith(renderer.__controller.view);
+      done();
+    });
+
+    it('awaits removing it from the "ViewSlot"', async done => {
+      const renderer = createRenderer();
+      let asyncWorkDone = false;
+      spyOn(renderer.viewSlot, 'remove').and.callFake(async () => {
+        await wait(400);
+        asyncWorkDone = true;
+      });
+      await show(done, renderer);
+      await hide(done, renderer);
+      expect(asyncWorkDone).toBe(true);
+      done();
+    });
+  });
 });

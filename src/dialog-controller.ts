@@ -110,7 +110,7 @@ export class DialogController {
   public releaseResources(result: DialogCloseResult | DialogCloseError): Promise<void> {
     return this.deactivate(result)
       .then(() => this.renderer.hideDialog(this))
-      .then(() => { (this.controller || this.view)!.unbind(); }); // TODO: add unbind API
+      .then(() => { (this.controller || this.view)!.unbind(); });
   }
 
   /**
@@ -163,7 +163,6 @@ export class DialogController {
     const dialogResult: DialogCloseResult = { wasCancelled: !ok, output };
 
     // tslint:disable-next-line:max-line-length
-    // TODO: add canDeactivate API
     return this.closePromise = invokeLifecycle((this.controller && this.controller.viewModel) || {}, 'canDeactivate', dialogResult)
       .catch(reason => {
         this.closePromise = undefined;
