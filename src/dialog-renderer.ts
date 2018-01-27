@@ -1,6 +1,5 @@
 import { DOM } from 'aurelia-pal';
 import { transient } from 'aurelia-dependency-injection';
-import { registerDialog } from 'dialog-polyfill';
 import { ActionKey } from './dialog-settings';
 import { Renderer } from './renderer';
 import { DialogController } from './dialog-controller';
@@ -112,7 +111,10 @@ export class DialogRenderer implements Renderer {
     const spacingWrapper = DOM.createElement('div'); // TODO: check if redundant
     spacingWrapper.appendChild(this.anchor);
     this.dialogContainer = DOM.createElement(containerTagName) as HTMLDialogElement;
-    registerDialog(this.dialogContainer);
+    if ((window as any).dialogPolyfill) {
+      (window as any).dialogPolyfill.registerDialog(this.dialogContainer);
+    }
+
     this.dialogContainer.appendChild(spacingWrapper);
 
     const lastContainer = this.getOwnElements(this.host, containerTagName).pop();

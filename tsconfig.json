@@ -10,9 +10,5 @@
     "dist",
     "doc",
     "node_modules"
-  ],
-  "include": [
-    "**/*.ts",
-    "custom_typings/**/*.d.ts"
   ]
 }

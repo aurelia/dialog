@@ -68,8 +68,7 @@
       "aurelia-dependency-injection": "^1.0.0",
       "aurelia-metadata": "^1.0.0",
       "aurelia-pal": "^1.0.0",
-      "aurelia-templating": "^1.0.0",
-      "dialog-polyfill": "^0.4.9"
+      "aurelia-templating": "^1.0.0"
     },
     "devDependencies": {
       "aurelia-bootstrapper": "^1.0.0",
@@ -89,8 +88,7 @@
     "aurelia-framework": "^1.0.0",
     "aurelia-metadata": "^1.0.0",
     "aurelia-pal": "^1.0.0",
-    "aurelia-templating": "^1.0.0",
-    "dialog-polyfill": "^0.4.9"
+    "aurelia-templating": "^1.0.0"
   },
   "devDependencies": {
     "@types/jasmine": "2.5.47",
