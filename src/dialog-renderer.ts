@@ -128,7 +128,11 @@ export class DialogRenderer implements Renderer {
   }
 
   private detach(dialogController: DialogController): void {
-    this.dialogContainer.close();
+    // This check only seems required for the polyfill
+    if (this.dialogContainer.hasAttribute('open')) {
+      this.dialogContainer.close();
+    }
+
     this.host.removeChild(this.dialogContainer);
     dialogController.controller.detached();
     if (!DialogRenderer.dialogControllers.length) {
