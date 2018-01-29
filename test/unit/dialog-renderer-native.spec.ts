@@ -334,28 +334,6 @@ describe('DialogRenderer', () => {
         done();
       });
     });
-
-    describe('and when the transition duration is non-zero', () => {
-      it('"showDialog" awaits', async done => {
-        renderer.__controller.settings.ignoreTransitions = false;
-        transitionDuration = '1.1s';
-        await show(done, renderer);
-        expect(renderer.dialogContainer.addEventListener)
-          .toHaveBeenCalledWith(transitionEvent(), jasmine.any(Function));
-        done();
-      });
-
-      it('"hideDialog" awaits', async done => {
-        renderer.__controller.settings.ignoreTransitions = false;
-        transitionDuration = '0.4s';
-        await show(done, renderer);
-        spyOn(renderer.dialogContainer, 'removeEventListener').and.callThrough();
-        await hide(done, renderer);
-        expect(renderer.dialogContainer.removeEventListener)
-          .toHaveBeenCalledWith(transitionEvent(), jasmine.any(Function));
-        done();
-      });
-    });
   });
 
   describe('"backdropDismiss" handlers', () => {
