@@ -58,6 +58,12 @@ export interface DialogSettings {
   overlayDismiss?: boolean;
 
   /**
+   * The z-index of the dialog.
+   * In the terms of the DialogRenderer it is applied to the dialog overlay and the dialog container.
+   */
+  startingZIndex?: number;
+
+  /**
    * Centers the dialog only horizontally.
    */
   centerHorizontalOnly?: boolean;
@@ -73,10 +79,10 @@ export interface DialogSettings {
   ignoreTransitions?: boolean;
 
   /**
-   * Used to provide custom positioning logic.
+   * Usde to provide custom positioning logic.
    * When invoked the function is passed the dialog container and the dialog overlay elements.
    */
-  position?: (dialogContainer: Element) => void;
+  position?: (dialogContainer: Element, dialogOverlay: Element) => void;
 }
 
 /**
@@ -85,8 +91,9 @@ export interface DialogSettings {
 export class DefaultDialogSettings implements DialogSettings {
   [setting: string]: any;
   public lock: boolean = true;
+  public startingZIndex = 1000;
   public centerHorizontalOnly = false;
   public rejectOnCancel = false;
   public ignoreTransitions = false;
-  public position?: (dialogContainer: Element) => void;
+  public position?: (dialogContainer: Element, dialogOverlay: Element) => void;
 }

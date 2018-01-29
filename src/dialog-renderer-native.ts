@@ -4,8 +4,7 @@ import { ActionKey } from './dialog-settings';
 import { Renderer } from './renderer';
 import { DialogController } from './dialog-controller';
 
-const containerTagName = 'ux-dialog-container';
-const overlayTagName = 'ux-dialog-overlay';
+const containerTagName = 'dialog';
 
 export const transitionEvent = (() => {
   let transition: string | undefined;
@@ -51,9 +50,6 @@ export const hasTransition = (() => {
 let body: HTMLBodyElement;
 
 function getActionKey(e: KeyboardEvent): ActionKey | undefined {
-  if ((e.code || e.key) === 'Escape' || e.keyCode === 27) {
-    return 'Escape';
-  }
   if ((e.code || e.key) === 'Enter' || e.keyCode === 13) {
     return 'Enter';
   }
@@ -61,45 +57,42 @@ function getActionKey(e: KeyboardEvent): ActionKey | undefined {
 }
 
 @transient()
-export class DialogRenderer implements Renderer {
+export class DialogRendererNative implements Renderer {
   public static dialogControllers: DialogController[] = [];
 
   public static keyboardEventHandler(e: KeyboardEvent) {
     const key = getActionKey(e);
     if (!key) { return; }
-    const top = DialogRenderer.dialogControllers[DialogRenderer.dialogControllers.length - 1];
+    const top = DialogRendererNative.dialogControllers[DialogRendererNative.dialogControllers.length - 1];
     if (!top || !top.settings.keyboard) { return; }
     const keyboard = top.settings.keyboard;
-    if (key === 'Escape'
-      && (keyboard === true || keyboard === key || (Array.isArray(keyboard) && keyboard.indexOf(key) > -1))) {
-      top.cancel();
-    } else if (key === 'Enter' && (keyboard === key || (Array.isArray(keyboard) && keyboard.indexOf(key) > -1))) {
+    if (key === 'Enter' && (keyboard === key || (Array.isArray(keyboard) && keyboard.indexOf(key) > -1))) {
       top.ok();
     }
   }
 
   public static trackController(dialogController: DialogController): void {
-    if (!DialogRenderer.dialogControllers.length) {
-      DOM.addEventListener('keyup', DialogRenderer.keyboardEventHandler, false);
+    if (!DialogRendererNative.dialogControllers.length) {
+      DOM.addEventListener('keyup', DialogRendererNative.keyboardEventHandler, false);
     }
-    DialogRenderer.dialogControllers.push(dialogController);
+    DialogRendererNative.dialogControllers.push(dialogController);
   }
 
   public static untrackController(dialogController: DialogController): void {
-    const i = DialogRenderer.dialogControllers.indexOf(dialogController);
+    const i = DialogRendererNative.dialogControllers.indexOf(dialogController);
     if (i !== -1) {
-      DialogRenderer.dialogControllers.splice(i, 1);
+      DialogRendererNative.dialogControllers.splice(i, 1);
     }
-    if (!DialogRenderer.dialogControllers.length) {
-      DOM.removeEventListener('keyup', DialogRenderer.keyboardEventHandler, false);
+    if (!DialogRendererNative.dialogControllers.length) {
+      DOM.removeEventListener('keyup', DialogRendererNative.keyboardEventHandler, false);
     }
   }
 
   private stopPropagation: (e: MouseEvent & { _aureliaDialogHostClicked: boolean }) => void;
   private closeDialogClick: (e: MouseEvent & { _aureliaDialogHostClicked: boolean }) => void;
+  private dialogCancel: (e: Event) => void;
 
-  public dialogContainer: HTMLElement;
-  public dialogOverlay: HTMLElement;
+  public dialogContainer: HTMLDialogElement;
   public host: Element;
   public anchor: Element;
 
@@ -117,66 +110,71 @@ export class DialogRenderer implements Renderer {
   private attach(dialogController: DialogController): void {
     const spacingWrapper = DOM.createElement('div'); // TODO: check if redundant
     spacingWrapper.appendChild(this.anchor);
-    this.dialogContainer = DOM.createElement(containerTagName) as HTMLElement;
+    this.dialogContainer = DOM.createElement(containerTagName) as HTMLDialogElement;
+    if ((window as any).dialogPolyfill) {
+      (window as any).dialogPolyfill.registerDialog(this.dialogContainer);
+    }
+
     this.dialogContainer.appendChild(spacingWrapper);
-    this.dialogOverlay = DOM.createElement(overlayTagName) as HTMLElement;
-    const zIndex = typeof dialogController.settings.startingZIndex === 'number'
-      ? dialogController.settings.startingZIndex + ''
-      : null;
-    this.dialogOverlay.style.zIndex = zIndex;
-    this.dialogContainer.style.zIndex = zIndex;
+
     const lastContainer = this.getOwnElements(this.host, containerTagName).pop();
     if (lastContainer && lastContainer.parentElement) {
       this.host.insertBefore(this.dialogContainer, lastContainer.nextSibling);
-      this.host.insertBefore(this.dialogOverlay, lastContainer.nextSibling);
     } else {
       this.host.insertBefore(this.dialogContainer, this.host.firstChild);
-      this.host.insertBefore(this.dialogOverlay, this.host.firstChild);
     }
     dialogController.controller.attached();
     this.host.classList.add('ux-dialog-open');
   }
 
   private detach(dialogController: DialogController): void {
-    this.host.removeChild(this.dialogOverlay);
+    // This check only seems required for the polyfill
+    if (this.dialogContainer.hasAttribute('open')) {
+      this.dialogContainer.close();
+    }
+
     this.host.removeChild(this.dialogContainer);
     dialogController.controller.detached();
-    if (!DialogRenderer.dialogControllers.length) {
+    if (!DialogRendererNative.dialogControllers.length) {
       this.host.classList.remove('ux-dialog-open');
     }
   }
 
   private setAsActive(): void {
-    this.dialogOverlay.classList.add('active');
+    this.dialogContainer.showModal();
     this.dialogContainer.classList.add('active');
   }
 
   private setAsInactive(): void {
-    this.dialogOverlay.classList.remove('active');
     this.dialogContainer.classList.remove('active');
   }
 
-  private setupClickHandling(dialogController: DialogController): void {
+  private setupEventHandling(dialogController: DialogController): void {
     this.stopPropagation = e => { e._aureliaDialogHostClicked = true; };
     this.closeDialogClick = e => {
       if (dialogController.settings.overlayDismiss && !e._aureliaDialogHostClicked) {
         dialogController.cancel();
       }
     };
+    this.dialogCancel = e => {
+      const keyboard = dialogController.settings.keyboard;
+      const key = 'Escape';
+
+      if (keyboard === true || keyboard === key || (Array.isArray(keyboard) && keyboard.indexOf(key) > -1)) {
+        dialogController.cancel();
+      } else {
+        e.preventDefault();
+      }
+    };
     this.dialogContainer.addEventListener('click', this.closeDialogClick);
+    this.dialogContainer.addEventListener('cancel', this.dialogCancel);
     this.anchor.addEventListener('click', this.stopPropagation);
   }
 
-  private clearClickHandling(): void {
+  private clearEventHandling(): void {
     this.dialogContainer.removeEventListener('click', this.closeDialogClick);
+    this.dialogContainer.removeEventListener('cancel', this.dialogCancel);
     this.anchor.removeEventListener('click', this.stopPropagation);
-  }
-
-  private centerDialog() {
-    const child = this.dialogContainer.children[0] as HTMLElement;
-    const vh = Math.max((DOM.querySelectorAll('html')[0] as HTMLElement).clientHeight, window.innerHeight || 0);
-    child.style.marginTop = Math.max((vh - child.offsetHeight) / 2, 30) + 'px';
-    child.style.marginBottom = Math.max((vh - child.offsetHeight) / 2, 30) + 'px';
   }
 
   private awaitTransition(setActiveInactive: () => void, ignore: boolean): Promise<void> {
@@ -218,19 +216,17 @@ export class DialogRenderer implements Renderer {
     this.attach(dialogController);
 
     if (typeof settings.position === 'function') {
-      settings.position(this.dialogContainer, this.dialogOverlay);
-    } else if (!settings.centerHorizontalOnly) {
-      this.centerDialog();
+      settings.position(this.dialogContainer);
     }
 
-    DialogRenderer.trackController(dialogController);
-    this.setupClickHandling(dialogController);
+    DialogRendererNative.trackController(dialogController);
+    this.setupEventHandling(dialogController);
     return this.awaitTransition(() => this.setAsActive(), dialogController.settings.ignoreTransitions as boolean);
   }
 
-  public hideDialog(dialogController: DialogController) {
-    this.clearClickHandling();
-    DialogRenderer.untrackController(dialogController);
+  public hideDialog(dialogController: DialogController): Promise<void> {
+    this.clearEventHandling();
+    DialogRendererNative.untrackController(dialogController);
     return this.awaitTransition(() => this.setAsInactive(), dialogController.settings.ignoreTransitions as boolean)
       .then(() => { this.detach(dialogController); });
   }
