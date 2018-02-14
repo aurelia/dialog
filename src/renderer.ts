@@ -1,4 +1,4 @@
-import { DialogController } from './dialog-controller';
+import { InfrastructureDialogController } from './infrastructure-dialog-controller';
 
 export interface RendererStatic {
   new (): Renderer;
@@ -20,7 +20,7 @@ export class Renderer {
    * Displays the dialog.
    * @returns Promise A promise that resolves when the dialog has been displayed.
    */
-  public showDialog(dialogController: DialogController): Promise<any> {
+  public showDialog(dialogController: InfrastructureDialogController): Promise<any> {
     throw new Error('DialogRenderer must implement showDialog().');
   }
 
@@ -28,7 +28,7 @@ export class Renderer {
    * Hides the dialog.
    * @returns Promise A promise that resolves when the dialog has been hidden.
    */
-  public hideDialog(dialogController: DialogController): Promise<any> {
+  public hideDialog(dialogController: InfrastructureDialogController): Promise<any> {
     throw new Error('DialogRenderer must implement hideDialog().');
   }
 }
