@@ -53,7 +53,7 @@ If you use TypeScript, install the plugin's typings with the following command
 typings install github:aurelia/dialog --save
 ```
 
-2. Make sure you use [manual bootstrapping](http://aurelia.io/docs#startup-and-configuration). In order to do so open your `index.html` and locate the element with the attribute aurelia-app. Change it to look like this:
+2. Make sure you use [manual bootstrapping](http://aurelia.io/docs/fundamentals/app-configuration-and-startup#manual-bootstrapping). In order to do so open your `index.html` and locate the element with the attribute aurelia-app. Change it to look like this:
 
 <code-listing heading="index.html">
   <source-code lang="HTML">
