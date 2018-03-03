@@ -333,6 +333,41 @@ It is possible to resolve and close (using cancel/ok/error methods) dialog in th
 
 ## Styling The Dialog
 
+### Overriding The Defaults
+The CSS classes for the dialog are hard-coded in `dialog-configuration.ts`.  When you cofigure the dialog plugin via `config.useDefaults()` the following code code is executed.
+
+<code-listing>
+  <source-code lang="ES 2015">
+    public useDefaults(): this {
+      return this.useRenderer(defaultRenderer)
+        .useCSS(defaultCSSText)
+        .useStandardResources();
+    }
+  </source-code>
+</code-listing>
+
+If you want to override the default styles, configure the plugin instead by calling `useCSS('')` in `main.ts`.  
+
+<code-listing heading="main.js">
+  <source-code lang="ES 2015">
+  import {PLATFORM} from 'aurelia-pal';
+  export function configure(aurelia) {
+    aurelia.use
+      .standardConfiguration()
+      .developmentLogging()
+      .plugin(PLATFORM.moduleName('aurelia-dialog'), cfg => {
+          cfg.useDefaultSettings()
+             .useCSS('');
+      });
+
+    aurelia.start().then(a => a.setRoot());
+  }
+  </source-code>
+</code-listing>
+
+Copying the CSS from `dialog-configuration.ts` to your application's CSS file is a good starting point.
+
+
 ### Overlay With 50% Opacity
 
 Bootstrap adds 50% opacity and a background color of black to the modal.  To achieve this in dialog you can simply add the following CSS.
