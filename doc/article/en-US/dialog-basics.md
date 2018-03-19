@@ -358,9 +358,10 @@ With this hook you can cancel the opening of a dialog. It is invoked with one pa
 
 This hook can be used to do any necessary init work. The hook is invoked with one parameter - the value of the `model` setting passed to `.open()`.
 
-### `.canDeactivate()`
+### `.canDeactivate(result: DialogCloseResult)`
 
 With this hook you can cancel the closing of a dialog. To do so return `false` - `null` and `undefined` will be coerced to `true`.
+The passed in result parameter has a property `wasCancelled`, indicating if the dialog was closed or cancelled, and an `output` property with the dialog result which can be manipulated before dialog deactivation.
 
 > Warning
 > When `DialogController.prototype.error()` is called this hook will be skipped.
