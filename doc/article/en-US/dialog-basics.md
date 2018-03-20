@@ -366,9 +366,9 @@ The passed in result parameter has a property `wasCancelled`, indicating if the 
 > Warning
 > When `DialogController.prototype.error()` is called this hook will be skipped.
 
-### `.deactivate()`
+### `.deactivate(result: DialogCloseResult | DialogCloseError)`
 
-This hook can be used to do any clean up work.
+This hook can be used to do any clean up work. The hook is invoked with one result parameter that has a property `wasCancelled`, indicating if the dialog was closed or cancelled, and an `output` property with the dialog result.
 
 ### Order of Invocation
 
