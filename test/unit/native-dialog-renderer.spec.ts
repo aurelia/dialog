@@ -1,9 +1,10 @@
 import { DOM } from 'aurelia-pal';
 import { DialogController } from '../../src/dialog-controller';
-import { DialogRendererNative, hasTransition, transitionEvent } from '../../src/dialog-renderer-native';
+import { NativeDialogRenderer } from '../../src/native-dialog-renderer';
+import { hasTransition, transitionEvent } from '../../src/dialog-renderer';
 import { DefaultDialogSettings, DialogSettings } from '../../src/dialog-settings';
 
-type TestDialogRenderer = DialogRendererNative & { [key: string]: any, __controller: DialogController };
+type TestDialogRenderer = NativeDialogRenderer & { [key: string]: any, __controller: DialogController };
 
 const durationPropertyName = (() => {
   let durationPropertyName: string | null;
@@ -25,7 +26,7 @@ const body = DOM.querySelectorAll('body')[0] as HTMLBodyElement;
 
 describe('DialogRenderer', () => {
   function createRenderer(settings: DialogSettings = {}): TestDialogRenderer {
-    const renderer = new DialogRendererNative() as TestDialogRenderer;
+    const renderer = new NativeDialogRenderer() as TestDialogRenderer;
     renderer.getDialogContainer();
     const dialogController = jasmine.createSpyObj('DialogControllerSpy', ['cancel', 'ok']) as DialogController;
     (dialogController.cancel as jasmine.Spy)
@@ -59,13 +60,13 @@ describe('DialogRenderer', () => {
   }
 
   function cleanDOM(): void {
-    DialogRendererNative.dialogControllers.forEach(controller => {
-      const { dialogContainer } = controller.renderer as DialogRendererNative;
+    NativeDialogRenderer.dialogControllers.forEach(controller => {
+      const { dialogContainer } = controller.renderer as NativeDialogRenderer;
       if (dialogContainer && dialogContainer.parentElement) {
         dialogContainer.parentElement.removeChild(dialogContainer);
       }
     });
-    DialogRendererNative.dialogControllers = [];
+    NativeDialogRenderer.dialogControllers = [];
   }
 
   afterEach(() => {
@@ -184,7 +185,7 @@ describe('DialogRenderer', () => {
 
   describe('on first open dialog', () => {
     beforeEach(() => {
-      expect(DialogRendererNative.dialogControllers.length).toBe(0);
+      expect(NativeDialogRenderer.dialogControllers.length).toBe(0);
     });
 
     it('adds "ux-dialog-open" class to the dialog host', async done => {
@@ -202,7 +203,7 @@ describe('DialogRenderer', () => {
       await show(done, first, last);
       expect(DOM.addEventListener).toHaveBeenCalledWith('keyup', jasmine.any(Function), false);
       expect((DOM.addEventListener as jasmine.Spy).calls.count()).toBe(1);
-      expect(DialogRendererNative.dialogControllers.length).toBe(2);
+      expect(NativeDialogRenderer.dialogControllers.length).toBe(2);
       done();
     });
   });
@@ -211,14 +212,14 @@ describe('DialogRenderer', () => {
     let renderers: TestDialogRenderer[];
 
     beforeEach(async done => {
-      expect(DialogRendererNative.dialogControllers.length).toBe(0);
+      expect(NativeDialogRenderer.dialogControllers.length).toBe(0);
       renderers = [createRenderer(), createRenderer()];
       await show(done, ...renderers);
       done();
     });
 
     afterEach(() => {
-      expect(DialogRendererNative.dialogControllers.length).toBe(0);
+      expect(NativeDialogRenderer.dialogControllers.length).toBe(0);
     });
 
     it('removes "ux-dialog-open" class from the dialog host', async done => {
@@ -241,13 +242,13 @@ describe('DialogRenderer', () => {
     let renderer: TestDialogRenderer;
 
     beforeEach(async done => {
-      expect(DialogRendererNative.dialogControllers.length).toBe(0);
+      expect(NativeDialogRenderer.dialogControllers.length).toBe(0);
       await show(done, createRenderer(), renderer = createRenderer(), createRenderer());
       done();
     });
 
     afterEach(() => {
-      expect(DialogRendererNative.dialogControllers.length).toBe(2);
+      expect(NativeDialogRenderer.dialogControllers.length).toBe(2);
     });
 
     it('does not remove "ux-dialog-open" from the dialog host', async done => {

@@ -1,69 +1,23 @@
 import { DOM } from 'aurelia-pal';
 import { transient } from 'aurelia-dependency-injection';
-import { ActionKey } from './dialog-settings';
 import { Renderer } from './renderer';
 import { DialogController } from './dialog-controller';
+import { transitionEvent, hasTransition } from './dialog-renderer';
 
 const containerTagName = 'dialog';
-
-export const transitionEvent = (() => {
-  let transition: string | undefined;
-  return (): string => {
-    if (transition) { return transition; }
-    const el = DOM.createElement('fakeelement') as HTMLElement;
-    const transitions: { [key: string]: string; } = {
-      transition: 'transitionend',
-      OTransition: 'oTransitionEnd',
-      MozTransition: 'transitionend',
-      WebkitTransition: 'webkitTransitionEnd'
-    };
-    for (let t in transitions) { // tslint:disable-line:prefer-const
-      if ((el.style as any)[t] !== undefined) {
-        transition = transitions[t];
-        return transition;
-      }
-    }
-    return '';
-  };
-})();
-
-export const hasTransition = (() => {
-  const unprefixedName: any = 'transitionDuration';
-  const prefixedNames = ['webkitTransitionDuration', 'oTransitionDuration'];
-  let el: HTMLElement;
-  let transitionDurationName: string | undefined;
-  return (element: Element) => {
-    if (!el) {
-      el = DOM.createElement('fakeelement') as HTMLElement;
-      if (unprefixedName in el.style) {
-        transitionDurationName = unprefixedName;
-      } else {
-        transitionDurationName = prefixedNames.find(prefixed => (prefixed in el.style));
-      }
-    }
-    return !!transitionDurationName && !!((DOM.getComputedStyle(element) as any)[transitionDurationName]
-      .split(',')
-      .find((duration: string) => !!parseFloat(duration)));
-  };
-})();
-
 let body: HTMLBodyElement;
 
-function getActionKey(e: KeyboardEvent): ActionKey | undefined {
-  if ((e.code || e.key) === 'Enter' || e.keyCode === 13) {
-    return 'Enter';
-  }
-  return undefined;
-}
-
 @transient()
-export class DialogRendererNative implements Renderer {
+export class NativeDialogRenderer implements Renderer {
   public static dialogControllers: DialogController[] = [];
 
   public static keyboardEventHandler(e: KeyboardEvent) {
-    const key = getActionKey(e);
+    const key = (e.code || e.key) === 'Enter' || e.keyCode === 13
+    ? 'Enter'
+    : undefined;
+
     if (!key) { return; }
-    const top = DialogRendererNative.dialogControllers[DialogRendererNative.dialogControllers.length - 1];
+    const top = NativeDialogRenderer.dialogControllers[NativeDialogRenderer.dialogControllers.length - 1];
     if (!top || !top.settings.keyboard) { return; }
     const keyboard = top.settings.keyboard;
     if (key === 'Enter' && (keyboard === key || (Array.isArray(keyboard) && keyboard.indexOf(key) > -1))) {
@@ -72,19 +26,19 @@ export class DialogRendererNative implements Renderer {
   }
 
   public static trackController(dialogController: DialogController): void {
-    if (!DialogRendererNative.dialogControllers.length) {
-      DOM.addEventListener('keyup', DialogRendererNative.keyboardEventHandler, false);
+    if (!NativeDialogRenderer.dialogControllers.length) {
+      DOM.addEventListener('keyup', NativeDialogRenderer.keyboardEventHandler, false);
     }
-    DialogRendererNative.dialogControllers.push(dialogController);
+    NativeDialogRenderer.dialogControllers.push(dialogController);
   }
 
   public static untrackController(dialogController: DialogController): void {
-    const i = DialogRendererNative.dialogControllers.indexOf(dialogController);
+    const i = NativeDialogRenderer.dialogControllers.indexOf(dialogController);
     if (i !== -1) {
-      DialogRendererNative.dialogControllers.splice(i, 1);
+      NativeDialogRenderer.dialogControllers.splice(i, 1);
     }
-    if (!DialogRendererNative.dialogControllers.length) {
-      DOM.removeEventListener('keyup', DialogRendererNative.keyboardEventHandler, false);
+    if (!NativeDialogRenderer.dialogControllers.length) {
+      DOM.removeEventListener('keyup', NativeDialogRenderer.keyboardEventHandler, false);
     }
   }
 
@@ -135,7 +89,7 @@ export class DialogRendererNative implements Renderer {
 
     this.host.removeChild(this.dialogContainer);
     dialogController.controller.detached();
-    if (!DialogRendererNative.dialogControllers.length) {
+    if (!NativeDialogRenderer.dialogControllers.length) {
       this.host.classList.remove('ux-dialog-open');
     }
   }
@@ -219,14 +173,14 @@ export class DialogRendererNative implements Renderer {
       settings.position(this.dialogContainer);
     }
 
-    DialogRendererNative.trackController(dialogController);
+    NativeDialogRenderer.trackController(dialogController);
     this.setupEventHandling(dialogController);
     return this.awaitTransition(() => this.setAsActive(), dialogController.settings.ignoreTransitions as boolean);
   }
 
   public hideDialog(dialogController: DialogController): Promise<void> {
     this.clearEventHandling();
-    DialogRendererNative.untrackController(dialogController);
+    NativeDialogRenderer.untrackController(dialogController);
     return this.awaitTransition(() => this.setAsInactive(), dialogController.settings.ignoreTransitions as boolean)
       .then(() => { this.detach(dialogController); });
   }
