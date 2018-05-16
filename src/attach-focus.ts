@@ -22,5 +22,8 @@ export class AttachFocus implements ComponentAttached {
 
   public valueChanged(newValue: string) {
     this.value = newValue;
+    if (this.value && this.value !== 'false') {
+      this.element.focus();
+    }
   }
 }
