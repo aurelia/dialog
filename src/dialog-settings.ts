@@ -82,7 +82,7 @@ export interface DialogSettings {
    * Usde to provide custom positioning logic.
    * When invoked the function is passed the dialog container and the dialog overlay elements.
    */
-  position?: (dialogContainer: Element, dialogOverlay: Element) => void;
+  position?: (dialogContainer: Element, dialogOverlay?: Element) => void;
 }
 
 /**
