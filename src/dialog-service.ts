@@ -1,3 +1,4 @@
+import { Container } from 'aurelia-dependency-injection';
 import { DialogCompositionEngine } from './dialog-composition-engine';
 import { DialogOpenResult, DialogCloseResult, DialogCancelResult } from './dialog-result';
 import { DialogSettings, DefaultDialogSettings } from './dialog-settings';
@@ -30,7 +31,7 @@ export class DialogService {
   private defaultSettings: DialogSettings;
 
   /**
-   * The current dialog controllers
+   * The current open dialogs controllers
    */
   public controllers: DialogController[] = [];
 
@@ -44,9 +45,9 @@ export class DialogService {
    * @internal
    */
   // tslint:disable-next-line:member-ordering
-  public static inject = [DialogCompositionEngine, DefaultDialogSettings];
-  constructor(dialogCompositionEngine: DialogCompositionEngine, defaultSettings: DialogSettings) {
-    this.dialogCompositionEngine = dialogCompositionEngine;
+  public static inject = [Container, DefaultDialogSettings];
+  constructor(container: Container, defaultSettings: DialogSettings) {
+    this.dialogCompositionEngine = container.get(DialogCompositionEngine);
     this.defaultSettings = defaultSettings;
   }
 
