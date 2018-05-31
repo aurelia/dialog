@@ -1,7 +1,7 @@
 import { InfrastructureDialogController } from './infrastructure-dialog-controller';
 
 export interface RendererStatic {
-  new (): Renderer;
+  new (...params: any[]): Renderer;
 }
 
 /**

@@ -173,7 +173,8 @@ describe('DialogController', () => {
 
     beforeEach(async done => {
       reason = new Error('Test reason');
-      await _success(() => dialogController.show(), done);
+      const openResult = await _success(() => dialogController.show(), done);
+      openResult.closeResult.catch(e => { /* prevent uncaught promise rejections */ });
       spyOn(dialogController as any, 'resolve').and.callThrough();
       spyOn(dialogController as any, 'reject').and.callThrough();
       done();

@@ -3,7 +3,7 @@ import { FrameworkConfiguration } from 'aurelia-framework';
 import { DOM } from 'aurelia-pal';
 import { DialogConfiguration, Renderer } from '../../src/aurelia-dialog';
 import { DefaultDialogSettings } from '../../src/dialog-settings';
-import { DialogRenderer } from '../../src/dialog-renderer';
+import { DialogRendererDefault } from '../../src/dialog-renderer';
 
 describe('DialogConfiguration', () => {
   const frameworkConfig: FrameworkConfiguration = {
@@ -38,7 +38,7 @@ describe('DialogConfiguration', () => {
       new DialogConfiguration(frameworkConfig, apply => { applyConfig = apply; });
       spyOn(frameworkConfig, 'transient');
       applyConfig();
-      expect(frameworkConfig.transient).toHaveBeenCalledWith(Renderer, DialogRenderer);
+      expect(frameworkConfig.transient).toHaveBeenCalledWith(Renderer, DialogRendererDefault);
     });
 
     it('the default css styles should be applied', () => {
@@ -86,7 +86,7 @@ describe('DialogConfiguration', () => {
 
       configuration.useDefaults();
       applyConfig();
-      expect(configuration.useRenderer).toHaveBeenCalledWith(DialogRenderer);
+      expect(configuration.useRenderer).toHaveBeenCalledWith(DialogRendererDefault);
       expect(configuration.useResource).toHaveBeenCalledWith('ux-dialog');
       expect(configuration.useResource).toHaveBeenCalledWith('ux-dialog-header');
       expect(configuration.useResource).toHaveBeenCalledWith('ux-dialog-footer');
