@@ -27,5 +27,6 @@ export * from './dialog-cancel-error';
 export * from './dialog-result';
 export * from './dialog-service';
 export * from './dialog-controller';
-export { NativeDialogRenderer } from './native-dialog-renderer';
+export * from './native-dialog-renderer';
+export * from './dialog-renderer';
 export * from './infrastructure-dialog-controller';

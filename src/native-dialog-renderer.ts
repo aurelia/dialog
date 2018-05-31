@@ -1,187 +1,107 @@
+import { transient, Container } from 'aurelia-dependency-injection';
 import { DOM } from 'aurelia-pal';
-import { transient } from 'aurelia-dependency-injection';
+import { Animator } from 'aurelia-templating';
+import { InfrastructureDialogController } from './infrastructure-dialog-controller';
 import { Renderer } from './renderer';
-import { DialogController } from './dialog-controller';
-import { transitionEvent, hasTransition } from './dialog-renderer';
+import { DialogHost } from './dialog-host';
+import { DialogContainer } from './dialog-container';
+import { DialogKeyboardService } from './dialog-keyboard-service';
 
-const containerTagName = 'dialog';
-let body: HTMLBodyElement;
+const CONTAINER_TAG_NAME = 'dialog';
 
 @transient()
-export class NativeDialogRenderer implements Renderer {
-  public static dialogControllers: DialogController[] = [];
+export class DialogRendererNative implements Renderer {
+  private clickDismissHandler: (eo: MouseEvent) => void;
+  private dialogCancel: (eo: Event) => void;
 
-  public static keyboardEventHandler(e: KeyboardEvent) {
-    const key = (e.code || e.key) === 'Enter' || e.keyCode === 13
-    ? 'Enter'
-    : undefined;
+  /**
+   * @internal
+   */
+  public keyboardService: DialogKeyboardService;
 
-    if (!key) { return; }
-    const top = NativeDialogRenderer.dialogControllers[NativeDialogRenderer.dialogControllers.length - 1];
-    if (!top || !top.settings.keyboard) { return; }
-    const keyboard = top.settings.keyboard;
-    if (key === 'Enter' && (keyboard === key || (Array.isArray(keyboard) && keyboard.indexOf(key) > -1))) {
-      top.ok();
-    }
+  /**
+   * @internal
+   */
+  public dialogContainer: DialogContainer<HTMLDialogElement>;
+
+  /**
+   * @internal
+   */
+  public host: DialogHost;
+
+  // tslint:disable-next-line:member-ordering
+  public static inject = [Container];
+  constructor(private container: Container) { }
+
+  private clearLayout(): void {
+    (this.dialogContainer as any) = undefined;
   }
 
-  public static trackController(dialogController: DialogController): void {
-    if (!NativeDialogRenderer.dialogControllers.length) {
-      DOM.addEventListener('keyup', NativeDialogRenderer.keyboardEventHandler, false);
-    }
-    NativeDialogRenderer.dialogControllers.push(dialogController);
-  }
-
-  public static untrackController(dialogController: DialogController): void {
-    const i = NativeDialogRenderer.dialogControllers.indexOf(dialogController);
-    if (i !== -1) {
-      NativeDialogRenderer.dialogControllers.splice(i, 1);
-    }
-    if (!NativeDialogRenderer.dialogControllers.length) {
-      DOM.removeEventListener('keyup', NativeDialogRenderer.keyboardEventHandler, false);
-    }
-  }
-
-  private stopPropagation: (e: MouseEvent & { _aureliaDialogHostClicked: boolean }) => void;
-  private closeDialogClick: (e: MouseEvent & { _aureliaDialogHostClicked: boolean }) => void;
-  private dialogCancel: (e: Event) => void;
-
-  public dialogContainer: HTMLDialogElement;
-  public host: Element;
-  public anchor: Element;
-
-  private getOwnElements(parent: Element, selector: string): Element[] {
-    const elements = parent.querySelectorAll(selector);
-    const own: Element[] = [];
-    for (let i = 0; i < elements.length; i++) {
-      if (elements[i].parentElement === parent) {
-        own.push(elements[i]);
+  private setupClickDismissHandling(dialogController: InfrastructureDialogController): void {
+    this.clickDismissHandler = eo => {
+      if ((eo.target || eo.srcElement) !== eo.currentTarget) { return; }
+      if (dialogController.settings.overlayDismiss) {
+        dialogController.cancel();
       }
-    }
-    return own;
+    };
+    this.dialogContainer.element.addEventListener('click', this.clickDismissHandler);
   }
 
-  private attach(dialogController: DialogController): void {
-    const spacingWrapper = DOM.createElement('div'); // TODO: check if redundant
-    spacingWrapper.appendChild(this.anchor);
-    this.dialogContainer = DOM.createElement(containerTagName) as HTMLDialogElement;
+  private clearClickDismissHandling(): void {
+    this.dialogContainer.element.removeEventListener('click', this.clickDismissHandler);
+  }
+
+  private attach(): void {
+    this.host.addDialog(this.dialogContainer.element);
     if ((window as any).dialogPolyfill) {
       (window as any).dialogPolyfill.registerDialog(this.dialogContainer);
     }
-
-    this.dialogContainer.appendChild(spacingWrapper);
-
-    const lastContainer = this.getOwnElements(this.host, containerTagName).pop();
-    if (lastContainer && lastContainer.parentElement) {
-      this.host.insertBefore(this.dialogContainer, lastContainer.nextSibling);
-    } else {
-      this.host.insertBefore(this.dialogContainer, this.host.firstChild);
-    }
-    dialogController.controller.attached();
-    this.host.classList.add('ux-dialog-open');
+    this.dialogContainer.element.showModal();
   }
 
-  private detach(dialogController: DialogController): void {
+  private detach(): void {
     // This check only seems required for the polyfill
-    if (this.dialogContainer.hasAttribute('open')) {
-      this.dialogContainer.close();
+    if (this.dialogContainer.element.hasAttribute('open')) {
+      this.dialogContainer.element.close();
     }
-
-    this.host.removeChild(this.dialogContainer);
-    dialogController.controller.detached();
-    if (!NativeDialogRenderer.dialogControllers.length) {
-      this.host.classList.remove('ux-dialog-open');
-    }
-  }
-
-  private setAsActive(): void {
-    this.dialogContainer.showModal();
-    this.dialogContainer.classList.add('active');
-  }
-
-  private setAsInactive(): void {
-    this.dialogContainer.classList.remove('active');
-  }
-
-  private setupEventHandling(dialogController: DialogController): void {
-    this.stopPropagation = e => { e._aureliaDialogHostClicked = true; };
-    this.closeDialogClick = e => {
-      if (dialogController.settings.overlayDismiss && !e._aureliaDialogHostClicked) {
-        dialogController.cancel();
-      }
-    };
-    this.dialogCancel = e => {
-      const keyboard = dialogController.settings.keyboard;
-      const key = 'Escape';
-
-      if (keyboard === true || keyboard === key || (Array.isArray(keyboard) && keyboard.indexOf(key) > -1)) {
-        dialogController.cancel();
-      } else {
-        e.preventDefault();
-      }
-    };
-    this.dialogContainer.addEventListener('click', this.closeDialogClick);
-    this.dialogContainer.addEventListener('cancel', this.dialogCancel);
-    this.anchor.addEventListener('click', this.stopPropagation);
-  }
-
-  private clearEventHandling(): void {
-    this.dialogContainer.removeEventListener('click', this.closeDialogClick);
-    this.dialogContainer.removeEventListener('cancel', this.dialogCancel);
-    this.anchor.removeEventListener('click', this.stopPropagation);
-  }
-
-  private awaitTransition(setActiveInactive: () => void, ignore: boolean): Promise<void> {
-    return new Promise<void>(resolve => {
-      // tslint:disable-next-line:no-this-assignment
-      const renderer = this;
-      const eventName = transitionEvent();
-      function onTransitionEnd(e: TransitionEvent): void {
-        if (e.target !== renderer.dialogContainer) {
-          return;
-        }
-        renderer.dialogContainer.removeEventListener(eventName, onTransitionEnd);
-        resolve();
-      }
-
-      if (ignore || !hasTransition(this.dialogContainer)) {
-        resolve();
-      } else {
-        this.dialogContainer.addEventListener(eventName, onTransitionEnd);
-      }
-      setActiveInactive();
-    });
+    this.dialogContainer.element.removeEventListener('cancel', this.dialogCancel);
+    this.host.removeDialog(this.dialogContainer.element);
+    this.clearLayout();
   }
 
   public getDialogContainer(): Element {
-    return this.anchor || (this.anchor = DOM.createElement('div'));
+    if (!this.dialogContainer) {
+      this.dialogContainer =
+        new DialogContainer(this.container.get(Animator), DOM.createElement(CONTAINER_TAG_NAME) as HTMLDialogElement);
+    }
+    return this.dialogContainer.element;
   }
 
-  public showDialog(dialogController: DialogController): Promise<void> {
-    if (!body) {
-      body = DOM.querySelectorAll('body')[0] as HTMLBodyElement;
-    }
-    if (dialogController.settings.host) {
-      this.host = dialogController.settings.host;
-    } else {
-      this.host = body;
-    }
+  public showDialog(dialogController: InfrastructureDialogController): Promise<void> {
+    this.keyboardService = this.container.get(DialogKeyboardService);
     const settings = dialogController.settings;
-    this.attach(dialogController);
+    this.host = DialogHost.getInstance(settings.host);
 
     if (typeof settings.position === 'function') {
-      settings.position(this.dialogContainer);
+      settings.position(this.dialogContainer.element);
     }
 
-    NativeDialogRenderer.trackController(dialogController);
-    this.setupEventHandling(dialogController);
-    return this.awaitTransition(() => this.setAsActive(), dialogController.settings.ignoreTransitions as boolean);
+    this.keyboardService.enlist(dialogController);
+    this.setupClickDismissHandling(dialogController);
+    this.dialogCancel = eo => {
+      if ((eo.target || eo.srcElement) !== eo.currentTarget) { return; }
+      eo.preventDefault();
+      eo.stopPropagation();
+    };
+    this.dialogContainer.element.addEventListener('cancel', this.dialogCancel);
+    this.attach();
+    return this.dialogContainer.addView(dialogController.view);
   }
 
-  public hideDialog(dialogController: DialogController): Promise<void> {
-    this.clearEventHandling();
-    NativeDialogRenderer.untrackController(dialogController);
-    return this.awaitTransition(() => this.setAsInactive(), dialogController.settings.ignoreTransitions as boolean)
-      .then(() => { this.detach(dialogController); });
+  public hideDialog(dialogController: InfrastructureDialogController): Promise<void> {
+    this.clearClickDismissHandling();
+    this.keyboardService.remove(dialogController);
+    return this.dialogContainer.removeView(dialogController.view)
+      .then(() => this.detach());
   }
 }
