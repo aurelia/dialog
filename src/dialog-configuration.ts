@@ -1,7 +1,7 @@
 import { FrameworkConfiguration } from 'aurelia-framework';
 import { Renderer, RendererStatic } from './renderer';
 import { DialogSettings, DefaultDialogSettings } from './dialog-settings';
-import { DialogRendererDefault } from './dialog-renderer';
+import { DialogRendererDefault } from './dialog-renderer-default';
 import { DOM, PLATFORM } from 'aurelia-pal';
 
 const defaultRenderer: RendererStatic = DialogRendererDefault;

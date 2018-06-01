@@ -2,7 +2,7 @@ import { Container } from 'aurelia-dependency-injection';
 import { Animator } from 'aurelia-templating';
 import { DOM } from 'aurelia-pal';
 import { DialogController } from '../../src/dialog-controller';
-import { DialogRendererDefault } from '../../src/dialog-renderer';
+import { DialogRendererDefault } from '../../src/dialog-renderer-default';
 import { DefaultDialogSettings, DialogSettings } from '../../src/dialog-settings';
 import { DialogKeyboardService } from '../../src/dialog-keyboard-service';
 
