@@ -3,7 +3,10 @@
   "compilerOptions": {
     "outDir": "dist/test",
     "allowUnreachableCode": true,
-    "allowUnusedLabels": true
+    "allowUnusedLabels": true,
+    "types": [
+      "jasmine"
+    ]
   },
   "exclude": [
     ".vscode",

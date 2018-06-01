@@ -19,7 +19,8 @@
     "forceConsistentCasingInFileNames": true,
     "experimentalDecorators": true,
     "noEmitHelpers": false,
-    "stripInternal": true
+    "stripInternal": true,
+    "types": [ ]
   },
   "exclude": [
     ".vscode",
