@@ -3,7 +3,7 @@ import { FrameworkConfiguration } from 'aurelia-framework';
 import { DOM } from 'aurelia-pal';
 import { DialogConfiguration, Renderer } from '../../src/aurelia-dialog';
 import { DefaultDialogSettings } from '../../src/dialog-settings';
-import { DialogRendererDefault } from '../../src/dialog-renderer';
+import { DialogRendererDefault } from '../../src/dialog-renderer-default';
 
 describe('DialogConfiguration', () => {
   const frameworkConfig: FrameworkConfiguration = {
