@@ -73,7 +73,12 @@ export class DialogRendererDefault implements Renderer {
   }
 
   private setupClickDismissHandling(dialogController: InfrastructureDialogController): void {
-    this.contentInboundClick = eo => { eo[CONTENT_INBOUND_CLICK] = true; };
+    this.contentInboundClick = eo => {
+      // TODO: if (!dialogController.settings.modal) {
+      //   set as focused
+      // }
+      eo[CONTENT_INBOUND_CLICK] = true;
+    };
     this.contentOutboundClick = eo => {
       if (dialogController.settings.overlayDismiss && !eo[CONTENT_INBOUND_CLICK]) {
         dialogController.cancel();

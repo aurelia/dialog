@@ -24,6 +24,8 @@ export interface DialogSettings {
    */
   model?: any;
 
+  modal?: boolean;
+
   /**
    * The element that will parent the dialog.
    */
@@ -95,5 +97,6 @@ export class DefaultDialogSettings implements DialogSettings {
   public centerHorizontalOnly = false;
   public rejectOnCancel = false;
   public ignoreTransitions = false;
+  public modal = true;
   public position?: (dialogContainer: Element, dialogOverlay: Element) => void;
 }

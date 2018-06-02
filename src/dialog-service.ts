@@ -35,6 +35,8 @@ export class DialogService {
    */
   public controllers: DialogController[] = [];
 
+  public focused: DialogController | null = null;
+
   /**
    * Is there an open dialog
    */
@@ -77,6 +79,39 @@ export class DialogService {
     return settings;
   }
 
+  public getLastModal(): DialogController | null {
+    for (let i = this.controllers.length - 1; i; i--) {
+      if (this.controllers[i].settings.modal) { return this.controllers[i]; }
+    }
+    return null;
+  }
+
+  /**
+   * @internal
+   */
+  public trySetFocused(controller: DialogController): boolean {
+    if (this.focused && this.focused.settings.modal && !controller.settings.modal) { return false; }
+    this.focused = controller;
+    return true;
+  }
+
+  /**
+   * @internal
+   */
+  public tryUnfocus(controller: DialogController): boolean {
+    if (this.focused !== controller) { return false; }
+    if (!this.controllers.length) {
+      this.focused = null;
+      return true;
+    }
+    const lastModal = this.getLastModal();
+    if (lastModal) {
+      this.trySetFocused(lastModal);
+      return true;
+    }
+    return false;
+  }
+
   /**
    * Opens a new dialog.
    * @param settings Dialog settings for this dialog instance.
@@ -100,10 +135,16 @@ export class DialogService {
     });
 
     if (settings.rejectOnCancel) {
-      return asDialogOpenPromise(openResult);
+      return asDialogOpenPromise(openResult.then(r => {
+        this.trySetFocused(r.controller);
+        return r;
+      }));
     }
 
-    return asDialogOpenPromise(openResult.catch(reason => {
+    return asDialogOpenPromise(openResult.then(r => {
+      this.trySetFocused(r.controller);
+      return r;
+    }, reason => {
       if (typeof reason.wasCancelled === 'boolean') {
         return { wasCancelled: true } as DialogCancelResult;
       }
@@ -141,4 +182,5 @@ function removeController(service: DialogService, dialogController: DialogContro
     service.controllers.splice(i, 1);
     service.hasActiveDialog = service.hasOpenDialog = !!service.controllers.length;
   }
+  this.tryUnfocus();
 }
