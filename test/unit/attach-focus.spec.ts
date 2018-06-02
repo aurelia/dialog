@@ -86,10 +86,9 @@ describe('attach-focus', () => {
     component.create(bootstrap).then(() => {
       expect(document.activeElement).not.toBe(viewModel.focusTargetElement);
       viewModel.hasFocus = true;
-      (Container.instance.get(TaskQueue) as TaskQueue).queueMicroTask(() => {
-        expect(document.activeElement).not.toBe(viewModel.focusTargetElement);
-        done();
-      });
+      (Container.instance.get(TaskQueue) as TaskQueue).flushMicroTaskQueue();
+      expect(document.activeElement).not.toBe(viewModel.focusTargetElement);
+      done();
     }, done.fail);
   });
 
