@@ -1,7 +1,8 @@
+import { bindingMode } from 'aurelia-binding';
 import { customAttribute, ComponentAttached } from 'aurelia-templating';
 import { DOM } from 'aurelia-pal';
 
-@customAttribute('attach-focus')
+@customAttribute('attach-focus', bindingMode.oneTime)
 export class AttachFocus implements ComponentAttached {
   public value: boolean | string;
 
@@ -15,14 +16,7 @@ export class AttachFocus implements ComponentAttached {
   }
 
   public attached(): void {
-    if (this.value && this.value !== 'false') {
-      this.element.focus();
-    }
-  }
-
-  public valueChanged(newValue: string) {
-    this.value = newValue;
-    if (this.value && this.value !== 'false') {
+    if (this.value === '' || (this.value && this.value !== 'false')) {
       this.element.focus();
     }
   }
