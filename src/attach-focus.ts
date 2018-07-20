@@ -10,7 +10,7 @@ export class AttachFocus implements ComponentAttached {
    * @internal
    */
   // tslint:disable-next-line:member-ordering
-  public static inject = [DOM.Element];
+  public static inject() { return [DOM.Element]; }
   constructor(private element: HTMLElement) {
     this.value = true;
   }
