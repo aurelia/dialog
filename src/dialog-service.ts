@@ -1,5 +1,4 @@
 import { Container } from 'aurelia-dependency-injection';
-import { Origin } from 'aurelia-metadata';
 import { CompositionEngine, Controller, ViewSlot, CompositionContext } from 'aurelia-templating';
 import { DialogOpenResult, DialogCloseResult, DialogCancelResult } from './dialog-result';
 import { DialogSettings, DefaultDialogSettings } from './dialog-settings';
@@ -78,19 +77,10 @@ export class DialogService {
   }
 
   private ensureViewModel(compositionContext: CompositionContext): Promise<CompositionContext> {
-    if (typeof compositionContext.viewModel === 'function') {
-      const moduleId = Origin.get(compositionContext.viewModel).moduleId;
-      if (!moduleId) {
-        return Promise.reject(new Error(`Can not resolve "moduleId" of "${compositionContext.viewModel.name}".`));
-      }
-      compositionContext.viewModel = moduleId;
+    if (typeof compositionContext.viewModel === 'object') {
+      return Promise.resolve(compositionContext);
     }
-
-    if (typeof compositionContext.viewModel === 'string') {
-      return this.compositionEngine.ensureViewModel(compositionContext);
-    }
-
-    return Promise.resolve(compositionContext);
+    return this.compositionEngine.ensureViewModel(compositionContext);
   }
 
   private _cancelOperation(rejectOnCancel: boolean): DialogCancelResult {
