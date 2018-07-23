@@ -11,6 +11,11 @@ let AttachFocus = class AttachFocus {
         this.element = element;
         this.value = true;
     }
+    /**
+     * @internal
+     */
+    // tslint:disable-next-line:member-ordering
+    static inject() { return [DOM.Element]; }
     attached() {
         if (this.value && this.value !== 'false') {
             this.element.focus();
@@ -20,11 +25,6 @@ let AttachFocus = class AttachFocus {
         this.value = newValue;
     }
 };
-/**
- * @internal
- */
-// tslint:disable-next-line:member-ordering
-AttachFocus.inject = [DOM.Element];
 AttachFocus = __decorate([
     customAttribute('attach-focus')
 ], AttachFocus);
