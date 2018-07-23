@@ -11,6 +11,11 @@ var AttachFocus = /** @class */ (function () {
         this.element = element;
         this.value = true;
     }
+    /**
+     * @internal
+     */
+    // tslint:disable-next-line:member-ordering
+    AttachFocus.inject = function () { return [DOM.Element]; };
     AttachFocus.prototype.attached = function () {
         if (this.value && this.value !== 'false') {
             this.element.focus();
@@ -19,11 +24,6 @@ var AttachFocus = /** @class */ (function () {
     AttachFocus.prototype.valueChanged = function (newValue) {
         this.value = newValue;
     };
-    /**
-     * @internal
-     */
-    // tslint:disable-next-line:member-ordering
-    AttachFocus.inject = [DOM.Element];
     AttachFocus = __decorate([
         customAttribute('attach-focus')
     ], AttachFocus);

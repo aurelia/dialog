@@ -1,3 +1,14 @@
+<a name="1.0.0"></a>
+# [1.0.0](https://github.com/aurelia/dialog/compare/1.0.0-rc.2.0.0...1.0.0) (2018-07-23)
+
+
+### Bug Fixes
+
+* **DI:** use static method for Element ([700dd62](https://github.com/aurelia/dialog/commit/700dd62))
+* **doc:** correct link from dialog to bootstraping ([432533d](https://github.com/aurelia/dialog/commit/432533d))
+
+
+
 <a name="1.0.0-rc.2.0.0"></a>
 # [1.0.0-rc.2.0.0](https://github.com/aurelia/dialog/compare/1.0.0-rc.1.0.3...1.0.0-rc.2.0.0) (2017-11-05)
 
