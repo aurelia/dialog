@@ -4,18 +4,27 @@ import { DOM } from 'aurelia-pal';
 import { DialogConfiguration, Renderer } from '../../src/aurelia-dialog';
 import { DefaultDialogSettings } from '../../src/dialog-settings';
 import { DialogRenderer } from '../../src/dialog-renderer';
+import UxDialog from '../../src/resources/ux-dialog';
 
-describe('DialogConfiguration', () => {
+fdescribe('DialogConfiguration', () => {
   const frameworkConfig: FrameworkConfiguration = {
     container: new Container(),
     globalResources: () => { return; },
     transient: () => { return; }
   } as any;
   let configuration: DialogConfiguration;
-  let applyConfig: () => void;
+  let applyConfig: () => Promise<void>;
   const applySetterSpy = jasmine.createSpy('applySetter')
     .and
-    .callFake((apply: () => void) => { applyConfig = apply; });
+    .callFake((apply: () => Promise<void>) => { applyConfig = apply; });
+
+  async function whenConfigured(configuration: () => (void | Promise<void>), done: DoneFn): Promise<void> {
+    try {
+      await configuration();
+    } catch (e) {
+      done.fail(e);
+    }
+  }
 
   beforeEach(() => {
     frameworkConfig.container.unregister(DefaultDialogSettings);
@@ -32,101 +41,106 @@ describe('DialogConfiguration', () => {
   });
 
   describe('even when ".useDefaults" is not called', () => {
-    it('a default Renderer should be registered', () => {
-      let applyConfig: () => void = null as any;
+    it('a default Renderer should be registered', async done => {
+      let applyConfig: () => void | Promise<void> = null as any;
       // tslint:disable-next-line:no-unused-expression
       new DialogConfiguration(frameworkConfig, apply => { applyConfig = apply; });
       spyOn(frameworkConfig, 'transient');
-      applyConfig();
+      await whenConfigured(applyConfig, done);
       expect(frameworkConfig.transient).toHaveBeenCalledWith(Renderer, DialogRenderer);
+      done();
     });
 
-    it('the default css styles should be applied', () => {
-      let applyConfig: () => void = null as any;
+    it('the default css styles should be applied', async done => {
+      let applyConfig: () => void | Promise<void> = null as any;
       // tslint:disable-next-line:no-unused-expression
       new DialogConfiguration(frameworkConfig, apply => { applyConfig = apply; });
       spyOn(DOM, 'injectStyles');
-      applyConfig();
+      await whenConfigured(applyConfig, done);
       expect(DOM.injectStyles).toHaveBeenCalledWith(jasmine.any(String));
+      done();
     });
   });
 
   describe('useRenderer', () => {
-    it('should register a renderer as a transient', () => {
+    it('should register a renderer as a transient', async done => {
       const renderer = {} as any;
       spyOn(frameworkConfig, 'transient');
       configuration.useRenderer(renderer);
-      applyConfig();
+      await whenConfigured(applyConfig, done);
       expect(frameworkConfig.transient).toHaveBeenCalledWith(Renderer, renderer);
+      done();
     });
 
-    it('should export settings', () => {
+    it('should export settings', async done => {
       const first = 'first';
       const second = 'second';
       configuration.useRenderer({} as any, { first, second });
-      applyConfig();
+      await whenConfigured(applyConfig, done);
       expect(configuration.settings[first]).toBe(first);
       expect(configuration.settings[second]).toBe(second);
+      done();
     });
   });
 
   describe('useResource', () => {
-    it('should call globalResources', () => {
+    it('should call globalResources', async done => {
       spyOn(frameworkConfig, 'globalResources');
       configuration.useResource('ux-dialog');
-      applyConfig();
-      expect(frameworkConfig.globalResources).toHaveBeenCalled();
+      await whenConfigured(applyConfig, done);
+      expect(frameworkConfig.globalResources).toHaveBeenCalledWith(jasmine.arrayContaining([UxDialog]));
+      done();
     });
   });
 
   describe('useDefaults', () => {
-    it('should call useRenderer with the default renderer', () => {
+    it('should call useRenderer with the default renderer', async done => {
       spyOn(configuration, 'useRenderer').and.callThrough();
       spyOn(configuration, 'useResource').and.callThrough();
-
       configuration.useDefaults();
-      applyConfig();
+      await whenConfigured(applyConfig, done);
       expect(configuration.useRenderer).toHaveBeenCalledWith(DialogRenderer);
       expect(configuration.useResource).toHaveBeenCalledWith('ux-dialog');
       expect(configuration.useResource).toHaveBeenCalledWith('ux-dialog-header');
       expect(configuration.useResource).toHaveBeenCalledWith('ux-dialog-footer');
       expect(configuration.useResource).toHaveBeenCalledWith('ux-dialog-body');
       expect(configuration.useResource).toHaveBeenCalledWith('attach-focus');
+      done();
     });
 
-    it('should inject default style', () => {
+    it('should inject default style', async done => {
       spyOn(DOM, 'injectStyles').and.callThrough();
-
       configuration.useDefaults();
-      applyConfig();
+      await whenConfigured(applyConfig, done);
       expect((DOM.injectStyles as jasmine.Spy).calls.any()).toEqual(true);
+      done();
     });
   });
 
   describe('useCSS', () => {
     describe('should skip injecting', () => {
-      it('undefined css', () => {
+      it('undefined css', async done => {
         spyOn(DOM, 'injectStyles').and.callThrough();
-
         configuration.useCSS(undefined as any);
-        applyConfig();
+        await whenConfigured(applyConfig, done);
         expect((DOM.injectStyles as jasmine.Spy).calls.any()).toEqual(false);
+        done();
       });
 
-      it('null css', () => {
+      it('null css', async done => {
         spyOn(DOM, 'injectStyles').and.callThrough();
-
         configuration.useCSS(null as any);
-        applyConfig();
+        await whenConfigured(applyConfig, done);
         expect((DOM.injectStyles as jasmine.Spy).calls.any()).toEqual(false);
+        done();
       });
 
-      it('empty string', () => {
+      it('empty string', async done => {
         spyOn(DOM, 'injectStyles').and.callThrough();
-
         configuration.useCSS('');
-        applyConfig();
+        await whenConfigured(applyConfig, done);
         expect((DOM.injectStyles as jasmine.Spy).calls.any()).toEqual(false);
+        done();
       });
     });
   });

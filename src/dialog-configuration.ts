@@ -34,7 +34,10 @@ export class DialogConfiguration {
    */
   public settings: DialogSettings;
 
-  constructor(frameworkConfiguration: FrameworkConfiguration, applySetter: (apply: () => void) => void) {
+  constructor(
+    frameworkConfiguration: FrameworkConfiguration,
+    applySetter: (apply: () => void | Promise<void>) => void
+  ) {
     this.fwConfig = frameworkConfiguration;
     this.settings = this.fwConfig.container.get(DefaultDialogSettings);
     applySetter(() => this._apply());

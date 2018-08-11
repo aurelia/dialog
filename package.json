@@ -110,24 +110,5 @@
     "tslint": "5.7.0",
     "typedoc": "0.8.0",
     "typescript": "^2.5.3"
-  },
-  "aurelia": {
-    "documentation": {
-      "articles": [
-        {
-          "title": "Dialog: Basics",
-          "href": "doc/article/en-US/dialog-basics.md"
-        }
-      ]
-    },
-    "build": {
-      "resources": [
-        "aurelia-dialog/ux-dialog",
-        "aurelia-dialog/ux-dialog-header",
-        "aurelia-dialog/ux-dialog-body",
-        "aurelia-dialog/ux-dialog-footer",
-        "aurelia-dialog/attach-focus"
-      ]
-    }
   }
 }
