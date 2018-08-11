@@ -6,6 +6,6 @@ import { customElement, inlineView } from 'aurelia-templating';
     <slot></slot>
   </template>
 `)
-export class UxDialog {
+export default class UxDialog {
 
 }
