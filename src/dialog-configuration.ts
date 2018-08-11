@@ -2,16 +2,16 @@ import { FrameworkConfiguration } from 'aurelia-framework';
 import { Renderer, RendererStatic } from './renderer';
 import { DialogSettings, DefaultDialogSettings } from './dialog-settings';
 import { DialogRenderer } from './dialog-renderer';
-import { DOM, PLATFORM } from 'aurelia-pal';
+import { DOM } from 'aurelia-pal';
 
 const defaultRenderer: RendererStatic = DialogRenderer;
 
-const resources: { [key: string]: string } = {
-  'ux-dialog': PLATFORM.moduleName('./ux-dialog'),
-  'ux-dialog-header': PLATFORM.moduleName('./ux-dialog-header'),
-  'ux-dialog-body': PLATFORM.moduleName('./ux-dialog-body'),
-  'ux-dialog-footer': PLATFORM.moduleName('./ux-dialog-footer'),
-  'attach-focus': PLATFORM.moduleName('./attach-focus')
+const resources: { [key: string]: () => Promise<any> } = {
+  'ux-dialog': () => import('./resources/ux-dialog'),
+  'ux-dialog-header': () => import('./resources/ux-dialog-header'),
+  'ux-dialog-body': () => import('./resources/ux-dialog-body'),
+  'ux-dialog-footer': () => import('./resources/ux-dialog-footer'),
+  'attach-focus': () => import('./resources/attach-focus')
 };
 
 // tslint:disable-next-line:max-line-length
@@ -34,18 +34,27 @@ export class DialogConfiguration {
    */
   public settings: DialogSettings;
 
-  constructor(frameworkConfiguration: FrameworkConfiguration, applySetter: (apply: () => void) => void) {
+  constructor(
+    frameworkConfiguration: FrameworkConfiguration,
+    applySetter: (apply: () => void | Promise<void>) => void
+  ) {
     this.fwConfig = frameworkConfiguration;
     this.settings = this.fwConfig.container.get(DefaultDialogSettings);
     applySetter(() => this._apply());
   }
 
-  private _apply(): void {
+  private _apply(): void | Promise<void> {
     this.fwConfig.transient(Renderer, this.renderer);
-    this.resources.forEach(resourceName => this.fwConfig.globalResources(resources[resourceName]));
 
     if (this.cssText) {
       DOM.injectStyles(this.cssText);
+    }
+
+    if (this.resources.length) {
+      return Promise.all(this.resources.map(name => resources[name]()))
+        .then(modules => {
+          this.fwConfig.globalResources(modules.map(m => m.default as () => void));
+        });
     }
   }
 

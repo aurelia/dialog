@@ -1,5 +1,5 @@
 import { customElement, bindable, inlineView } from 'aurelia-templating';
-import { DialogController } from './dialog-controller';
+import { DialogController } from '../dialog-controller';
 
 /**
  * View-model for footer of Dialog.
@@ -19,7 +19,7 @@ import { DialogController } from './dialog-controller';
   </template>
 `)
 
-export class UxDialogFooter {
+export default class UxDialogFooter {
   public static isCancelButton(value: string) {
     return value === 'Cancel';
   }
