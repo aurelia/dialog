@@ -6,7 +6,7 @@ import { DefaultDialogSettings } from '../../src/dialog-settings';
 import { DialogRenderer } from '../../src/dialog-renderer';
 import UxDialog from '../../src/resources/ux-dialog';
 
-fdescribe('DialogConfiguration', () => {
+describe('DialogConfiguration', () => {
   const frameworkConfig: FrameworkConfiguration = {
     container: new Container(),
     globalResources: () => { return; },
