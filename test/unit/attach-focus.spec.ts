@@ -1,65 +1,95 @@
-import { StageComponent } from 'aurelia-testing';
 import { bootstrap } from 'aurelia-bootstrapper';
+import { Container } from 'aurelia-dependency-injection';
 import { Aurelia } from 'aurelia-framework';
+import { TaskQueue } from 'aurelia-task-queue';
+import { StageComponent, ComponentTester } from 'aurelia-testing';
 
-describe('modal gets focused when attached', () => {
-  let component: any;
-  let viewModel: any;
-
+describe('attach-focus', () => {
   class ViewModel {
     public first: any;
+    public focusTargetElement: Element;
+    public hasFocus: boolean;
+  }
+
+  let component: ComponentTester;
+  let viewModel: ViewModel;
+
+  function setupView(component: ComponentTester, attachFocusFragment: string): void {
+    component.inView(`
+      <div>
+        <input ${attachFocusFragment} ref="focusTargetElement" />
+      </div>
+    `);
   }
 
   beforeEach(() => {
     viewModel = new ViewModel();
     component = StageComponent
-      .withResources('dist/test/src/attach-focus')
+      .withResources('dist/test/src/resources/attach-focus')
       .boundTo(viewModel);
     component.bootstrap((aurelia: Aurelia) => aurelia.use.basicConfiguration());
   });
 
-  describe('when using attribute without .bind', () => {
-    beforeEach(() => {
-      component.inView(`
-        <div>
-          <input attach-focus="true" ref="noValueEl" />
-        </div>
-      `);
+  describe('without binding command', () => {
+    describe('sets focus', () => {
+      it('without value', done => {
+        setupView(component, 'attach-focus');
+        component.create(bootstrap).then(() => {
+          expect(document.activeElement).toBe(viewModel.focusTargetElement);
+          done();
+        }, done.fail);
+      });
+
+      it('when the value is "true"', done => {
+        setupView(component, 'attach-focus="true"');
+        component.create(bootstrap).then(() => {
+          expect(document.activeElement).toBe(viewModel.focusTargetElement);
+          done();
+        }, done.fail);
+      });
     });
 
-    it('sets focus to no value element', done => {
+    it('does not set focus when the value is "false"', done => {
+      setupView(component, 'attach-focus="false"');
       component.create(bootstrap).then(() => {
-        expect(document.activeElement).toBe(viewModel.noValueEl);
+        expect(document.activeElement).not.toBe(viewModel.focusTargetElement);
         done();
-      });
+      }, done.fail);
     });
   });
 
-  describe('when binding to vm property', () => {
+  describe('with binding command', () => {
     beforeEach(() => {
-      component.inView(`
-        <div>
-          <input attach-focus.bind="first" ref="firstEl" />
-          <input attach-focus.bind="!first" ref="secondEl" />
-        </div>
-      `);
+      setupView(component, 'attach-focus.bind="hasFocus"');
     });
 
-    it('sets focus to first element when true', done => {
-      viewModel.first = true;
+    it('sets focus when the value is "true"', done => {
+      viewModel.hasFocus = true;
       component.create(bootstrap).then(() => {
-        expect(document.activeElement).toBe(viewModel.firstEl);
+        expect(document.activeElement).toBe(viewModel.focusTargetElement);
         done();
-      });
+      }, done.fail);
     });
 
-    it('sets focus to second element when false', done => {
-      viewModel.first = false;
+    it('does not set focus when the value is "false"', done => {
+      viewModel.hasFocus = false;
       component.create(bootstrap).then(() => {
-        expect(document.activeElement).toBe(viewModel.secondEl);
+        expect(document.activeElement).not.toBe(viewModel.focusTargetElement);
         done();
-      });
+      }, done.fail);
     });
+  });
+
+  it('sets focus only in ".attached"', done => {
+    setupView(component, 'attach-focus.to-view="hasFocus"');
+    viewModel.hasFocus = false;
+    component.create(bootstrap).then(() => {
+      expect(document.activeElement).not.toBe(viewModel.focusTargetElement);
+      viewModel.hasFocus = true;
+      (Container.instance.get(TaskQueue) as TaskQueue).flushMicroTaskQueue();
+      expect(document.activeElement).not.toBe(viewModel.focusTargetElement);
+      done();
+    }, done.fail);
   });
 
   afterEach(() => {
