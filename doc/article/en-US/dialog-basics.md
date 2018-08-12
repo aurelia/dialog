@@ -11,25 +11,23 @@ This article covers the dialog plugin for Aurelia.  This plugin is created for s
 
 ## Installing The Plugin
 
-1. In your **JSPM**-based project install the plugin via `jspm` with following command
+```Shell
+npm install aurelia-dialog --save
+```
+
+or
+
+```Shell
+yarn add aurelia-dialog
+```
+
+or
 
 ```Shell
 jspm install aurelia-dialog
 ```
 
-If you use **Webpack**, install the plugin with the following command
-
-```Shell
-npm install aurelia-dialog --save
-```
-
-If you use the **Aurelia CLI**, install the plugin with the following command
-
-```Shell
-npm install aurelia-dialog --save
-```
-
-and then add a section in your `aurelia.json` for the plugin
+If you use the **Aurelia CLI** RequireJS/SystemJS build add the following section in your `aurelia.json`:
 
 <code-listing heading="aurelia.json">
   <source-code lang="ES 2015">
@@ -39,7 +37,8 @@ and then add a section in your `aurelia.json` for the plugin
       {
         "name": "aurelia-dialog",
         "path": "../node_modules/aurelia-dialog/dist/amd",
-        "main": "aurelia-dialog"
+        "main": "aurelia-dialog",
+        "resources": ["resources/*.js"]
       }
     //...
     ]
@@ -47,13 +46,21 @@ and then add a section in your `aurelia.json` for the plugin
   </source-code>
 </code-listing>
 
-If you use TypeScript, install the plugin's typings with the following command
+If you do not use any of the default resources(`<ux-dialog>`, `attach-focus`, etc.) just omit the `resources` entry. If you use just some, list those you are using.
 
+> INFO
+> Depending on you loader/bundler you may need aditional configuration, as with`aurelia-cli`, to include the default resources.
+
+
+> INFO
+> If you use TypeScript and install *only* the *jspm* package, you can install the plugin's typings with the following command:
 ```Shell
 typings install github:aurelia/dialog --save
 ```
 
-2. Make sure you use [manual bootstrapping](http://aurelia.io/docs/fundamentals/app-configuration-and-startup#manual-bootstrapping). In order to do so open your `index.html` and locate the element with the attribute aurelia-app. Change it to look like this:
+## Configuring The Plugin
+
+1. Make sure you use [manual bootstrapping](http://aurelia.io/docs/fundamentals/app-configuration-and-startup#manual-bootstrapping). In order to do so open your `index.html` and locate the element with the attribute aurelia-app. Change it to look like this:
 
 <code-listing heading="index.html">
   <source-code lang="HTML">
@@ -61,7 +68,7 @@ typings install github:aurelia/dialog --save
   </source-code>
 </code-listing>
 
-3. Create (if you haven't already) a file `main.js` in your `src` folder with following content:
+2. Create (if you haven't already) a file `main.js` in your `src` folder with following content:
 
 <code-listing heading="main.js">
   <source-code lang="ES 2015">
@@ -81,7 +88,7 @@ typings install github:aurelia/dialog --save
 > When the `<body>` is marked with the `aurelia-app` attribute any dialog open prior to the app being attached to the DOM(before `Aurelia.prototype.setRoot` completes), will be *removed* from the DOM. Opening a dialog in the `canActivate` or `activate` hooks is *OK* in any scenario *if* you *await* it to close *before continuing*. If you just want to open a dialog, without awaiting it to close, do it the `attached` hook instead.
 
 > Warning
-> `PLATFORM.moduleName` should *not* be omitted if you are using Webpack.
+> `PLATFORM.moduleName` should *not* be omitted if you are using *Webpack*.
 
 ## Using The Plugin
 
@@ -180,9 +187,45 @@ There is also an `output` property that gets returned with the outcome of the us
   </source-code>
 </code-listing>
 
-## Attach Focus Custom Attribute
+## Default Resources(custom elements/attributes)
 
-The library exposes an `attach-focus` custom attribute that allows focusing in on an element in the modal when it is loaded.  You can use this to focus a button, input, etc...  Example usage -
+The available resources are: `<ux-dialog>`, `<ux-dialog-header>`, `<ux-dialog-body>`, `<ux-dialog-footer>` and `attach-focus`. They are registered by default.
+If you are not using them provide a configuration callback so they do not get registered by default:
+
+<code-listing heading="main.js">
+  <source-code lang="ES 2015">
+  import {PLATFORM} from 'aurelia-pal';
+  export function configure(aurelia) {
+    aurelia.use
+      // ...
+      .plugin(PLATFORM.moduleName('aurelia-dialog'), (configuration) => {
+        // custom configuration
+      });
+    // ...
+  }
+  </source-code>
+</code-listing>
+
+Or if you want to use just some of them:
+
+<code-listing heading="main.js">
+  <source-code lang="ES 2015">
+  import {PLATFORM} from 'aurelia-pal';
+  export function configure(aurelia) {
+    aurelia.use
+      // ...
+      .plugin(PLATFORM.moduleName('aurelia-dialog'), (configuration) => {
+        // use only attach-focus
+        configuration.useResource('attach-focus');
+      });
+    // ...
+  }
+  </source-code>
+</code-listing>
+
+### `attach-focus` Custom Attribute
+
+The library exposes an `attach-focus` custom attribute that allows focusing in on an element in the modal when it is loaded. You can use this to focus a button, input, etc...  Example usage:
 
 <code-listing heading="edit-person.html">
   <source-code lang="HTML">
@@ -190,7 +233,7 @@ The library exposes an `attach-focus` custom attribute that allows focusing in o
     <ux-dialog>
       <ux-dialog-body>
         <h2>Edit first name</h2>
-        <input attach-focus="true" value.bind="person.firstName" />
+        <input attach-focus value.bind="person.firstName" />
       </ux-dialog-body>
     </ux-dialog>
   </template>
@@ -205,6 +248,9 @@ You can also bind the value of the attach-focus attribute if you want to alter w
   <input attach-focus.bind="!isNewPerson" value.bind="person.firstName" />
   </source-code>
 </code-listing>
+
+> INFO
+> Logic is executed during `attach` - hence the attribute name. Any changes to the value after this point will not be reflected, for such scenarios use the `focus` custom attribute.
 
 ## Settings
 
@@ -251,18 +297,11 @@ The settings available for the dialog are set on the dialog controller on a per-
     If you want to open a `prompt` from `consent-form` the path will be `prompts/prompt`.
 
     > Warning
-    > Webpack users should *always* mark dynamically loaded dependencies with `PLATFORM.moduleName`. For more details do check the `aurelia-webpack-plugin` [wiki](https://github.com/aurelia/webpack-plugin/wiki).
+    > *Webpack* users should *always* mark dynamically loaded dependencies with `PLATFORM.moduleName`. For more details do check the `aurelia-webpack-plugin` [wiki](https://github.com/aurelia/webpack-plugin/wiki).
 
   - object - it will be used as the view model. In this case `view` must also be specified.
   - class - the view model *class* or *constructor function*.
-    > Info
-    > This approach depends on being able resolve the origin of the class.
 
-    > Info
-    > Webpack users are advised to use the string overload, wrapped with `PLATFORM.moduleName`, instead of this one.
-
-    > Warning
-    > This approach might not work for Webpack users when using *DLLPlugin* or *ModuleConcatenationPlugin*.
 - `view` can be url or view strategy to override the default view location convention.
 - `model` the data to be passed to the `canActivate` and `activate` methods of the view model if implemented.
 - `host` allows providing the element which will parent the dialog - if not provided the body will be used.
@@ -334,7 +373,7 @@ It is possible to resolve and close (using cancel/ok/error methods) dialog in th
 ## Styling The Dialog
 
 ### Overriding The Defaults
-The CSS classes for the dialog are hard-coded in `dialog-configuration.ts`.  When you cofigure the dialog plugin via `config.useDefaults()` the following code code is executed.
+The CSS classes for the dialog are hard-coded in `dialog-configuration.ts`.  When you configure the dialog plugin via `config.useDefaults()` the following code code is executed.
 
 <code-listing>
   <source-code lang="ES 2015">
@@ -366,7 +405,6 @@ If you want to override the default styles, configure the plugin instead by call
 </code-listing>
 
 Copying the CSS from `dialog-configuration.ts` to your application's CSS file is a good starting point.
-
 
 ### Overlay With 50% Opacity
 
