@@ -65,6 +65,7 @@
       "aurelia-templating": "^1.8.2"
     },
     "dependencies": {
+      "aurelia-binding": "^2.1.4",
       "aurelia-dependency-injection": "^1.0.0",
       "aurelia-metadata": "^1.0.0",
       "aurelia-pal": "^1.0.0",
@@ -79,6 +80,7 @@
     }
   },
   "dependencies": {
+    "aurelia-binding": "^2.1.4",
     "aurelia-dependency-injection": "^1.0.0",
     "aurelia-framework": "^1.0.0",
     "aurelia-metadata": "^1.0.0",
@@ -87,7 +89,6 @@
   },
   "devDependencies": {
     "@types/jasmine": "2.5.47",
-    "aurelia-binding": "^1.2.1",
     "aurelia-bootstrapper": "^2.0.1",
     "aurelia-event-aggregator": "^1.0.1",
     "aurelia-loader": "^1.0.0",
