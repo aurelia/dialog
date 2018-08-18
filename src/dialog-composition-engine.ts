@@ -29,7 +29,7 @@ const noopViewSlot: ViewSlot = {
     add() { },
     insert() { },
     move() { },
-    remove() { },
+    remove() { return {} as any; },
     removeAt() { return {} as any; },
     removeMany() { },
     removeAll() { },
