@@ -27,11 +27,11 @@ export declare class DialogService {
     hasOpenDialog: boolean;
     hasActiveDialog: boolean;
     constructor(container: Container, compositionEngine: CompositionEngine, defaultSettings: DialogSettings);
-    private validateSettings(settings);
-    private createCompositionContext(childContainer, host, settings);
-    private ensureViewModel(compositionContext);
-    private _cancelOperation(rejectOnCancel);
-    private composeAndShowDialog(compositionContext, dialogController);
+    private validateSettings;
+    private createCompositionContext;
+    private ensureViewModel;
+    private _cancelOperation;
+    private composeAndShowDialog;
     /**
      * Opens a new dialog.
      * @param settings Dialog settings for this dialog instance.

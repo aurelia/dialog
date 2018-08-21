@@ -4,6 +4,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var DialogRenderer_1;
 import { DOM } from 'aurelia-pal';
 import { transient } from 'aurelia-dependency-injection';
 const containerTagName = 'ux-dialog-container';
@@ -21,7 +22,7 @@ export const transitionEvent = (() => {
             MozTransition: 'transitionend',
             WebkitTransition: 'webkitTransitionEnd'
         };
-        for (let t in transitions) {
+        for (let t in transitions) { // tslint:disable-line:prefer-const
             if (el.style[t] !== undefined) {
                 transition = transitions[t];
                 return transition;
@@ -221,4 +222,3 @@ DialogRenderer = DialogRenderer_1 = __decorate([
     transient()
 ], DialogRenderer);
 export { DialogRenderer };
-var DialogRenderer_1;

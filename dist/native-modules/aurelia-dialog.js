@@ -8,13 +8,8 @@ export function configure(frameworkConfig, callback) {
     else {
         config.useDefaults();
     }
-    applyConfig();
+    return applyConfig();
 }
-export * from './ux-dialog';
-export * from './ux-dialog-header';
-export * from './ux-dialog-body';
-export * from './ux-dialog-footer';
-export * from './attach-focus';
 export * from './dialog-settings';
 export * from './dialog-configuration';
 export * from './renderer';

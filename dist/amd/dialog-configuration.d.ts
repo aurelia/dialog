@@ -14,8 +14,8 @@ export declare class DialogConfiguration {
      * The global configuration settings.
      */
     settings: DialogSettings;
-    constructor(frameworkConfiguration: FrameworkConfiguration, applySetter: (apply: () => void) => void);
-    private _apply();
+    constructor(frameworkConfiguration: FrameworkConfiguration, applySetter: (apply: () => void | Promise<void>) => void);
+    private _apply;
     /**
      * Selects the Aurelia conventional defaults for the dialog plugin.
      * @return This instance.

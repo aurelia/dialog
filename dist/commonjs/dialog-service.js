@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var aurelia_dependency_injection_1 = require("aurelia-dependency-injection");
-var aurelia_metadata_1 = require("aurelia-metadata");
 var aurelia_templating_1 = require("aurelia-templating");
 var dialog_settings_1 = require("./dialog-settings");
 var dialog_cancel_error_1 = require("./dialog-cancel-error");
@@ -53,17 +52,10 @@ var DialogService = /** @class */ (function () {
         };
     };
     DialogService.prototype.ensureViewModel = function (compositionContext) {
-        if (typeof compositionContext.viewModel === 'function') {
-            var moduleId = aurelia_metadata_1.Origin.get(compositionContext.viewModel).moduleId;
-            if (!moduleId) {
-                return Promise.reject(new Error("Can not resolve \"moduleId\" of \"" + compositionContext.viewModel.name + "\"."));
-            }
-            compositionContext.viewModel = moduleId;
+        if (typeof compositionContext.viewModel === 'object') {
+            return Promise.resolve(compositionContext);
         }
-        if (typeof compositionContext.viewModel === 'string') {
-            return this.compositionEngine.ensureViewModel(compositionContext);
-        }
-        return Promise.resolve(compositionContext);
+        return this.compositionEngine.ensureViewModel(compositionContext);
     };
     DialogService.prototype._cancelOperation = function (rejectOnCancel) {
         if (!rejectOnCancel) {

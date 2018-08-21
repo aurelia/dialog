@@ -1,3 +1,25 @@
+<a name="2.0.0-rc.1"></a>
+# [2.0.0-rc.1](https://github.com/aurelia/dialog/compare/1.0.0...2.0.0-rc.1) (2018-08-21)
+
+
+### Bug Fixes
+
+* **css:** update styles to use ux- prefix instead of ai- ([f29d8cb](https://github.com/aurelia/dialog/commit/f29d8cb)), closes [#306](https://github.com/aurelia/dialog/issues/306)
+* **package.json:** add missing dependency ([ed9c5df](https://github.com/aurelia/dialog/commit/ed9c5df))
+
+
+### Features
+
+* **attach-focus:** make work as boolean attr ([f75abb4](https://github.com/aurelia/dialog/commit/f75abb4)), closes [#349](https://github.com/aurelia/dialog/issues/349)
+* **resources:** register resources by class ([#354](https://github.com/aurelia/dialog/issues/354)) ([ff55c80](https://github.com/aurelia/dialog/commit/ff55c80))
+
+
+### BREAKING CHANGES
+
+* **resources:** - default resources are no longer reexported, need to be explicitly included when bundling
+
+
+
 <a name="1.0.0"></a>
 # [1.0.0](https://github.com/aurelia/dialog/compare/1.0.0-rc.2.0.0...1.0.0) (2018-07-23)
 

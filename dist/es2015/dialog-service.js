@@ -1,5 +1,4 @@
 import { Container } from 'aurelia-dependency-injection';
-import { Origin } from 'aurelia-metadata';
 import { CompositionEngine, ViewSlot } from 'aurelia-templating';
 import { DefaultDialogSettings } from './dialog-settings';
 import { createDialogCancelError } from './dialog-cancel-error';
@@ -51,17 +50,10 @@ export class DialogService {
         };
     }
     ensureViewModel(compositionContext) {
-        if (typeof compositionContext.viewModel === 'function') {
-            const moduleId = Origin.get(compositionContext.viewModel).moduleId;
-            if (!moduleId) {
-                return Promise.reject(new Error(`Can not resolve "moduleId" of "${compositionContext.viewModel.name}".`));
-            }
-            compositionContext.viewModel = moduleId;
+        if (typeof compositionContext.viewModel === 'object') {
+            return Promise.resolve(compositionContext);
         }
-        if (typeof compositionContext.viewModel === 'string') {
-            return this.compositionEngine.ensureViewModel(compositionContext);
-        }
-        return Promise.resolve(compositionContext);
+        return this.compositionEngine.ensureViewModel(compositionContext);
     }
     _cancelOperation(rejectOnCancel) {
         if (!rejectOnCancel) {

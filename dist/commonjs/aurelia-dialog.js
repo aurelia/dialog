@@ -13,14 +13,9 @@ function configure(frameworkConfig, callback) {
     else {
         config.useDefaults();
     }
-    applyConfig();
+    return applyConfig();
 }
 exports.configure = configure;
-__export(require("./ux-dialog"));
-__export(require("./ux-dialog-header"));
-__export(require("./ux-dialog-body"));
-__export(require("./ux-dialog-footer"));
-__export(require("./attach-focus"));
 __export(require("./dialog-settings"));
 __export(require("./dialog-configuration"));
 __export(require("./renderer"));
