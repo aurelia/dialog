@@ -23,7 +23,7 @@ exports.transitionEvent = (function () {
             MozTransition: 'transitionend',
             WebkitTransition: 'webkitTransitionEnd'
         };
-        for (var t in transitions) {
+        for (var t in transitions) { // tslint:disable-line:prefer-const
             if (el.style[t] !== undefined) {
                 transition = transitions[t];
                 return transition;
@@ -223,11 +223,11 @@ var DialogRenderer = /** @class */ (function () {
         return this.awaitTransition(function () { return _this.setAsInactive(); }, dialogController.settings.ignoreTransitions)
             .then(function () { _this.detach(dialogController); });
     };
+    var DialogRenderer_1;
     DialogRenderer.dialogControllers = [];
     DialogRenderer = DialogRenderer_1 = __decorate([
         aurelia_dependency_injection_1.transient()
     ], DialogRenderer);
     return DialogRenderer;
-    var DialogRenderer_1;
 }());
 exports.DialogRenderer = DialogRenderer;

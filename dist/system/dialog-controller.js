@@ -1,7 +1,7 @@
 System.register(["./renderer", "./lifecycle", "./dialog-close-error", "./dialog-cancel-error"], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var renderer_1, lifecycle_1, dialog_close_error_1, dialog_cancel_error_1, DialogController;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (renderer_1_1) {

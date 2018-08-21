@@ -1,6 +1,6 @@
 {
   "name": "aurelia-dialog",
-  "version": "1.0.0",
+  "version": "2.0.0-rc.1",
   "description": "A dialog plugin for Aurelia.",
   "keywords": [
     "aurelia",
@@ -59,7 +59,9 @@
       "dist": "dist/amd"
     },
     "peerDependencies": {
+      "aurelia-binding": "^2.1.4",
       "aurelia-dependency-injection": "^1.0.0",
+      "aurelia-framework": "^1.0.0",
       "aurelia-metadata": "^1.0.0",
       "aurelia-pal": "^1.0.0",
       "aurelia-templating": "^1.8.2"
@@ -67,9 +69,10 @@
     "dependencies": {
       "aurelia-binding": "^2.1.4",
       "aurelia-dependency-injection": "^1.0.0",
+      "aurelia-framework": "^1.0.0",
       "aurelia-metadata": "^1.0.0",
       "aurelia-pal": "^1.0.0",
-      "aurelia-templating": "^1.0.0"
+      "aurelia-templating": "^1.8.2"
     },
     "devDependencies": {
       "aurelia-bootstrapper": "^1.0.0",

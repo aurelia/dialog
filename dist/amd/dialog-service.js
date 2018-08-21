@@ -1,4 +1,4 @@
-define(["require", "exports", "aurelia-dependency-injection", "aurelia-metadata", "aurelia-templating", "./dialog-settings", "./dialog-cancel-error", "./lifecycle", "./dialog-controller"], function (require, exports, aurelia_dependency_injection_1, aurelia_metadata_1, aurelia_templating_1, dialog_settings_1, dialog_cancel_error_1, lifecycle_1, dialog_controller_1) {
+define(["require", "exports", "aurelia-dependency-injection", "aurelia-templating", "./dialog-settings", "./dialog-cancel-error", "./lifecycle", "./dialog-controller"], function (require, exports, aurelia_dependency_injection_1, aurelia_templating_1, dialog_settings_1, dialog_cancel_error_1, lifecycle_1, dialog_controller_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     /* tslint:enable:max-line-length */
@@ -47,17 +47,10 @@ define(["require", "exports", "aurelia-dependency-injection", "aurelia-metadata"
             };
         };
         DialogService.prototype.ensureViewModel = function (compositionContext) {
-            if (typeof compositionContext.viewModel === 'function') {
-                var moduleId = aurelia_metadata_1.Origin.get(compositionContext.viewModel).moduleId;
-                if (!moduleId) {
-                    return Promise.reject(new Error("Can not resolve \"moduleId\" of \"" + compositionContext.viewModel.name + "\"."));
-                }
-                compositionContext.viewModel = moduleId;
+            if (typeof compositionContext.viewModel === 'object') {
+                return Promise.resolve(compositionContext);
             }
-            if (typeof compositionContext.viewModel === 'string') {
-                return this.compositionEngine.ensureViewModel(compositionContext);
-            }
-            return Promise.resolve(compositionContext);
+            return this.compositionEngine.ensureViewModel(compositionContext);
         };
         DialogService.prototype._cancelOperation = function (rejectOnCancel) {
             if (!rejectOnCancel) {
