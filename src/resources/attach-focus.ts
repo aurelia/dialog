@@ -3,7 +3,7 @@ import { customAttribute, ComponentAttached } from 'aurelia-templating';
 import { DOM } from 'aurelia-pal';
 
 @customAttribute('attach-focus', bindingMode.oneTime)
-export class AttachFocus implements ComponentAttached {
+export default class AttachFocus implements ComponentAttached {
   public value: boolean | string;
 
   /**
