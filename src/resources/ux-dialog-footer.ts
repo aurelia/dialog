@@ -19,7 +19,7 @@ import { DialogController } from '../dialog-controller';
   </template>
 `)
 
-export default class UxDialogFooter {
+export class UxDialogFooter {
   public static isCancelButton(value: string) {
     return value === 'Cancel';
   }
