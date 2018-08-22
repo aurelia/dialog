@@ -4,7 +4,11 @@ import { DOM } from 'aurelia-pal';
 import { DialogConfiguration, Renderer } from '../../src/aurelia-dialog';
 import { DefaultDialogSettings } from '../../src/dialog-settings';
 import { DialogRenderer } from '../../src/dialog-renderer';
-import UxDialog from '../../src/resources/ux-dialog';
+import { UxDialog } from '../../src/resources/ux-dialog';
+import { UxDialogHeader } from '../../src/resources/ux-dialog-header';
+import { UxDialogBody } from '../../src/resources/ux-dialog-body';
+import { UxDialogFooter } from '../../src/resources/ux-dialog-footer';
+import { AttachFocus } from '../../src/resources/attach-focus';
 
 describe('DialogConfiguration', () => {
   const frameworkConfig: FrameworkConfiguration = {
@@ -89,6 +93,23 @@ describe('DialogConfiguration', () => {
       configuration.useResource('ux-dialog');
       await whenConfigured(applyConfig, done);
       expect(frameworkConfig.globalResources).toHaveBeenCalledWith(jasmine.arrayContaining([UxDialog]));
+      done();
+    });
+  });
+
+  describe('useStandardResources', () => {
+    it('should register all standard resources as global', async done => {
+      spyOn(frameworkConfig, 'globalResources');
+      configuration.useStandardResources();
+      await whenConfigured(applyConfig, done);
+      const expectedContents = [
+        UxDialog,
+        UxDialogHeader,
+        UxDialogBody,
+        UxDialogFooter,
+        AttachFocus
+      ];
+      expect(frameworkConfig.globalResources).toHaveBeenCalledWith(jasmine.arrayContaining(expectedContents));
       done();
     });
   });

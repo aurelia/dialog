@@ -7,11 +7,11 @@ import { DOM } from 'aurelia-pal';
 const defaultRenderer: RendererStatic = DialogRenderer;
 
 const resources: { [key: string]: () => Promise<any> } = {
-  'ux-dialog': () => import('./resources/ux-dialog'),
-  'ux-dialog-header': () => import('./resources/ux-dialog-header'),
-  'ux-dialog-body': () => import('./resources/ux-dialog-body'),
-  'ux-dialog-footer': () => import('./resources/ux-dialog-footer'),
-  'attach-focus': () => import('./resources/attach-focus')
+  'ux-dialog': () => import('./resources/ux-dialog').then(m => m.UxDialog),
+  'ux-dialog-header': () => import('./resources/ux-dialog-header').then(m => m.UxDialogHeader),
+  'ux-dialog-body': () => import('./resources/ux-dialog-body').then(m => m.UxDialogBody),
+  'ux-dialog-footer': () => import('./resources/ux-dialog-footer').then(m => m.UxDialogFooter),
+  'attach-focus': () => import('./resources/attach-focus').then(m => m.AttachFocus)
 };
 
 // tslint:disable-next-line:max-line-length
@@ -27,7 +27,7 @@ export class DialogConfiguration {
   private fwConfig: FrameworkConfiguration;
   private renderer: RendererStatic = defaultRenderer;
   private cssText: string = defaultCSSText;
-  private resources: string[] = [];
+  private resources: DialogResourceName[] = [];
 
   /**
    * The global configuration settings.
@@ -52,9 +52,7 @@ export class DialogConfiguration {
 
     if (this.resources.length) {
       return Promise.all(this.resources.map(name => resources[name]()))
-        .then(modules => {
-          this.fwConfig.globalResources(modules.map(m => m.default as () => void));
-        });
+        .then(modules => { this.fwConfig.globalResources(modules); });
     }
   }
 
