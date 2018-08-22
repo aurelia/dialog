@@ -19,7 +19,7 @@ import { DialogController } from '../dialog-controller';
   </template>
 `)
 
-export default class UxDialogHeader implements ComponentBind {
+export class UxDialogHeader implements ComponentBind {
   @bindable() public showCloseButton: boolean | undefined;
 
   /**
