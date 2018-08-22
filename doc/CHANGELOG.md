@@ -1,3 +1,13 @@
+<a name="2.0.0-rc.2"></a>
+# [2.0.0-rc.2](https://github.com/aurelia/dialog/compare/2.0.0-rc.1...2.0.0-rc.2) (2018-08-22)
+
+
+### Bug Fixes
+
+* **attach-focus:** AttachFocus must be the default export fix [#358](https://github.com/aurelia/dialog/issues/358) ([fb5e829](https://github.com/aurelia/dialog/commit/fb5e829))
+
+
+
 <a name="2.0.0-rc.1"></a>
 # [2.0.0-rc.1](https://github.com/aurelia/dialog/compare/1.0.0...2.0.0-rc.1) (2018-08-21)
 

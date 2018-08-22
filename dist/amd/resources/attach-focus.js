@@ -27,5 +27,5 @@ define(["require", "exports", "aurelia-binding", "aurelia-templating", "aurelia-
         ], AttachFocus);
         return AttachFocus;
     }());
-    exports.AttachFocus = AttachFocus;
+    exports.default = AttachFocus;
 });
