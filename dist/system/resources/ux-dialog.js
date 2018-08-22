@@ -24,7 +24,7 @@ System.register(["aurelia-templating"], function (exports_1, context_1) {
                 ], UxDialog);
                 return UxDialog;
             }());
-            exports_1("default", UxDialog);
+            exports_1("UxDialog", UxDialog);
         }
     };
 });

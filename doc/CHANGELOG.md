@@ -1,3 +1,13 @@
+<a name="2.0.0-rc.3"></a>
+# [2.0.0-rc.3](https://github.com/aurelia/dialog/compare/2.0.0-rc.2...2.0.0-rc.3) (2018-08-22)
+
+
+### Bug Fixes
+
+* **resources:** use named exports instead of default ([4033216](https://github.com/aurelia/dialog/commit/4033216))
+
+
+
 <a name="2.0.0-rc.2"></a>
 # [2.0.0-rc.2](https://github.com/aurelia/dialog/compare/2.0.0-rc.1...2.0.0-rc.2) (2018-08-22)
 

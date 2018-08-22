@@ -31,4 +31,4 @@ var UxDialogHeader = /** @class */ (function () {
     ], UxDialogHeader);
     return UxDialogHeader;
 }());
-exports.default = UxDialogHeader;
+exports.UxDialogHeader = UxDialogHeader;

@@ -16,5 +16,5 @@ define(["require", "exports", "aurelia-templating"], function (require, exports,
         ], UxDialog);
         return UxDialog;
     }());
-    exports.default = UxDialog;
+    exports.UxDialog = UxDialog;
 });

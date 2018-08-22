@@ -2,7 +2,7 @@ import { DialogController } from '../dialog-controller';
 /**
  * View-model for footer of Dialog.
  */
-export default class UxDialogFooter {
+export declare class UxDialogFooter {
     controller: DialogController;
     static isCancelButton(value: string): boolean;
     buttons: any[];

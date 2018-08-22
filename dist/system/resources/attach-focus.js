@@ -41,7 +41,7 @@ System.register(["aurelia-binding", "aurelia-templating", "aurelia-pal"], functi
                 ], AttachFocus);
                 return AttachFocus;
             }());
-            exports_1("default", AttachFocus);
+            exports_1("AttachFocus", AttachFocus);
         }
     };
 });

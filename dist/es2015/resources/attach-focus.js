@@ -26,4 +26,4 @@ AttachFocus.inject = [DOM.Element];
 AttachFocus = __decorate([
     customAttribute('attach-focus', bindingMode.oneTime)
 ], AttachFocus);
-export default AttachFocus;
+export { AttachFocus };

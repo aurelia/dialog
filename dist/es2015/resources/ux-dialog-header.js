@@ -43,4 +43,4 @@ UxDialogHeader = __decorate([
   </template>
 `)
 ], UxDialogHeader);
-export default UxDialogHeader;
+export { UxDialogHeader };
