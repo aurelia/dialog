@@ -15,4 +15,4 @@ UxDialog = __decorate([
   </template>
 `)
 ], UxDialog);
-export default UxDialog;
+export { UxDialog };

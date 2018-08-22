@@ -30,5 +30,5 @@ define(["require", "exports", "aurelia-templating", "../dialog-controller"], fun
         ], UxDialogHeader);
         return UxDialogHeader;
     }());
-    exports.default = UxDialogHeader;
+    exports.UxDialogHeader = UxDialogHeader;
 });

@@ -14,4 +14,4 @@ var UxDialogBody = /** @class */ (function () {
     ], UxDialogBody);
     return UxDialogBody;
 }());
-export default UxDialogBody;
+export { UxDialogBody };

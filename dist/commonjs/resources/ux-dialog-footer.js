@@ -52,4 +52,4 @@ var UxDialogFooter = /** @class */ (function () {
     ], UxDialogFooter);
     return UxDialogFooter;
 }());
-exports.default = UxDialogFooter;
+exports.UxDialogFooter = UxDialogFooter;

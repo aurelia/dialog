@@ -59,7 +59,7 @@ System.register(["aurelia-templating", "../dialog-controller"], function (export
                 ], UxDialogFooter);
                 return UxDialogFooter;
             }());
-            exports_1("default", UxDialogFooter);
+            exports_1("UxDialogFooter", UxDialogFooter);
         }
     };
 });

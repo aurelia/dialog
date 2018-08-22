@@ -41,7 +41,7 @@ System.register(["aurelia-templating", "../dialog-controller"], function (export
                 ], UxDialogHeader);
                 return UxDialogHeader;
             }());
-            exports_1("default", UxDialogHeader);
+            exports_1("UxDialogHeader", UxDialogHeader);
         }
     };
 });

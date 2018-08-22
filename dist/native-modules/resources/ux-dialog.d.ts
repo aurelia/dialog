@@ -1,2 +1,2 @@
-export default class UxDialog {
+export declare class UxDialog {
 }

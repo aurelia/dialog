@@ -51,5 +51,5 @@ define(["require", "exports", "aurelia-templating", "../dialog-controller"], fun
         ], UxDialogFooter);
         return UxDialogFooter;
     }());
-    exports.default = UxDialogFooter;
+    exports.UxDialogFooter = UxDialogFooter;
 });

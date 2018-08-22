@@ -60,4 +60,4 @@ UxDialogFooter = UxDialogFooter_1 = __decorate([
   </template>
 `)
 ], UxDialogFooter);
-export default UxDialogFooter;
+export { UxDialogFooter };

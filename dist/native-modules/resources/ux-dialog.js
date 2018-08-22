@@ -14,4 +14,4 @@ var UxDialog = /** @class */ (function () {
     ], UxDialog);
     return UxDialog;
 }());
-export default UxDialog;
+export { UxDialog };

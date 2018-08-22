@@ -27,4 +27,4 @@ var AttachFocus = /** @class */ (function () {
     ], AttachFocus);
     return AttachFocus;
 }());
-export default AttachFocus;
+export { AttachFocus };

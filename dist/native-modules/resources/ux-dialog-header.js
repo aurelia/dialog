@@ -29,4 +29,4 @@ var UxDialogHeader = /** @class */ (function () {
     ], UxDialogHeader);
     return UxDialogHeader;
 }());
-export default UxDialogHeader;
+export { UxDialogHeader };
