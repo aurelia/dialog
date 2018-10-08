@@ -17,7 +17,7 @@ describe('attach-focus', () => {
   function setupView(component: ComponentTester, attachFocusFragment: string): void {
     component.inView(`
       <div>
-        <input ${attachFocusFragment} ref="focusTargetElement" />
+        <input ${attachFocusFragment} ref="focusTargetElement">
       </div>
     `);
   }

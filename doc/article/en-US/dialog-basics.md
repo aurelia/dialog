@@ -175,7 +175,7 @@ There is also an `output` property that gets returned with the outcome of the us
     <ux-dialog>
       <ux-dialog-body>
         <h2>Edit first name</h2>
-        <input value.bind="person.firstName" />
+        <input value.bind="person.firstName">
       </ux-dialog-body>
 
       <ux-dialog-footer>
@@ -233,7 +233,7 @@ The library exposes an `attach-focus` custom attribute that allows focusing in o
     <ux-dialog>
       <ux-dialog-body>
         <h2>Edit first name</h2>
-        <input attach-focus value.bind="person.firstName" />
+        <input attach-focus value.bind="person.firstName">
       </ux-dialog-body>
     </ux-dialog>
   </template>
@@ -244,8 +244,8 @@ You can also bind the value of the attach-focus attribute if you want to alter w
 
 <code-listing heading="edit-person.html">
   <source-code lang="ES 2015">
-  <input attach-focus.bind="isNewPerson" value.bind="person.email" />
-  <input attach-focus.bind="!isNewPerson" value.bind="person.firstName" />
+  <input attach-focus.bind="isNewPerson" value.bind="person.email">
+  <input attach-focus.bind="!isNewPerson" value.bind="person.firstName">
   </source-code>
 </code-listing>
 
@@ -385,7 +385,7 @@ The CSS classes for the dialog are hard-coded in `dialog-configuration.ts`.  Whe
   </source-code>
 </code-listing>
 
-If you want to override the default styles, configure the plugin instead by calling `useCSS('')` in `main.ts`.  
+If you want to override the default styles, configure the plugin instead by calling `useCSS('')` in `main.ts`.
 
 <code-listing heading="main.js">
   <source-code lang="ES 2015">
