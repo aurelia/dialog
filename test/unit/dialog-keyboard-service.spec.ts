@@ -1,7 +1,7 @@
 import { DialogKeyboardService } from '../../src/dialog-keyboard-service';
 import { DialogService } from '../../src/dialog-service';
 import { DOM } from 'aurelia-pal';
-import { DialogController, ActionKey } from '../../src/aurelia-dialog';
+import { DialogController, ActionKey, KeyEventType } from '../../src/aurelia-dialog';
 
 describe(`${DialogKeyboardService.name}`, () => {
   function createDialogService(controllers: DialogController[] = []): DialogService {
@@ -16,10 +16,15 @@ describe(`${DialogKeyboardService.name}`, () => {
     return service;
   }
 
-  function createController(keyboard?: boolean | ActionKey | ActionKey[]): DialogController;
-  function createController(keyboard?: boolean | ActionKey | ActionKey[]): DialogController {
+  function createController(keyboard?: boolean | ActionKey | ActionKey[], keyType?: KeyEventType): DialogController;
+  function createController(keyboard?: boolean | ActionKey | ActionKey[], keyType?: KeyEventType): DialogController {
     const controller = jasmine.createSpyObj(`${DialogController.name}Spy`, ['ok', 'cancel']) as DialogController;
     controller.settings = { keyboard };
+
+    if (keyType) {
+      controller.settings.keyEvent = keyType;
+    }
+
     return controller;
   }
 
@@ -95,17 +100,21 @@ describe(`${DialogKeyboardService.name}`, () => {
   });
 
   describe('OKs the top dialog when the "keyboard" setting is set to', () => {
-    function okOnEnterKeySpec(keyboard: ActionKey | ActionKey[]): void {
-      const controller = createController(keyboard);
+    function okOnEnterKeySpec(keyboard: ActionKey | ActionKey[], keyType: KeyEventType = 'keyup'): void {
+      const controller = createController(keyboard, keyType);
       const service = createKeyboardService(controller);
       // tslint:disable-next-line:no-unused-expression
       service;
-      DOM.dispatchEvent(new KeyboardEvent('keyup', { key: 'Enter', bubbles: true }));
+      DOM.dispatchEvent(new KeyboardEvent(keyType, { key: 'Enter', bubbles: true }));
       expect(controller.ok).toHaveBeenCalled();
     }
 
     it('"Enter"', () => {
       okOnEnterKeySpec('Enter');
+    });
+
+    it('"Enter" using keydown event', () => {
+      okOnEnterKeySpec('Enter', 'keydown');
     });
 
     it('Array containing "Enter"', () => {

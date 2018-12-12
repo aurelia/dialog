@@ -1,6 +1,6 @@
 import { DOM } from 'aurelia-pal';
 import { DialogController } from './dialog-controller';
-import { ActionKey } from './dialog-settings';
+import { ActionKey, KeyEventType } from './dialog-settings';
 import { DialogService } from './dialog-service';
 
 function getActionKey(eo: KeyboardEvent): ActionKey | undefined {
@@ -39,18 +39,18 @@ export class DialogKeyboardService {
     };
   }
 
-  private addListener(): void {
-    DOM.addEventListener('keyup', this.keyboardHandler, false);
+  private addListener(keyEvent: KeyEventType = 'keyup'): void {
+    DOM.addEventListener(keyEvent, this.keyboardHandler, false);
   }
 
-  private removeListener(): void {
-    DOM.removeEventListener('keyup', this.keyboardHandler, false);
+  private removeListener(keyEvent: KeyEventType = 'keyup'): void {
+    DOM.removeEventListener(keyEvent, this.keyboardHandler, false);
   }
 
   public enlist(controller: DialogController): void {
     if (!controller.settings.keyboard) { return; }
     if (!this.controllers.size) {
-      this.addListener();
+      this.addListener(controller.settings.keyEvent);
     }
     this.controllers.add(controller);
   }
