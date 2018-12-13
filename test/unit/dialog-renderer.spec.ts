@@ -209,6 +209,18 @@ describe('DialogRenderer', () => {
       expect(DialogRenderer.dialogControllers.length).toBe(2);
       done();
     });
+
+    it('sets ESC key event handler with custom event type', async done => {
+      spyOn(DOM, 'addEventListener');
+      const keyEvent = 'keydown';
+      const first = createRenderer({ keyEvent });
+      const last = createRenderer();
+      await show(done, first, last);
+      expect(DOM.addEventListener).toHaveBeenCalledWith(keyEvent, jasmine.any(Function), false);
+      expect((DOM.addEventListener as jasmine.Spy).calls.count()).toBe(1);
+      expect(DialogRenderer.dialogControllers.length).toBe(2);
+      done();
+    });
   });
 
   describe('on last closed dialog', () => {

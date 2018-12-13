@@ -2,6 +2,7 @@ import { Container } from 'aurelia-dependency-injection';
 import { ViewStrategy } from 'aurelia-templating';
 
 export type ActionKey = 'Escape' | 'Enter';
+export type KeyEventType = 'keyup' | 'keydown';
 
 /**
  * All available dialog settings.
@@ -51,6 +52,14 @@ export interface DialogSettings {
    * Using the array format allows combining the ESC and ENTER keys.
    */
   keyboard?: boolean | ActionKey | ActionKey[];
+
+  /**
+   * Determines which type of keyevent should be used to listen for
+   * ENTER and ESC keys
+   *
+   * Default: keyup
+   */
+  keyEvent?: KeyEventType;
 
   /**
    * When set to "true" allows for the dismissal of the dialog by clicking outside of it.
