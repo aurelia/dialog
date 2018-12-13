@@ -80,7 +80,7 @@ export class DialogRenderer implements Renderer {
 
   public static trackController(dialogController: DialogController): void {
     if (!DialogRenderer.dialogControllers.length) {
-      DOM.addEventListener('keyup', DialogRenderer.keyboardEventHandler, false);
+      DOM.addEventListener(dialogController.settings.keyEvent || 'keyup', DialogRenderer.keyboardEventHandler, false);
     }
     DialogRenderer.dialogControllers.push(dialogController);
   }
@@ -91,7 +91,11 @@ export class DialogRenderer implements Renderer {
       DialogRenderer.dialogControllers.splice(i, 1);
     }
     if (!DialogRenderer.dialogControllers.length) {
-      DOM.removeEventListener('keyup', DialogRenderer.keyboardEventHandler, false);
+      DOM.removeEventListener(
+        dialogController.settings.keyEvent || 'keyup',
+        DialogRenderer.keyboardEventHandler,
+        false
+      );
     }
   }
 
