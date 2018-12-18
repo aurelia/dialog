@@ -1,3 +1,13 @@
+<a name="1.1.0"></a>
+# [1.1.0](https://github.com/aurelia/dialog/compare/1.0.0...1.1.0) (2018-12-18)
+
+
+### Features
+
+* **keyboard:** allow to configure keyevent type ([2755a0b](https://github.com/aurelia/dialog/commit/2755a0b))
+
+
+
 <a name="1.0.0"></a>
 # [1.0.0](https://github.com/aurelia/dialog/compare/1.0.0-rc.2.0.0...1.0.0) (2018-07-23)
 

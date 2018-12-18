@@ -4,6 +4,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var DialogRenderer_1;
 import { DOM } from 'aurelia-pal';
 import { transient } from 'aurelia-dependency-injection';
 const containerTagName = 'ux-dialog-container';
@@ -21,7 +22,7 @@ export const transitionEvent = (() => {
             MozTransition: 'transitionend',
             WebkitTransition: 'webkitTransitionEnd'
         };
-        for (let t in transitions) {
+        for (let t in transitions) { // tslint:disable-line:prefer-const
             if (el.style[t] !== undefined) {
                 transition = transitions[t];
                 return transition;
@@ -81,7 +82,7 @@ let DialogRenderer = DialogRenderer_1 = class DialogRenderer {
     }
     static trackController(dialogController) {
         if (!DialogRenderer_1.dialogControllers.length) {
-            DOM.addEventListener('keyup', DialogRenderer_1.keyboardEventHandler, false);
+            DOM.addEventListener(dialogController.settings.keyEvent || 'keyup', DialogRenderer_1.keyboardEventHandler, false);
         }
         DialogRenderer_1.dialogControllers.push(dialogController);
     }
@@ -91,7 +92,7 @@ let DialogRenderer = DialogRenderer_1 = class DialogRenderer {
             DialogRenderer_1.dialogControllers.splice(i, 1);
         }
         if (!DialogRenderer_1.dialogControllers.length) {
-            DOM.removeEventListener('keyup', DialogRenderer_1.keyboardEventHandler, false);
+            DOM.removeEventListener(dialogController.settings.keyEvent || 'keyup', DialogRenderer_1.keyboardEventHandler, false);
         }
     }
     getOwnElements(parent, selector) {
@@ -221,4 +222,3 @@ DialogRenderer = DialogRenderer_1 = __decorate([
     transient()
 ], DialogRenderer);
 export { DialogRenderer };
-var DialogRenderer_1;

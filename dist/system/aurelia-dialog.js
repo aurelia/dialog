@@ -1,5 +1,6 @@
 System.register(["./dialog-configuration", "./ux-dialog", "./ux-dialog-header", "./ux-dialog-body", "./ux-dialog-footer", "./attach-focus", "./dialog-settings", "./renderer", "./dialog-cancel-error", "./dialog-service", "./dialog-controller"], function (exports_1, context_1) {
     "use strict";
+    var dialog_configuration_1;
     var __moduleName = context_1 && context_1.id;
     function configure(frameworkConfig, callback) {
         var applyConfig = null;
@@ -13,7 +14,6 @@ System.register(["./dialog-configuration", "./ux-dialog", "./ux-dialog-header", 
         applyConfig();
     }
     exports_1("configure", configure);
-    var dialog_configuration_1;
     var exportedNames_1 = {
         "configure": true
     };

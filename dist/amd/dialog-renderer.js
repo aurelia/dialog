@@ -22,7 +22,7 @@ define(["require", "exports", "aurelia-pal", "aurelia-dependency-injection"], fu
                 MozTransition: 'transitionend',
                 WebkitTransition: 'webkitTransitionEnd'
             };
-            for (var t in transitions) {
+            for (var t in transitions) { // tslint:disable-line:prefer-const
                 if (el.style[t] !== undefined) {
                     transition = transitions[t];
                     return transition;
@@ -85,7 +85,7 @@ define(["require", "exports", "aurelia-pal", "aurelia-dependency-injection"], fu
         };
         DialogRenderer.trackController = function (dialogController) {
             if (!DialogRenderer_1.dialogControllers.length) {
-                aurelia_pal_1.DOM.addEventListener('keyup', DialogRenderer_1.keyboardEventHandler, false);
+                aurelia_pal_1.DOM.addEventListener(dialogController.settings.keyEvent || 'keyup', DialogRenderer_1.keyboardEventHandler, false);
             }
             DialogRenderer_1.dialogControllers.push(dialogController);
         };
@@ -95,7 +95,7 @@ define(["require", "exports", "aurelia-pal", "aurelia-dependency-injection"], fu
                 DialogRenderer_1.dialogControllers.splice(i, 1);
             }
             if (!DialogRenderer_1.dialogControllers.length) {
-                aurelia_pal_1.DOM.removeEventListener('keyup', DialogRenderer_1.keyboardEventHandler, false);
+                aurelia_pal_1.DOM.removeEventListener(dialogController.settings.keyEvent || 'keyup', DialogRenderer_1.keyboardEventHandler, false);
             }
         };
         DialogRenderer.prototype.getOwnElements = function (parent, selector) {
@@ -222,12 +222,12 @@ define(["require", "exports", "aurelia-pal", "aurelia-dependency-injection"], fu
             return this.awaitTransition(function () { return _this.setAsInactive(); }, dialogController.settings.ignoreTransitions)
                 .then(function () { _this.detach(dialogController); });
         };
+        var DialogRenderer_1;
         DialogRenderer.dialogControllers = [];
         DialogRenderer = DialogRenderer_1 = __decorate([
             aurelia_dependency_injection_1.transient()
         ], DialogRenderer);
         return DialogRenderer;
-        var DialogRenderer_1;
     }());
     exports.DialogRenderer = DialogRenderer;
 });

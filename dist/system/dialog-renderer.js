@@ -6,6 +6,7 @@ System.register(["aurelia-pal", "aurelia-dependency-injection"], function (expor
         else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
         return c > 3 && r && Object.defineProperty(target, key, r), r;
     };
+    var aurelia_pal_1, aurelia_dependency_injection_1, containerTagName, overlayTagName, transitionEvent, hasTransition, body, DialogRenderer;
     var __moduleName = context_1 && context_1.id;
     function getActionKey(e) {
         if ((e.code || e.key) === 'Escape' || e.keyCode === 27) {
@@ -16,7 +17,6 @@ System.register(["aurelia-pal", "aurelia-dependency-injection"], function (expor
         }
         return undefined;
     }
-    var aurelia_pal_1, aurelia_dependency_injection_1, containerTagName, overlayTagName, transitionEvent, hasTransition, body, DialogRenderer;
     return {
         setters: [
             function (aurelia_pal_1_1) {
@@ -42,7 +42,7 @@ System.register(["aurelia-pal", "aurelia-dependency-injection"], function (expor
                         MozTransition: 'transitionend',
                         WebkitTransition: 'webkitTransitionEnd'
                     };
-                    for (var t in transitions) {
+                    for (var t in transitions) { // tslint:disable-line:prefer-const
                         if (el.style[t] !== undefined) {
                             transition = transitions[t];
                             return transition;
@@ -95,7 +95,7 @@ System.register(["aurelia-pal", "aurelia-dependency-injection"], function (expor
                 };
                 DialogRenderer.trackController = function (dialogController) {
                     if (!DialogRenderer_1.dialogControllers.length) {
-                        aurelia_pal_1.DOM.addEventListener('keyup', DialogRenderer_1.keyboardEventHandler, false);
+                        aurelia_pal_1.DOM.addEventListener(dialogController.settings.keyEvent || 'keyup', DialogRenderer_1.keyboardEventHandler, false);
                     }
                     DialogRenderer_1.dialogControllers.push(dialogController);
                 };
@@ -105,7 +105,7 @@ System.register(["aurelia-pal", "aurelia-dependency-injection"], function (expor
                         DialogRenderer_1.dialogControllers.splice(i, 1);
                     }
                     if (!DialogRenderer_1.dialogControllers.length) {
-                        aurelia_pal_1.DOM.removeEventListener('keyup', DialogRenderer_1.keyboardEventHandler, false);
+                        aurelia_pal_1.DOM.removeEventListener(dialogController.settings.keyEvent || 'keyup', DialogRenderer_1.keyboardEventHandler, false);
                     }
                 };
                 DialogRenderer.prototype.getOwnElements = function (parent, selector) {
@@ -232,12 +232,12 @@ System.register(["aurelia-pal", "aurelia-dependency-injection"], function (expor
                     return this.awaitTransition(function () { return _this.setAsInactive(); }, dialogController.settings.ignoreTransitions)
                         .then(function () { _this.detach(dialogController); });
                 };
+                var DialogRenderer_1;
                 DialogRenderer.dialogControllers = [];
                 DialogRenderer = DialogRenderer_1 = __decorate([
                     aurelia_dependency_injection_1.transient()
                 ], DialogRenderer);
                 return DialogRenderer;
-                var DialogRenderer_1;
             }());
             exports_1("DialogRenderer", DialogRenderer);
         }

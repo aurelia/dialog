@@ -33,6 +33,7 @@ define(["require", "exports", "aurelia-templating", "./dialog-controller"], func
                 this.buttons = ['Cancel', 'Ok'];
             }
         };
+        var UxDialogFooter_1;
         /**
          * @internal
          */
@@ -49,7 +50,6 @@ define(["require", "exports", "aurelia-templating", "./dialog-controller"], func
             aurelia_templating_1.inlineView("\n  <template>\n    <slot></slot>\n    <template if.bind=\"buttons.length > 0\">\n      <button type=\"button\"\n        class=\"btn btn-default\"\n        repeat.for=\"button of buttons\"\n        click.trigger=\"close(button)\">\n        ${button}\n      </button>\n    </template>\n  </template>\n")
         ], UxDialogFooter);
         return UxDialogFooter;
-        var UxDialogFooter_1;
     }());
     exports.UxDialogFooter = UxDialogFooter;
 });

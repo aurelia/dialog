@@ -1,5 +1,6 @@
 System.register(["aurelia-dependency-injection", "aurelia-metadata", "aurelia-templating", "./dialog-settings", "./dialog-cancel-error", "./lifecycle", "./dialog-controller"], function (exports_1, context_1) {
     "use strict";
+    var aurelia_dependency_injection_1, aurelia_metadata_1, aurelia_templating_1, dialog_settings_1, dialog_cancel_error_1, lifecycle_1, dialog_controller_1, DialogService;
     var __moduleName = context_1 && context_1.id;
     /* tslint:enable:max-line-length */
     function whenClosed(onfulfilled, onrejected) {
@@ -16,7 +17,6 @@ System.register(["aurelia-dependency-injection", "aurelia-metadata", "aurelia-te
             service.hasActiveDialog = service.hasOpenDialog = !!service.controllers.length;
         }
     }
-    var aurelia_dependency_injection_1, aurelia_metadata_1, aurelia_templating_1, dialog_settings_1, dialog_cancel_error_1, lifecycle_1, dialog_controller_1, DialogService;
     return {
         setters: [
             function (aurelia_dependency_injection_1_1) {

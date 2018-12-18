@@ -1,7 +1,7 @@
 System.register(["./renderer", "./dialog-settings", "./dialog-renderer", "aurelia-pal"], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var renderer_1, dialog_settings_1, dialog_renderer_1, aurelia_pal_1, defaultRenderer, resources, defaultCSSText, DialogConfiguration;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (renderer_1_1) {

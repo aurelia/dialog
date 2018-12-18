@@ -6,8 +6,8 @@ System.register(["aurelia-templating", "./dialog-controller"], function (exports
         else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
         return c > 3 && r && Object.defineProperty(target, key, r), r;
     };
-    var __moduleName = context_1 && context_1.id;
     var aurelia_templating_1, dialog_controller_1, UxDialogFooter;
+    var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (aurelia_templating_1_1) {
@@ -41,6 +41,7 @@ System.register(["aurelia-templating", "./dialog-controller"], function (exports
                         this.buttons = ['Cancel', 'Ok'];
                     }
                 };
+                var UxDialogFooter_1;
                 /**
                  * @internal
                  */
@@ -57,7 +58,6 @@ System.register(["aurelia-templating", "./dialog-controller"], function (exports
                     aurelia_templating_1.inlineView("\n  <template>\n    <slot></slot>\n    <template if.bind=\"buttons.length > 0\">\n      <button type=\"button\"\n        class=\"btn btn-default\"\n        repeat.for=\"button of buttons\"\n        click.trigger=\"close(button)\">\n        ${button}\n      </button>\n    </template>\n  </template>\n")
                 ], UxDialogFooter);
                 return UxDialogFooter;
-                var UxDialogFooter_1;
             }());
             exports_1("UxDialogFooter", UxDialogFooter);
         }
