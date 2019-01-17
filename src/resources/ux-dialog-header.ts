@@ -1,9 +1,20 @@
-import { customElement, bindable, inlineView, ComponentBind } from 'aurelia-templating';
+import { ComponentBind } from 'aurelia-templating';
 import { DialogController } from '../dialog-controller';
 
-@customElement('ux-dialog-header')
-@inlineView(`
-  <template>
+export class UxDialogHeader implements ComponentBind {
+
+  /**
+   * @internal
+   */
+  // tslint:disable-next-line:member-ordering
+  public static inject = [DialogController];
+
+  /**
+   * @internal
+   */
+  // tslint:disable-next-line:member-ordering
+  public static $view =
+  `<template>
     <button
       type="button"
       class="dialog-close"
@@ -16,17 +27,22 @@ import { DialogController } from '../dialog-controller';
     <div class="dialog-header-content">
       <slot></slot>
     </div>
-  </template>
-`)
-
-export class UxDialogHeader implements ComponentBind {
-  @bindable() public showCloseButton: boolean | undefined;
+  </template>`;
 
   /**
    * @internal
    */
   // tslint:disable-next-line:member-ordering
-  public static inject = [DialogController];
+  public static $resource = {
+    name: 'ux-dialog-header',
+    bindables: ['showCloseButton']
+  };
+
+  /**
+   * @bindable
+   */
+  public showCloseButton: boolean | undefined;
+
   constructor(public controller: DialogController) { }
 
   public bind(): void {
