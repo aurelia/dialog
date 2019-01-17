@@ -60,7 +60,6 @@ function getActionKey(e: KeyboardEvent): ActionKey | undefined {
   return undefined;
 }
 
-@transient()
 export class DialogRenderer implements Renderer {
   public static dialogControllers: DialogController[] = [];
 
@@ -239,3 +238,6 @@ export class DialogRenderer implements Renderer {
       .then(() => { this.detach(dialogController); });
   }
 }
+
+// avoid unnecessary code
+transient()(DialogRenderer);
