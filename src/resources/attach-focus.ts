@@ -1,16 +1,26 @@
-import { bindingMode } from 'aurelia-binding';
-import { customAttribute, ComponentAttached } from 'aurelia-templating';
 import { DOM } from 'aurelia-pal';
+import { ComponentAttached } from 'aurelia-templating';
 
-@customAttribute('attach-focus', bindingMode.oneTime)
 export class AttachFocus implements ComponentAttached {
-  public value: boolean | string;
+
+  /**
+   * @internal
+   */
+  public static $resource = {
+    type: 'attribute',
+    name: 'attach-focus'
+  };
 
   /**
    * @internal
    */
   // tslint:disable-next-line:member-ordering
-  public static inject = [DOM.Element];
+  public static inject() {
+    return [DOM.Element];
+  }
+
+  public value: boolean | string;
+
   constructor(private element: HTMLElement) {
     this.value = true;
   }

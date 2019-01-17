@@ -40,6 +40,8 @@
     "prebuild:system": "cross-env rimraf dist/system",
     "build:system": "cross-env tsc --project tsconfig.build.json --outDir dist/system --module system",
     "postbuild:system": "cross-env copyfiles --up 1 src/**/*.html src/**/*.css dist/system",
+    "prebuild:umd": "cross-env rimraf dist/umd",
+    "build:umd": "rollup -c",
     "prebuild": "cross-env rimraf dist && rimraf node_modules/@types/!node",
     "build": "concurrently \"npm run build:amd\" \"npm run build:commonjs\" \"npm run build:es2015\" \"npm run build:native-modules\" \"npm run build:system\"",
     "predoc": "cross-env rimraf doc/api.json && rimraf dist/doc-temp && tsc --project tsconfig.build.json --outFile dist/doc-temp/aurelia-dialog.js && node doc/shape-defs",
@@ -111,6 +113,8 @@
     "requirejs": "^2.2.0",
     "requirejs-text": "^2.0.12",
     "rimraf": "^2.5.4",
+    "rollup": "^1.1.0",
+    "rollup-plugin-typescript": "^1.0.0",
     "tslint": "5.7.0",
     "typedoc": "0.8.0",
     "typescript": "^2.5.3"

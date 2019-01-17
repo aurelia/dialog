@@ -1,12 +1,22 @@
-import { customElement, bindable, inlineView } from 'aurelia-templating';
 import { DialogController } from '../dialog-controller';
 
 /**
  * View-model for footer of Dialog.
  */
-@customElement('ux-dialog-footer')
-@inlineView(`
-  <template>
+export class UxDialogFooter {
+
+  /**
+   * @internal
+   */
+  // tslint:disable-next-line:member-ordering
+  public static inject = [DialogController];
+
+  /**
+   * @internal
+   */
+  // tslint:disable-next-line:member-ordering
+  public static $view =
+  `<template>
     <slot></slot>
     <template if.bind="buttons.length > 0">
       <button type="button"
@@ -16,22 +26,30 @@ import { DialogController } from '../dialog-controller';
         \${button}
       </button>
     </template>
-  </template>
-`)
-
-export class UxDialogFooter {
-  public static isCancelButton(value: string) {
-    return value === 'Cancel';
-  }
-
-  @bindable public buttons: any[] = [];
-  @bindable public useDefaultButtons: boolean = false;
+  </template>`;
 
   /**
    * @internal
    */
   // tslint:disable-next-line:member-ordering
-  public static inject = [DialogController];
+  public static $resource = {
+    name: 'ux-dialog-footer',
+    bindables: ['buttons', 'useDefaultButtons']
+  };
+
+  public static isCancelButton(value: string) {
+    return value === 'Cancel';
+  }
+
+  /**
+   * @bindable
+   */
+  public buttons: any[] = [];
+  /**
+   * @bindable
+   */
+  public useDefaultButtons: boolean = false;
+
   constructor(public controller: DialogController) { }
 
   public close(buttonValue: string) {
