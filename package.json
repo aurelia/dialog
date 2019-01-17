@@ -15,6 +15,9 @@
   "license": "MIT",
   "author": "Rob Eisenberg <rob@bluespire.com> (http://robeisenberg.com/)",
   "main": "dist/commonjs/aurelia-dialog.js",
+  "module": "dist/es2015/aurelia-dialog.js",
+  "browser": "dist/umd/aurelia-dialog.js",
+  "unpkg": "dist/umd/aurelia-dialog.js",
   "typings": "dist/commonjs/aurelia-dialog.d.ts",
   "repository": {
     "type": "git",
