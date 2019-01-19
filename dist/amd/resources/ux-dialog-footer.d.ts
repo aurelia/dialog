@@ -5,7 +5,13 @@ import { DialogController } from '../dialog-controller';
 export declare class UxDialogFooter {
     controller: DialogController;
     static isCancelButton(value: string): boolean;
+    /**
+     * @bindable
+     */
     buttons: any[];
+    /**
+     * @bindable
+     */
     useDefaultButtons: boolean;
     constructor(controller: DialogController);
     close(buttonValue: string): void;

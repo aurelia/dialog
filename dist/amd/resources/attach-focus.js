@@ -1,10 +1,4 @@
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-define(["require", "exports", "aurelia-binding", "aurelia-templating", "aurelia-pal"], function (require, exports, aurelia_binding_1, aurelia_templating_1, aurelia_pal_1) {
+define(["require", "exports", "aurelia-pal"], function (require, exports, aurelia_pal_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var AttachFocus = /** @class */ (function () {
@@ -12,6 +6,13 @@ define(["require", "exports", "aurelia-binding", "aurelia-templating", "aurelia-
             this.element = element;
             this.value = true;
         }
+        /**
+         * @internal
+         */
+        // tslint:disable-next-line:member-ordering
+        AttachFocus.inject = function () {
+            return [aurelia_pal_1.DOM.Element];
+        };
         AttachFocus.prototype.attached = function () {
             if (this.value === '' || (this.value && this.value !== 'false')) {
                 this.element.focus();
@@ -20,11 +21,10 @@ define(["require", "exports", "aurelia-binding", "aurelia-templating", "aurelia-
         /**
          * @internal
          */
-        // tslint:disable-next-line:member-ordering
-        AttachFocus.inject = [aurelia_pal_1.DOM.Element];
-        AttachFocus = __decorate([
-            aurelia_templating_1.customAttribute('attach-focus', aurelia_binding_1.bindingMode.oneTime)
-        ], AttachFocus);
+        AttachFocus.$resource = {
+            type: 'attribute',
+            name: 'attach-focus'
+        };
         return AttachFocus;
     }());
     exports.AttachFocus = AttachFocus;

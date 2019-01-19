@@ -1,10 +1,3 @@
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var DialogRenderer_1;
 import { DOM } from 'aurelia-pal';
 import { transient } from 'aurelia-dependency-injection';
 const containerTagName = 'ux-dialog-container';
@@ -61,13 +54,13 @@ function getActionKey(e) {
     }
     return undefined;
 }
-let DialogRenderer = DialogRenderer_1 = class DialogRenderer {
+export class DialogRenderer {
     static keyboardEventHandler(e) {
         const key = getActionKey(e);
         if (!key) {
             return;
         }
-        const top = DialogRenderer_1.dialogControllers[DialogRenderer_1.dialogControllers.length - 1];
+        const top = DialogRenderer.dialogControllers[DialogRenderer.dialogControllers.length - 1];
         if (!top || !top.settings.keyboard) {
             return;
         }
@@ -81,18 +74,18 @@ let DialogRenderer = DialogRenderer_1 = class DialogRenderer {
         }
     }
     static trackController(dialogController) {
-        if (!DialogRenderer_1.dialogControllers.length) {
-            DOM.addEventListener('keyup', DialogRenderer_1.keyboardEventHandler, false);
+        if (!DialogRenderer.dialogControllers.length) {
+            DOM.addEventListener(dialogController.settings.keyEvent || 'keyup', DialogRenderer.keyboardEventHandler, false);
         }
-        DialogRenderer_1.dialogControllers.push(dialogController);
+        DialogRenderer.dialogControllers.push(dialogController);
     }
     static untrackController(dialogController) {
-        const i = DialogRenderer_1.dialogControllers.indexOf(dialogController);
+        const i = DialogRenderer.dialogControllers.indexOf(dialogController);
         if (i !== -1) {
-            DialogRenderer_1.dialogControllers.splice(i, 1);
+            DialogRenderer.dialogControllers.splice(i, 1);
         }
-        if (!DialogRenderer_1.dialogControllers.length) {
-            DOM.removeEventListener('keyup', DialogRenderer_1.keyboardEventHandler, false);
+        if (!DialogRenderer.dialogControllers.length) {
+            DOM.removeEventListener(dialogController.settings.keyEvent || 'keyup', DialogRenderer.keyboardEventHandler, false);
         }
     }
     getOwnElements(parent, selector) {
@@ -132,7 +125,7 @@ let DialogRenderer = DialogRenderer_1 = class DialogRenderer {
         this.host.removeChild(this.dialogOverlay);
         this.host.removeChild(this.dialogContainer);
         dialogController.controller.detached();
-        if (!DialogRenderer_1.dialogControllers.length) {
+        if (!DialogRenderer.dialogControllers.length) {
             this.host.classList.remove('ux-dialog-open');
         }
     }
@@ -206,19 +199,17 @@ let DialogRenderer = DialogRenderer_1 = class DialogRenderer {
         else if (!settings.centerHorizontalOnly) {
             this.centerDialog();
         }
-        DialogRenderer_1.trackController(dialogController);
+        DialogRenderer.trackController(dialogController);
         this.setupClickHandling(dialogController);
         return this.awaitTransition(() => this.setAsActive(), dialogController.settings.ignoreTransitions);
     }
     hideDialog(dialogController) {
         this.clearClickHandling();
-        DialogRenderer_1.untrackController(dialogController);
+        DialogRenderer.untrackController(dialogController);
         return this.awaitTransition(() => this.setAsInactive(), dialogController.settings.ignoreTransitions)
             .then(() => { this.detach(dialogController); });
     }
-};
+}
 DialogRenderer.dialogControllers = [];
-DialogRenderer = DialogRenderer_1 = __decorate([
-    transient()
-], DialogRenderer);
-export { DialogRenderer };
+// avoid unnecessary code
+transient()(DialogRenderer);
