@@ -23,6 +23,7 @@ export default {
       }
     }
   ],
+  inlineDynamicImports: true,
   plugins: [
     typescript({
       tsconfigOverride: {
