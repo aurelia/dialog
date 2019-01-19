@@ -1,9 +1,3 @@
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
 define(["require", "exports", "aurelia-pal", "aurelia-dependency-injection"], function (require, exports, aurelia_pal_1, aurelia_dependency_injection_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -64,13 +58,12 @@ define(["require", "exports", "aurelia-pal", "aurelia-dependency-injection"], fu
     var DialogRenderer = /** @class */ (function () {
         function DialogRenderer() {
         }
-        DialogRenderer_1 = DialogRenderer;
         DialogRenderer.keyboardEventHandler = function (e) {
             var key = getActionKey(e);
             if (!key) {
                 return;
             }
-            var top = DialogRenderer_1.dialogControllers[DialogRenderer_1.dialogControllers.length - 1];
+            var top = DialogRenderer.dialogControllers[DialogRenderer.dialogControllers.length - 1];
             if (!top || !top.settings.keyboard) {
                 return;
             }
@@ -84,18 +77,18 @@ define(["require", "exports", "aurelia-pal", "aurelia-dependency-injection"], fu
             }
         };
         DialogRenderer.trackController = function (dialogController) {
-            if (!DialogRenderer_1.dialogControllers.length) {
-                aurelia_pal_1.DOM.addEventListener('keyup', DialogRenderer_1.keyboardEventHandler, false);
+            if (!DialogRenderer.dialogControllers.length) {
+                aurelia_pal_1.DOM.addEventListener(dialogController.settings.keyEvent || 'keyup', DialogRenderer.keyboardEventHandler, false);
             }
-            DialogRenderer_1.dialogControllers.push(dialogController);
+            DialogRenderer.dialogControllers.push(dialogController);
         };
         DialogRenderer.untrackController = function (dialogController) {
-            var i = DialogRenderer_1.dialogControllers.indexOf(dialogController);
+            var i = DialogRenderer.dialogControllers.indexOf(dialogController);
             if (i !== -1) {
-                DialogRenderer_1.dialogControllers.splice(i, 1);
+                DialogRenderer.dialogControllers.splice(i, 1);
             }
-            if (!DialogRenderer_1.dialogControllers.length) {
-                aurelia_pal_1.DOM.removeEventListener('keyup', DialogRenderer_1.keyboardEventHandler, false);
+            if (!DialogRenderer.dialogControllers.length) {
+                aurelia_pal_1.DOM.removeEventListener(dialogController.settings.keyEvent || 'keyup', DialogRenderer.keyboardEventHandler, false);
             }
         };
         DialogRenderer.prototype.getOwnElements = function (parent, selector) {
@@ -135,7 +128,7 @@ define(["require", "exports", "aurelia-pal", "aurelia-dependency-injection"], fu
             this.host.removeChild(this.dialogOverlay);
             this.host.removeChild(this.dialogContainer);
             dialogController.controller.detached();
-            if (!DialogRenderer_1.dialogControllers.length) {
+            if (!DialogRenderer.dialogControllers.length) {
                 this.host.classList.remove('ux-dialog-open');
             }
         };
@@ -211,23 +204,21 @@ define(["require", "exports", "aurelia-pal", "aurelia-dependency-injection"], fu
             else if (!settings.centerHorizontalOnly) {
                 this.centerDialog();
             }
-            DialogRenderer_1.trackController(dialogController);
+            DialogRenderer.trackController(dialogController);
             this.setupClickHandling(dialogController);
             return this.awaitTransition(function () { return _this.setAsActive(); }, dialogController.settings.ignoreTransitions);
         };
         DialogRenderer.prototype.hideDialog = function (dialogController) {
             var _this = this;
             this.clearClickHandling();
-            DialogRenderer_1.untrackController(dialogController);
+            DialogRenderer.untrackController(dialogController);
             return this.awaitTransition(function () { return _this.setAsInactive(); }, dialogController.settings.ignoreTransitions)
                 .then(function () { _this.detach(dialogController); });
         };
-        var DialogRenderer_1;
         DialogRenderer.dialogControllers = [];
-        DialogRenderer = DialogRenderer_1 = __decorate([
-            aurelia_dependency_injection_1.transient()
-        ], DialogRenderer);
         return DialogRenderer;
     }());
     exports.DialogRenderer = DialogRenderer;
+    // avoid unnecessary code
+    aurelia_dependency_injection_1.transient()(DialogRenderer);
 });

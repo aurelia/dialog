@@ -1,26 +1,24 @@
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var UxDialogFooter_1;
-import { customElement, bindable, inlineView } from 'aurelia-templating';
 import { DialogController } from '../dialog-controller';
 /**
  * View-model for footer of Dialog.
  */
-let UxDialogFooter = UxDialogFooter_1 = class UxDialogFooter {
+export class UxDialogFooter {
     constructor(controller) {
         this.controller = controller;
+        /**
+         * @bindable
+         */
         this.buttons = [];
+        /**
+         * @bindable
+         */
         this.useDefaultButtons = false;
     }
     static isCancelButton(value) {
         return value === 'Cancel';
     }
     close(buttonValue) {
-        if (UxDialogFooter_1.isCancelButton(buttonValue)) {
+        if (UxDialogFooter.isCancelButton(buttonValue)) {
             this.controller.cancel(buttonValue);
         }
         else {
@@ -32,22 +30,17 @@ let UxDialogFooter = UxDialogFooter_1 = class UxDialogFooter {
             this.buttons = ['Cancel', 'Ok'];
         }
     }
-};
+}
 /**
  * @internal
  */
 // tslint:disable-next-line:member-ordering
 UxDialogFooter.inject = [DialogController];
-__decorate([
-    bindable
-], UxDialogFooter.prototype, "buttons", void 0);
-__decorate([
-    bindable
-], UxDialogFooter.prototype, "useDefaultButtons", void 0);
-UxDialogFooter = UxDialogFooter_1 = __decorate([
-    customElement('ux-dialog-footer'),
-    inlineView(`
-  <template>
+/**
+ * @internal
+ */
+// tslint:disable-next-line:member-ordering
+UxDialogFooter.$view = `<template>
     <slot></slot>
     <template if.bind="buttons.length > 0">
       <button type="button"
@@ -57,7 +50,12 @@ UxDialogFooter = UxDialogFooter_1 = __decorate([
         \${button}
       </button>
     </template>
-  </template>
-`)
-], UxDialogFooter);
-export { UxDialogFooter };
+  </template>`;
+/**
+ * @internal
+ */
+// tslint:disable-next-line:member-ordering
+UxDialogFooter.$resource = {
+    name: 'ux-dialog-footer',
+    bindables: ['buttons', 'useDefaultButtons']
+};

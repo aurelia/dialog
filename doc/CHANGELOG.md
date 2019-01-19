@@ -1,3 +1,20 @@
+<a name="2.0.0-rc.4"></a>
+# [2.0.0-rc.4](https://github.com/aurelia/dialog/compare/2.0.0-rc.3...2.0.0-rc.4) (2019-01-19)
+
+
+### Bug Fixes
+
+* **build:** add umd build to build script ([0c46fdc](https://github.com/aurelia/dialog/commit/0c46fdc))
+* **build:** update rollup dep, config ([0c9e029](https://github.com/aurelia/dialog/commit/0c9e029))
+* **doc:** fix html5 syntax ([629ad1c](https://github.com/aurelia/dialog/commit/629ad1c)), closes [/github.com/aurelia/templating/pull/647#issuecomment-427989601](https://github.com//github.com/aurelia/templating/pull/647/issues/issuecomment-427989601)
+
+
+### Features
+
+* **keyboard:** allow to configure keyevent type ([3aad34f](https://github.com/aurelia/dialog/commit/3aad34f))
+
+
+
 <a name="2.0.0-rc.3"></a>
 # [2.0.0-rc.3](https://github.com/aurelia/dialog/compare/2.0.0-rc.2...2.0.0-rc.3) (2018-08-22)
 
