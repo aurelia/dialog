@@ -13,14 +13,15 @@ export default {
     {
       file: 'dist/umd/aurelia-dialog.js',
       format: 'umd',
-      name: 'dialog',
+      name: 'au.dialog',
       globals: {
         'aurelia-framework': 'au',
         'aurelia-binding': 'au',
         'aurelia-templating': 'au',
         'aurelia-dependency-injection': 'au',
         'aurelia-pal': 'au'
-      }
+      },
+      esModule: false
     }
   ],
   inlineDynamicImports: true,
