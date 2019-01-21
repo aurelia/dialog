@@ -1,7 +1,7 @@
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('aurelia-pal'), require('aurelia-dependency-injection'), require('aurelia-templating')) :
   typeof define === 'function' && define.amd ? define(['exports', 'aurelia-pal', 'aurelia-dependency-injection', 'aurelia-templating'], factory) :
-  (global = global || self, factory(global.dialog = {}, global.au, global.au, global.au));
+  (global = global || self, factory((global.au = global.au || {}, global.au.dialog = {}), global.au, global.au, global.au));
 }(this, function (exports, aureliaPal, aureliaDependencyInjection, aureliaTemplating) { 'use strict';
 
   class Renderer {
@@ -658,7 +658,5 @@
   exports.createDialogCancelError = createDialogCancelError;
   exports.DialogService = DialogService;
   exports.DialogController = DialogController;
-
-  Object.defineProperty(exports, '__esModule', { value: true });
 
 }));

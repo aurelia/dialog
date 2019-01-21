@@ -1,3 +1,13 @@
+<a name="2.0.0-rc.5"></a>
+# [2.0.0-rc.5](https://github.com/aurelia/dialog/compare/2.0.0-rc.4...2.0.0-rc.5) (2019-01-21)
+
+
+### Bug Fixes
+
+* **build:** correct namespace for umd build ([b3b08e7](https://github.com/aurelia/dialog/commit/b3b08e7))
+
+
+
 <a name="2.0.0-rc.4"></a>
 # [2.0.0-rc.4](https://github.com/aurelia/dialog/compare/2.0.0-rc.3...2.0.0-rc.4) (2019-01-19)
 
