@@ -31,7 +31,7 @@ export default {
         compilerOptions: {
           module: 'esnext',
           outDir: undefined,
-          target: 'es2015',
+          target: 'es5',
           declaration: false,
           removeComments: true
         },
