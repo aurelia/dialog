@@ -1,6 +1,7 @@
+import '../setup';
 import { Container } from 'aurelia-dependency-injection';
 import { Loader } from 'aurelia-loader';
-import { DefaultLoader } from 'aurelia-loader-default';
+import { WebpackLoader } from 'aurelia-loader-webpack';
 import { BindingLanguage } from 'aurelia-templating';
 import { TemplatingBindingLanguage } from 'aurelia-templating-binding';
 import { DOM } from 'aurelia-pal';
@@ -51,7 +52,7 @@ describe('DialogService', () => {
     };
 
     container = new Container();
-    container.registerSingleton(Loader, DefaultLoader);
+    container.registerSingleton(Loader, WebpackLoader);
     container.registerSingleton(BindingLanguage, TemplatingBindingLanguage);
     container.registerAlias(BindingLanguage, TemplatingBindingLanguage);
     container.registerInstance(Renderer, renderer);
