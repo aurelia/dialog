@@ -250,3 +250,5 @@ export class DialogRenderer implements Renderer {
 
 // avoid unnecessary code
 transient()(DialogRenderer);
+
+export { DialogRenderer as UxDialogRenderer }

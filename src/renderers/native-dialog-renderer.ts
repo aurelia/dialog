@@ -159,7 +159,7 @@ export class NativeDialogRenderer implements Renderer {
 
   public showDialog(dialogController: DialogController): Promise<void> {
     if (!body) {
-      body = DOM.querySelectorAll('body')[0] as HTMLBodyElement;
+      body = DOM.querySelector('body') as HTMLBodyElement;
     }
     if (dialogController.settings.host) {
       this.host = dialogController.settings.host;
