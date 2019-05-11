@@ -49,16 +49,23 @@ export class DialogKeyboardService {
 
   public enlist(controller: DialogController): void {
     if (!controller.settings.keyboard) { return; }
-    if (!this.controllers.size) {
+    const controllers = this.controllers;
+    if (!controllers.size) {
       this.addListener(controller.settings.keyEvent);
     }
-    this.controllers.add(controller);
+    controllers.add(controller);
   }
 
   public remove(controller: DialogController): void {
-    if (!this.controllers.has(controller)) { return; }
-    this.controllers.delete(controller);
-    if (!this.controllers.size) {
+    const controllers = this.controllers;
+
+    if (!controllers.has(controller)) {
+      return;
+    }
+
+    controllers.delete(controller);
+
+    if (!controllers.size) {
       this.removeListener();
     }
   }

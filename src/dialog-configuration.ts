@@ -81,12 +81,8 @@ export class DialogConfiguration {
    * @return This instance.
    */
   public useStandardResources(): this {
-    return this
-      .useResource('ux-dialog')
-      .useResource('ux-dialog-header')
-      .useResource('ux-dialog-body')
-      .useResource('ux-dialog-footer')
-      .useResource('attach-focus');
+    Object.keys(DEFAULT_RESOURCES).forEach(this.useResource, this);
+    return this;
   }
 
   /**

@@ -78,18 +78,20 @@ export class DialogRenderer implements Renderer {
   }
 
   public static trackController(dialogController: DialogController): void {
-    if (!DialogRenderer.dialogControllers.length) {
+    const trackedDialogControllers = DialogRenderer.dialogControllers;
+    if (!trackedDialogControllers.length) {
       DOM.addEventListener(dialogController.settings.keyEvent || 'keyup', DialogRenderer.keyboardEventHandler, false);
     }
-    DialogRenderer.dialogControllers.push(dialogController);
+    trackedDialogControllers.push(dialogController);
   }
 
   public static untrackController(dialogController: DialogController): void {
-    const i = DialogRenderer.dialogControllers.indexOf(dialogController);
+    const trackedDialogControllers = DialogRenderer.dialogControllers;
+    const i = trackedDialogControllers.indexOf(dialogController);
     if (i !== -1) {
-      DialogRenderer.dialogControllers.splice(i, 1);
+      trackedDialogControllers.splice(i, 1);
     }
-    if (!DialogRenderer.dialogControllers.length) {
+    if (!trackedDialogControllers.length) {
       DOM.removeEventListener(
         dialogController.settings.keyEvent || 'keyup',
         DialogRenderer.keyboardEventHandler,
@@ -120,32 +122,39 @@ export class DialogRenderer implements Renderer {
   private attach(dialogController: DialogController): void {
     const spacingWrapper = DOM.createElement('div'); // TODO: check if redundant
     spacingWrapper.appendChild(this.anchor);
-    this.dialogContainer = DOM.createElement(containerTagName) as HTMLElement;
-    this.dialogContainer.appendChild(spacingWrapper);
-    this.dialogOverlay = DOM.createElement(overlayTagName) as HTMLElement;
+
+    const dialogContainer = this.dialogContainer = DOM.createElement(containerTagName) as HTMLElement;
+    dialogContainer.appendChild(spacingWrapper);
+
+    const dialogOverlay = this.dialogOverlay = DOM.createElement(overlayTagName) as HTMLElement;
     const zIndex = typeof dialogController.settings.startingZIndex === 'number'
       ? dialogController.settings.startingZIndex + ''
       : null;
-    this.dialogOverlay.style.zIndex = zIndex;
-    this.dialogContainer.style.zIndex = zIndex;
-    const lastContainer = this.getOwnElements(this.host, containerTagName).pop();
+
+    dialogOverlay.style.zIndex = zIndex;
+    dialogContainer.style.zIndex = zIndex;
+
+    const host = this.host;
+    const lastContainer = this.getOwnElements(host, containerTagName).pop();
+
     if (lastContainer && lastContainer.parentElement) {
-      this.host.insertBefore(this.dialogContainer, lastContainer.nextSibling);
-      this.host.insertBefore(this.dialogOverlay, lastContainer.nextSibling);
+      host.insertBefore(dialogContainer, lastContainer.nextSibling);
+      host.insertBefore(dialogOverlay, lastContainer.nextSibling);
     } else {
-      this.host.insertBefore(this.dialogContainer, this.host.firstChild);
-      this.host.insertBefore(this.dialogOverlay, this.host.firstChild);
+      host.insertBefore(dialogContainer, host.firstChild);
+      host.insertBefore(dialogOverlay, host.firstChild);
     }
     dialogController.controller.attached();
-    this.host.classList.add('ux-dialog-open');
+    host.classList.add('ux-dialog-open');
   }
 
   private detach(dialogController: DialogController): void {
-    this.host.removeChild(this.dialogOverlay);
-    this.host.removeChild(this.dialogContainer);
+    const host = this.host;
+    host.removeChild(this.dialogOverlay);
+    host.removeChild(this.dialogContainer);
     dialogController.controller.detached();
     if (!DialogRenderer.dialogControllers.length) {
-      this.host.classList.remove('ux-dialog-open');
+      host.classList.remove('ux-dialog-open');
     }
   }
 
@@ -210,7 +219,7 @@ export class DialogRenderer implements Renderer {
 
   public showDialog(dialogController: DialogController): Promise<void> {
     if (!body) {
-      body = DOM.querySelectorAll('body')[0] as HTMLBodyElement;
+      body = DOM.querySelector('body') as HTMLBodyElement;
     }
     if (dialogController.settings.host) {
       this.host = dialogController.settings.host;
