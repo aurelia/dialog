@@ -2,6 +2,64 @@ import typescript from 'rollup-plugin-typescript2';
 
 export default [
   {
+    input: 'src/aurelia-dialog.ts',
+    output: [
+      {
+        dir: 'dist/es2015',
+        format: 'esm'
+      }
+    ],
+    plugins: [
+      typescript({
+        cacheRoot: '.rollupcache',
+        tsconfigOverride: {
+          compilerOptions: {
+            target: 'es2015',
+            removeComments: true,
+          }
+        }
+      })
+    ]
+  },
+  {
+    input: 'src/aurelia-dialog.ts',
+    output: [{
+      dir: 'dist/es2017',
+      format: 'esm'
+    }],
+    plugins: [
+      typescript({
+        cacheRoot: '.rollupcache',
+        tsconfigOverride: {
+          compilerOptions: {
+            target: 'es2017',
+            removeComments: true,
+          }
+        }
+      })
+    ]
+  },
+  {
+    input: 'src/aurelia-dialog.ts',
+    output: [
+      { dir: 'dist/amd', format: 'amd', id: 'aurelia-dialog' },
+      { dir: 'dist/commonjs', format: 'cjs' },
+      { dir: 'dist/system', format: 'system' },
+      { dir: 'dist/native-modules', format: 'esm' },
+    ],
+    plugins: [
+      typescript({
+        cacheRoot: '.rollupcache',
+        tsconfigOverride: {
+          compilerOptions: {
+            target: 'es5',
+            removeComments: true,
+          }
+        }
+      })
+    ]
+  },
+  {
     input: './src/aurelia-dialog.ts',
     external: [
       'aurelia-framework',
@@ -87,4 +145,21 @@ export default [
       })
     ]
   }
-]
+].map(config => {
+  config.external = [
+    'aurelia-binding',
+    'aurelia-dependency-injection',
+    'aurelia-pal',
+    'aurelia-templating',
+    'aurelia-dialog',
+    'aurelia-task-queue',
+    'aurelia-logging',
+    'aurelia-path',
+    'aurelia-loader',
+    'aurelia-metadata'
+  ];
+  config.output.forEach(output => output.sourcemap = true);
+  config.output.forEach(output => output.chunkFileNames = '[name].js');
+  return config;
+});
+
