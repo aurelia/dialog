@@ -1,12 +1,15 @@
 import { FrameworkConfiguration } from 'aurelia-framework';
 import { Renderer, RendererStatic } from './renderer';
 import { DialogSettings, DefaultDialogSettings } from './dialog-settings';
-import { DialogRenderer } from './dialog-renderer';
 import { DOM } from 'aurelia-pal';
 
-const defaultRenderer: RendererStatic = DialogRenderer;
+const RENDERRERS: Record<string, () => Promise<RendererStatic>> = {
+  ux: () => import('./renderers/ux-dialog-renderer').then(m => m.DialogRenderer) as Promise<RendererStatic>,
+  // tslint:disable-next-line:max-line-length
+  native: () => import('./renderers/native-dialog-renderer').then(m => m.NativeDialogRenderer) as Promise<RendererStatic>
+};
 
-const resources: { [key: string]: () => Promise<any> } = {
+const DEFAULT_RESOURCES: { [key: string]: () => Promise<any> } = {
   'ux-dialog': () => import('./resources/ux-dialog').then(m => m.UxDialog),
   'ux-dialog-header': () => import('./resources/ux-dialog-header').then(m => m.UxDialogHeader),
   'ux-dialog-body': () => import('./resources/ux-dialog-body').then(m => m.UxDialogBody),
@@ -25,7 +28,7 @@ const defaultCSSText = `ux-dialog-container,ux-dialog-overlay{position:fixed;top
  */
 export class DialogConfiguration {
   private fwConfig: FrameworkConfiguration;
-  private renderer: RendererStatic = defaultRenderer;
+  private renderer: 'ux' | 'native' = 'ux';
   private cssText: string = defaultCSSText;
   private resources: DialogResourceName[] = [];
 
@@ -39,21 +42,27 @@ export class DialogConfiguration {
     applySetter: (apply: () => void | Promise<void>) => void
   ) {
     this.fwConfig = frameworkConfiguration;
-    this.settings = this.fwConfig.container.get(DefaultDialogSettings);
+    this.settings = frameworkConfiguration.container.get(DefaultDialogSettings);
     applySetter(() => this._apply());
   }
 
-  private _apply(): void | Promise<void> {
-    this.fwConfig.transient(Renderer, this.renderer);
+  private _apply(): Promise<void> {
+    return Promise
+      .resolve(RENDERRERS[this.renderer]())
+      .then(rendererImpl => {
+        const fwConfig = this.fwConfig;
+        fwConfig.transient(Renderer, rendererImpl);
 
-    if (this.cssText) {
-      DOM.injectStyles(this.cssText);
-    }
+        if (this.cssText) {
+          DOM.injectStyles(this.cssText);
+        }
 
-    if (this.resources.length) {
-      return Promise.all(this.resources.map(name => resources[name]()))
-        .then(modules => { this.fwConfig.globalResources(modules); });
-    }
+        return Promise
+          .all(this.resources.map(name => DEFAULT_RESOURCES[name]()))
+          .then(modules => {
+            fwConfig.globalResources(modules);
+          });
+      });
   }
 
   /**
@@ -61,7 +70,8 @@ export class DialogConfiguration {
    * @return This instance.
    */
   public useDefaults(): this {
-    return this.useRenderer(defaultRenderer)
+    return this
+      .useRenderer('ux')
       .useCSS(defaultCSSText)
       .useStandardResources();
   }
@@ -71,7 +81,8 @@ export class DialogConfiguration {
    * @return This instance.
    */
   public useStandardResources(): this {
-    return this.useResource('ux-dialog')
+    return this
+      .useResource('ux-dialog')
       .useResource('ux-dialog-header')
       .useResource('ux-dialog-body')
       .useResource('ux-dialog-footer')
@@ -94,8 +105,8 @@ export class DialogConfiguration {
    * @param settings Global settings for the renderer.
    * @return This instance.
    */
-  public useRenderer(renderer: RendererStatic, settings?: DialogSettings): this {
-    this.renderer = renderer;
+  public useRenderer(type: 'ux' | 'native', settings?: DialogSettings): this {
+    this.renderer = type;
     if (settings) {
       Object.assign(this.settings, settings);
     }

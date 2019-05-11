@@ -1,8 +1,8 @@
 import { DOM } from 'aurelia-pal';
 import { transient } from 'aurelia-dependency-injection';
-import { ActionKey } from './dialog-settings';
-import { Renderer } from './renderer';
-import { DialogController } from './dialog-controller';
+import { ActionKey } from '../dialog-settings';
+import { Renderer } from '../renderer';
+import { DialogController } from '../dialog-controller';
 
 const containerTagName = 'ux-dialog-container';
 const overlayTagName = 'ux-dialog-overlay';
