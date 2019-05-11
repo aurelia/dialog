@@ -38,7 +38,7 @@
     "changelog": "conventional-changelog -p angular -i doc/CHANGELOG.md -s",
     "bump-version": "npm --no-git-tag-version version",
     "precut-release": "npm run test",
-    "cut-release": "npm run changelog && npm run build && npm run doc"
+    "cut-release": "npm run changelog && npm run build && npm run build:dts"
   },
   "jspm": {
     "registry": "npm",
