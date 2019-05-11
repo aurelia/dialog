@@ -1,8 +1,8 @@
 import { DOM } from 'aurelia-pal';
 import { transient } from 'aurelia-dependency-injection';
-import { Renderer } from './renderer';
-import { DialogController } from './dialog-controller';
-import { transitionEvent, hasTransition } from './dialog-renderer';
+import { Renderer } from '../renderer';
+import { DialogController } from '../dialog-controller';
+import { transitionEvent, hasTransition } from './ux-dialog-renderer';
 
 const containerTagName = 'dialog';
 let body: HTMLBodyElement;
