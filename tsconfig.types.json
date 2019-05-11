@@ -14,7 +14,9 @@
     "noUnusedParameters": false,
     "noImplicitReturns": true,
     "strictNullChecks": true,
-    "declaration": false,
+    "declaration": true,
+    "declarationDir": "dist/types",
+    "emitDeclarationOnly": true,
     "forceConsistentCasingInFileNames": true,
     "experimentalDecorators": true,
     "noEmitHelpers": false,
@@ -24,6 +26,7 @@
     ".vscode",
     "dist",
     "doc",
+    "test",
     "node_modules"
   ]
 }
