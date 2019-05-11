@@ -9,7 +9,7 @@ const RENDERRERS: Record<string, () => Promise<RendererStatic>> = {
   native: () => import('./renderers/native-dialog-renderer').then(m => m.NativeDialogRenderer) as Promise<RendererStatic>
 };
 
-const DEFAULT_RESOURCES: { [key: string]: () => Promise<any> } = {
+const DEFAULT_RESOURCES: Record<string, () => Promise<Function>> = {
   'ux-dialog': () => import('./resources/ux-dialog').then(m => m.UxDialog),
   'ux-dialog-header': () => import('./resources/ux-dialog-header').then(m => m.UxDialogHeader),
   'ux-dialog-body': () => import('./resources/ux-dialog-body').then(m => m.UxDialogBody),
@@ -28,7 +28,7 @@ const defaultCSSText = `ux-dialog-container,ux-dialog-overlay{position:fixed;top
  */
 export class DialogConfiguration {
   private fwConfig: FrameworkConfiguration;
-  private renderer: 'ux' | 'native' = 'ux';
+  private renderer: RendererStatic | Promise<RendererStatic> | 'ux' | 'native' = 'ux';
   private cssText: string = defaultCSSText;
   private resources: DialogResourceName[] = [];
 
@@ -47,8 +47,9 @@ export class DialogConfiguration {
   }
 
   private _apply(): Promise<void> {
+    const renderer = this.renderer;
     return Promise
-      .resolve(RENDERRERS[this.renderer]())
+      .resolve(typeof renderer === 'string' ? RENDERRERS[renderer]() : renderer)
       .then(rendererImpl => {
         const fwConfig = this.fwConfig;
         fwConfig.transient(Renderer, rendererImpl);
@@ -101,8 +102,8 @@ export class DialogConfiguration {
    * @param settings Global settings for the renderer.
    * @return This instance.
    */
-  public useRenderer(type: 'ux' | 'native', settings?: DialogSettings): this {
-    this.renderer = type;
+  public useRenderer(renderer: RendererStatic | Promise<RendererStatic> | 'ux' | 'native', settings?: DialogSettings): this {
+    this.renderer = renderer;
     if (settings) {
       Object.assign(this.settings, settings);
     }

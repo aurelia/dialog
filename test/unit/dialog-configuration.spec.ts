@@ -69,11 +69,11 @@ describe('dialog-configuration.spec.ts', () => {
 
   describe('useRenderer', () => {
     it('should register a renderer as a transient', async done => {
-      // const renderer = {} as any;
+      const renderer = {} as any;
       spyOn(frameworkConfig, 'transient');
-      configuration.useRenderer('ux');
+      configuration.useRenderer(renderer);
       await whenConfigured(applyConfig, done);
-      // expect(frameworkConfig.transient).toHaveBeenCalledWith(Renderer, renderer);
+      expect(frameworkConfig.transient).toHaveBeenCalledWith(Renderer, renderer);
       done();
     });
 
