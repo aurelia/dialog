@@ -40,6 +40,10 @@
     "precut-release": "npm run test",
     "cut-release": "npm run changelog && npm run build && npm run build:dts"
   },
+  "files": [
+    "dist",
+    "doc"
+  ],
   "jspm": {
     "registry": "npm",
     "jspmPackage": true,
