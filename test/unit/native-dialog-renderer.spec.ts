@@ -1,7 +1,7 @@
 import { DOM } from 'aurelia-pal';
 import { DialogController } from '../../src/dialog-controller';
-import { NativeDialogRenderer } from '../../src/native-dialog-renderer';
-import { hasTransition, transitionEvent } from '../../src/dialog-renderer';
+import { NativeDialogRenderer } from '../../src/renderers/native-dialog-renderer';
+import { hasTransition, transitionEvent } from '../../src/renderers/ux-dialog-renderer';
 import { DefaultDialogSettings, DialogSettings } from '../../src/dialog-settings';
 
 type TestDialogRenderer = NativeDialogRenderer & { [key: string]: any, __controller: DialogController };
@@ -280,10 +280,10 @@ describe('DialogRenderer', () => {
         renderer.dialogContainer.style.opacity = '0';
       });
       Object.defineProperty(renderer, 'dialogContainer', { // is set in ".showDialog()"
-        get: (): HTMLDialogElement => {
+        get(): HTMLDialogElement {
           return this.dialogContainer;
         },
-        set: (element: HTMLDialogElement): void => {
+        set(element: HTMLDialogElement): void {
           this.dialogContainer = element;
           element.style[durationPropertyName() as any] = transitionDuration;
           element.style.opacity = '0'; // init

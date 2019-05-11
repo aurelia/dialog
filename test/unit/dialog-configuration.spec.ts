@@ -3,7 +3,7 @@ import { FrameworkConfiguration } from 'aurelia-framework';
 import { DOM } from 'aurelia-pal';
 import { DialogConfiguration, Renderer } from '../../src/aurelia-dialog';
 import { DefaultDialogSettings } from '../../src/dialog-settings';
-import { DialogRenderer } from '../../src/dialog-renderer';
+import { DialogRenderer } from '../../src/renderers/ux-dialog-renderer';
 import { UxDialog } from '../../src/resources/ux-dialog';
 import { UxDialogHeader } from '../../src/resources/ux-dialog-header';
 import { UxDialogBody } from '../../src/resources/ux-dialog-body';
