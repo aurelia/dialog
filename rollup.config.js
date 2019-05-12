@@ -1,4 +1,5 @@
 import typescript from 'rollup-plugin-typescript2';
+import postcss from 'rollup-plugin-postcss'
 
 export default [
   {
@@ -160,6 +161,11 @@ export default [
   ];
   config.output.forEach(output => output.sourcemap = true);
   config.output.forEach(output => output.chunkFileNames = '[name].js');
+  config.plugins.push(postcss({
+    use: ['less'],
+    inject: false,
+    minimize: true
+  }));
   return config;
 });
 
