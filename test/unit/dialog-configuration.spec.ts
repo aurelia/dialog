@@ -1,16 +1,17 @@
+import '../setup';
 import { Container } from 'aurelia-dependency-injection';
 import { FrameworkConfiguration } from 'aurelia-framework';
 import { DOM } from 'aurelia-pal';
 import { DialogConfiguration, Renderer } from '../../src/aurelia-dialog';
 import { DefaultDialogSettings } from '../../src/dialog-settings';
-import { DialogRenderer } from '../../src/dialog-renderer';
+import { UxDialogRenderer } from '../../src/renderers/ux-dialog-renderer';
 import { UxDialog } from '../../src/resources/ux-dialog';
 import { UxDialogHeader } from '../../src/resources/ux-dialog-header';
 import { UxDialogBody } from '../../src/resources/ux-dialog-body';
 import { UxDialogFooter } from '../../src/resources/ux-dialog-footer';
 import { AttachFocus } from '../../src/resources/attach-focus';
 
-describe('DialogConfiguration', () => {
+describe('dialog-configuration.spec.ts', () => {
   const frameworkConfig: FrameworkConfiguration = {
     container: new Container(),
     globalResources: () => { return; },
@@ -51,7 +52,7 @@ describe('DialogConfiguration', () => {
       new DialogConfiguration(frameworkConfig, apply => { applyConfig = apply; });
       spyOn(frameworkConfig, 'transient');
       await whenConfigured(applyConfig, done);
-      expect(frameworkConfig.transient).toHaveBeenCalledWith(Renderer, DialogRenderer);
+      expect(frameworkConfig.transient).toHaveBeenCalledWith(Renderer, UxDialogRenderer);
       done();
     });
 
@@ -79,7 +80,7 @@ describe('DialogConfiguration', () => {
     it('should export settings', async done => {
       const first = 'first';
       const second = 'second';
-      configuration.useRenderer({} as any, { first, second });
+      configuration.useRenderer('ux', { first, second });
       await whenConfigured(applyConfig, done);
       expect(configuration.settings[first]).toBe(first);
       expect(configuration.settings[second]).toBe(second);
@@ -120,12 +121,11 @@ describe('DialogConfiguration', () => {
       spyOn(configuration, 'useResource').and.callThrough();
       configuration.useDefaults();
       await whenConfigured(applyConfig, done);
-      expect(configuration.useRenderer).toHaveBeenCalledWith(DialogRenderer);
-      expect(configuration.useResource).toHaveBeenCalledWith('ux-dialog');
-      expect(configuration.useResource).toHaveBeenCalledWith('ux-dialog-header');
-      expect(configuration.useResource).toHaveBeenCalledWith('ux-dialog-footer');
-      expect(configuration.useResource).toHaveBeenCalledWith('ux-dialog-body');
-      expect(configuration.useResource).toHaveBeenCalledWith('attach-focus');
+      expect(configuration.useRenderer).toHaveBeenCalledWith('ux');
+      const allDefaultResources = ['ux-dialog', 'ux-dialog-header', 'ux-dialog-body', 'ux-dialog-footer', 'attach-focus'];
+      expect((configuration.useResource as jasmine.Spy).calls.allArgs()).toEqual(
+        allDefaultResources.map((resource, idx) => [resource, idx, [...allDefaultResources]])
+      );
       done();
     });
 

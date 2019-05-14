@@ -16,17 +16,17 @@ export class UxDialogFooter {
    */
   // tslint:disable-next-line:member-ordering
   public static $view =
-  `<template>
-    <slot></slot>
-    <template if.bind="buttons.length > 0">
-      <button type="button"
-        class="btn btn-default"
-        repeat.for="button of buttons"
-        click.trigger="close(button)">
-        \${button}
-      </button>
-    </template>
-  </template>`;
+`<template>
+  <slot></slot>
+  <template if.bind="buttons.length > 0">
+    <button type="button"
+      class="btn btn-default"
+      repeat.for="button of buttons"
+      click.trigger="close(button)">
+      \${button}
+    </button>
+  </template>
+</template>`;
 
   /**
    * @internal

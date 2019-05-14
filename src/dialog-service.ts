@@ -96,17 +96,23 @@ export class DialogService {
       // provide access to the dialog controller for view only dialogs
       compositionContext.bindingContext = { controller: dialogController };
     }
-    return this.compositionEngine.compose(compositionContext).then<void>((controller: Controller) => {
-      dialogController.controller = controller;
-      return dialogController.renderer.showDialog(dialogController).then(() => {
-        this.controllers.push(dialogController);
-        this.hasActiveDialog = this.hasOpenDialog = !!this.controllers.length;
-      }, reason => {
-        if (controller.viewModel) {
-          invokeLifecycle(controller.viewModel, 'deactivate');
-        }
-        return Promise.reject(reason);
-      });
+    return this.compositionEngine
+      .compose(compositionContext)
+      .then<void>((controller: Controller) => {
+        dialogController.controller = controller;
+        return dialogController.renderer
+          .showDialog(dialogController)
+          .then(
+            () => {
+              this.controllers.push(dialogController);
+              this.hasActiveDialog = this.hasOpenDialog = !!this.controllers.length;
+            },
+            reason => {
+              if (controller.viewModel) {
+                invokeLifecycle(controller.viewModel, 'deactivate');
+              }
+              return Promise.reject(reason);
+            });
     });
   }
 

@@ -1,3 +1,4 @@
+import '../setup';
 import { invokeLifecycle } from '../../src/lifecycle';
 
 describe('invokeLifecycle', () => {

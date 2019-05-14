@@ -1,6 +1,7 @@
+import '../setup';
 import { bootstrap } from 'aurelia-bootstrapper';
 import { Container } from 'aurelia-dependency-injection';
-import { Aurelia } from 'aurelia-framework';
+import { Aurelia, PLATFORM } from 'aurelia-framework';
 import { TaskQueue } from 'aurelia-task-queue';
 import { StageComponent, ComponentTester } from 'aurelia-testing';
 
@@ -25,7 +26,7 @@ describe('attach-focus', () => {
   beforeEach(() => {
     viewModel = new ViewModel();
     component = StageComponent
-      .withResources('dist/test/src/resources/attach-focus')
+      .withResources(PLATFORM.moduleName('src/resources/attach-focus'))
       .boundTo(viewModel);
     component.bootstrap((aurelia: Aurelia) => aurelia.use.basicConfiguration());
   });
