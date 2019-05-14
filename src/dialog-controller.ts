@@ -50,7 +50,9 @@ export class DialogController {
   public releaseResources(result: DialogCloseResult | DialogCloseError): Promise<void> {
     return invokeLifecycle(this.controller.viewModel || {}, 'deactivate', result)
       .then(() => this.renderer.hideDialog(this))
-      .then(() => { this.controller.unbind(); });
+      .then(() => {
+        this.controller.unbind();
+      });
   }
 
   /**

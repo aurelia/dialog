@@ -14,20 +14,20 @@ export class UxDialogHeader implements ComponentBind {
    */
   // tslint:disable-next-line:member-ordering
   public static $view =
-  `<template>
-    <button
-      type="button"
-      class="dialog-close"
-      aria-label="Close"
-      if.bind="showCloseButton"
-      click.trigger="controller.cancel()">
-      <span aria-hidden="true">&times;</span>
-    </button>
+`<template>
+  <button
+    type="button"
+    class="dialog-close"
+    aria-label="Close"
+    if.bind="showCloseButton"
+    click.trigger="controller.cancel()">
+    <span aria-hidden="true">&times;</span>
+  </button>
 
-    <div class="dialog-header-content">
-      <slot></slot>
-    </div>
-  </template>`;
+  <div class="dialog-header-content">
+    <slot></slot>
+  </div>
+</template>`;
 
   /**
    * @internal

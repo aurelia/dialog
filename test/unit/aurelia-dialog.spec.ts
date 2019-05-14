@@ -1,3 +1,4 @@
+import '../setup';
 import { Container } from 'aurelia-dependency-injection';
 import { FrameworkConfiguration } from 'aurelia-framework';
 import { configure } from '../../src/aurelia-dialog';

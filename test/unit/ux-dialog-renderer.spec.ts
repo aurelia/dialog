@@ -1,6 +1,7 @@
+import '../setup';
 import { DOM } from 'aurelia-pal';
 import { DialogController } from '../../src/dialog-controller';
-import { DialogRenderer, hasTransition, transitionEvent } from '../../src/dialog-renderer';
+import { DialogRenderer, hasTransition, transitionEvent } from '../../src/renderers/ux-dialog-renderer';
 import { DefaultDialogSettings, DialogSettings } from '../../src/dialog-settings';
 
 type TestDialogRenderer = DialogRenderer & { [key: string]: any, __controller: DialogController };
@@ -23,7 +24,7 @@ const durationPropertyName = (() => {
 })();
 const body = DOM.querySelectorAll('body')[0] as HTMLBodyElement;
 
-describe('DialogRenderer', () => {
+describe('ux-dialog-renderer.spec.ts', () => {
   function createRenderer(settings: DialogSettings = {}): TestDialogRenderer {
     const renderer = new DialogRenderer() as TestDialogRenderer;
     renderer.getDialogContainer();
@@ -295,11 +296,11 @@ describe('DialogRenderer', () => {
         renderer.dialogContainer.style.opacity = '0';
       });
       Object.defineProperty(renderer, 'dialogContainer', { // is set in ".showDialog()"
-        get: (): HTMLElement => {
-          return this.dialogContainer;
+        get(): HTMLElement {
+          return this.__dialogContainer;
         },
-        set: (element: HTMLElement): void => {
-          this.dialogContainer = element;
+        set(element: HTMLElement): void {
+          this.__dialogContainer = element;
           element.style[durationPropertyName() as any] = transitionDuration;
           element.style.opacity = '0'; // init
           spyOn(element, 'addEventListener').and.callThrough();
