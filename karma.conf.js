@@ -39,6 +39,13 @@ module.exports = function(config) {
           {
             test: /\.html$/i,
             loader: 'html-loader'
+          },
+          {
+            test: /\.less$/i,
+            loader: 'postcss-loader',
+            options: {
+              plugins: () => []
+            }
           }
         ]
       },
