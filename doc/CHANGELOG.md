@@ -1,3 +1,20 @@
+<a name="2.0.0-rc.6"></a>
+# [2.0.0-rc.6](https://github.com/aurelia/dialog/compare/2.0.0-rc.5...2.0.0-rc.6) (2019-05-31)
+
+
+### Bug Fixes
+
+* **build:** adjust umd build, add umd-es2015 ([342c023](https://github.com/aurelia/dialog/commit/342c023))
+* **package.json:** fix package.json ([5ae0d3a](https://github.com/aurelia/dialog/commit/5ae0d3a))
+
+
+### Features
+
+* **dialog-renderer:** add native dialog renderer close [#338](https://github.com/aurelia/dialog/issues/338) ([9da52fe](https://github.com/aurelia/dialog/commit/9da52fe))
+* **keyboard:** allow to configure keyevent type ([2f57949](https://github.com/aurelia/dialog/commit/2f57949))
+
+
+
 <a name="2.0.0-rc.5"></a>
 # [2.0.0-rc.5](https://github.com/aurelia/dialog/compare/2.0.0-rc.4...2.0.0-rc.5) (2019-01-21)
 
