@@ -63,7 +63,9 @@ export class NativeDialogRenderer implements Renderer {
   }
 
   private attach(dialogController: DialogController): void {
-    this.lastActiveElement = DOM.activeElement as HTMLElement;
+    if (dialogController.settings.restoreFocus) {
+      this.lastActiveElement = DOM.activeElement as HTMLElement;
+    }
 
     const spacingWrapper = DOM.createElement('div'); // TODO: check if redundant
     spacingWrapper.appendChild(this.anchor);
