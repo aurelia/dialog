@@ -182,6 +182,18 @@ describe('native-dialog-renderer.spec.ts', () => {
         done();
       });
     });
+
+    describe('"restoreFocus"', () => {
+      it('and calls the given callback on close', async done => {
+        let restoreCalled = false;
+        const renderer = createRenderer({ restoreFocus: () => restoreCalled = true });
+        await show(done, renderer);
+        expect(restoreCalled).toBe(false);
+        await hide(done, renderer);
+        expect(restoreCalled).toBe(true);
+        done();
+      });
+    });
   });
 
   describe('on first open dialog', () => {

@@ -47,6 +47,7 @@ export class NativeDialogRenderer implements Renderer {
   private dialogCancel: (e: Event) => void;
 
   public dialogContainer: HTMLDialogElement;
+  public lastActiveElement: HTMLElement;
   public host: Element;
   public anchor: Element;
 
@@ -62,6 +63,10 @@ export class NativeDialogRenderer implements Renderer {
   }
 
   private attach(dialogController: DialogController): void {
+    if (dialogController.settings.restoreFocus) {
+      this.lastActiveElement = DOM.activeElement as HTMLElement;
+    }
+
     const spacingWrapper = DOM.createElement('div'); // TODO: check if redundant
     spacingWrapper.appendChild(this.anchor);
     this.dialogContainer = DOM.createElement(containerTagName) as HTMLDialogElement;
@@ -91,6 +96,9 @@ export class NativeDialogRenderer implements Renderer {
     dialogController.controller.detached();
     if (!NativeDialogRenderer.dialogControllers.length) {
       this.host.classList.remove('ux-dialog-open');
+    }
+    if (dialogController.settings.restoreFocus) {
+      dialogController.settings.restoreFocus(this.lastActiveElement);
     }
   }
 
