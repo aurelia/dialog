@@ -1,3 +1,100 @@
+<a name="2.0.0-rc.6"></a>
+# [2.0.0-rc.6](https://github.com/aurelia/dialog/compare/2.0.0-rc.5...2.0.0-rc.6) (2019-05-31)
+
+
+### Bug Fixes
+
+* **build:** adjust umd build, add umd-es2015 ([342c023](https://github.com/aurelia/dialog/commit/342c023))
+* **package.json:** fix package.json ([5ae0d3a](https://github.com/aurelia/dialog/commit/5ae0d3a))
+
+
+### Features
+
+* **dialog-renderer:** add native dialog renderer close [#338](https://github.com/aurelia/dialog/issues/338) ([9da52fe](https://github.com/aurelia/dialog/commit/9da52fe))
+* **keyboard:** allow to configure keyevent type ([2f57949](https://github.com/aurelia/dialog/commit/2f57949))
+
+
+
+<a name="2.0.0-rc.5"></a>
+# [2.0.0-rc.5](https://github.com/aurelia/dialog/compare/2.0.0-rc.4...2.0.0-rc.5) (2019-01-21)
+
+
+### Bug Fixes
+
+* **build:** correct namespace for umd build ([b3b08e7](https://github.com/aurelia/dialog/commit/b3b08e7))
+
+
+
+<a name="2.0.0-rc.4"></a>
+# [2.0.0-rc.4](https://github.com/aurelia/dialog/compare/2.0.0-rc.3...2.0.0-rc.4) (2019-01-19)
+
+
+### Bug Fixes
+
+* **build:** add umd build to build script ([0c46fdc](https://github.com/aurelia/dialog/commit/0c46fdc))
+* **build:** update rollup dep, config ([0c9e029](https://github.com/aurelia/dialog/commit/0c9e029))
+* **doc:** fix html5 syntax ([629ad1c](https://github.com/aurelia/dialog/commit/629ad1c)), closes [/github.com/aurelia/templating/pull/647#issuecomment-427989601](https://github.com//github.com/aurelia/templating/pull/647/issues/issuecomment-427989601)
+
+
+### Features
+
+* **keyboard:** allow to configure keyevent type ([3aad34f](https://github.com/aurelia/dialog/commit/3aad34f))
+
+
+
+<a name="2.0.0-rc.3"></a>
+# [2.0.0-rc.3](https://github.com/aurelia/dialog/compare/2.0.0-rc.2...2.0.0-rc.3) (2018-08-22)
+
+
+### Bug Fixes
+
+* **resources:** use named exports instead of default ([4033216](https://github.com/aurelia/dialog/commit/4033216))
+
+
+
+<a name="2.0.0-rc.2"></a>
+# [2.0.0-rc.2](https://github.com/aurelia/dialog/compare/2.0.0-rc.1...2.0.0-rc.2) (2018-08-22)
+
+
+### Bug Fixes
+
+* **attach-focus:** AttachFocus must be the default export fix [#358](https://github.com/aurelia/dialog/issues/358) ([fb5e829](https://github.com/aurelia/dialog/commit/fb5e829))
+
+
+
+<a name="2.0.0-rc.1"></a>
+# [2.0.0-rc.1](https://github.com/aurelia/dialog/compare/1.0.0...2.0.0-rc.1) (2018-08-21)
+
+
+### Bug Fixes
+
+* **css:** update styles to use ux- prefix instead of ai- ([f29d8cb](https://github.com/aurelia/dialog/commit/f29d8cb)), closes [#306](https://github.com/aurelia/dialog/issues/306)
+* **package.json:** add missing dependency ([ed9c5df](https://github.com/aurelia/dialog/commit/ed9c5df))
+
+
+### Features
+
+* **attach-focus:** make work as boolean attr ([f75abb4](https://github.com/aurelia/dialog/commit/f75abb4)), closes [#349](https://github.com/aurelia/dialog/issues/349)
+* **resources:** register resources by class ([#354](https://github.com/aurelia/dialog/issues/354)) ([ff55c80](https://github.com/aurelia/dialog/commit/ff55c80))
+
+
+### BREAKING CHANGES
+
+* **resources:** - default resources are no longer reexported, need to be explicitly included when bundling
+
+
+
+<a name="1.0.0"></a>
+# [1.0.0](https://github.com/aurelia/dialog/compare/1.0.0-rc.2.0.0...1.0.0) (2018-07-23)
+
+
+### Bug Fixes
+
+* **DI:** use static method for Element ([700dd62](https://github.com/aurelia/dialog/commit/700dd62))
+* **doc:** correct link from dialog to bootstraping ([432533d](https://github.com/aurelia/dialog/commit/432533d))
+
+
+
 <a name="1.0.0-rc.2.0.0"></a>
 # [1.0.0-rc.2.0.0](https://github.com/aurelia/dialog/compare/1.0.0-rc.1.0.3...1.0.0-rc.2.0.0) (2017-11-05)
 

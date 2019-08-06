@@ -1,4 +1,4 @@
-import { Controller, View } from 'aurelia-templating';
+import '../setup';
 import { DialogCloseResult } from './../../src/dialog-result';
 import { DialogComponentCanDeactivate } from './../../src/interfaces';
 import { DefaultDialogSettings } from '../../src/dialog-settings';

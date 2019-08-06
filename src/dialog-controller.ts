@@ -110,7 +110,9 @@ export class DialogController {
   public releaseResources(result: DialogCloseResult | DialogCloseError): Promise<void> {
     return this.deactivate(result)
       .then(() => this.renderer.hideDialog(this))
-      .then(() => { (this.controller || this.view)!.unbind(); });
+      .then(() => {
+        this.controller.unbind();
+      });
   }
 
   /**

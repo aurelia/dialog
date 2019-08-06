@@ -1,3 +1,4 @@
+import '../setup';
 import { DialogKeyboardService } from '../../src/dialog-keyboard-service';
 import { DialogService } from '../../src/dialog-service';
 import { DOM } from 'aurelia-pal';
