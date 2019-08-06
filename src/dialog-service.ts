@@ -1,5 +1,5 @@
 import { Container } from 'aurelia-dependency-injection';
-import { DialogCompositionEngine } from './dialog-composition-engine';
+import { CompositionEngine, Controller, ViewSlot, CompositionContext } from 'aurelia-templating';
 import { DialogOpenResult, DialogCloseResult, DialogCancelResult } from './dialog-result';
 import { DialogSettings, DefaultDialogSettings } from './dialog-settings';
 import { DialogController } from './dialog-controller';
@@ -55,6 +55,61 @@ export class DialogService {
     if (!settings.viewModel && !settings.view) {
       throw new Error('Invalid Dialog Settings. You must provide "viewModel", "view" or both.');
     }
+  }
+
+  // tslint:disable-next-line:max-line-length
+  private createCompositionContext(childContainer: Container, host: Element, settings: DialogSettings): (CompositionContext & { host: Element }) { // TODO: remove when templating typings fix is used
+    return {
+      container: childContainer.parent,
+      childContainer,
+      bindingContext: null,
+      viewResources: null as any,
+      model: settings.model,
+      view: settings.view,
+      viewModel: settings.viewModel,
+      viewSlot: new ViewSlot(host, true),
+      host
+    };
+  }
+
+  private ensureViewModel(compositionContext: CompositionContext): Promise<CompositionContext> {
+    if (typeof compositionContext.viewModel === 'object') {
+      return Promise.resolve(compositionContext);
+    }
+    return this.compositionEngine.ensureViewModel(compositionContext);
+  }
+
+  private _cancelOperation(rejectOnCancel: boolean): DialogCancelResult {
+    if (!rejectOnCancel) {
+      return { wasCancelled: true };
+    }
+    throw createDialogCancelError();
+  }
+
+  // tslint:disable-next-line:max-line-length
+  private composeAndShowDialog(compositionContext: CompositionContext, dialogController: DialogController): Promise<void> {
+    if (!compositionContext.viewModel) {
+      // provide access to the dialog controller for view only dialogs
+      compositionContext.bindingContext = { controller: dialogController };
+    }
+    return this.compositionEngine
+      .compose(compositionContext)
+      .then<void>((controller: Controller) => {
+        dialogController.controller = controller;
+        return dialogController.renderer
+          .showDialog(dialogController)
+          .then(
+            () => {
+              this.controllers.push(dialogController);
+              this.hasActiveDialog = this.hasOpenDialog = !!this.controllers.length;
+            },
+            reason => {
+              if (controller.viewModel) {
+                invokeLifecycle(controller.viewModel, 'deactivate');
+              }
+              return Promise.reject(reason);
+            });
+    });
   }
 
   /**

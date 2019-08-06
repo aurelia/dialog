@@ -3,5 +3,6 @@ jspm_packages
 bower_components
 .idea
 .DS_STORE
+.rollupcache
 *.swp
 build/reports

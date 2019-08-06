@@ -1,12 +1,24 @@
 {
-  "extends": "./tsconfig.build",
   "compilerOptions": {
-    "outDir": "dist/test",
-    "allowUnreachableCode": true,
-    "allowUnusedLabels": true,
-    "types": [
-      "jasmine"
-    ]
+    "module": "esnext",
+    "moduleResolution": "node",
+    "target": "es5",
+    "lib": [
+      "es2017",
+      "dom"
+    ],
+    "noImplicitAny": true,
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "noUnusedLocals": true,
+    "noUnusedParameters": false,
+    "noImplicitReturns": true,
+    "strictNullChecks": true,
+    "declaration": false,
+    "forceConsistentCasingInFileNames": true,
+    "experimentalDecorators": true,
+    "noEmitHelpers": false,
+    "stripInternal": true
   },
   "exclude": [
     ".vscode",

@@ -3,22 +3,17 @@ import { DialogConfiguration } from './dialog-configuration';
 
 export function configure(
   frameworkConfig: FrameworkConfiguration,
-  callback?: (config: DialogConfiguration) => void): void {
-  let applyConfig: () => void = null as any;
+  callback?: (config: DialogConfiguration) => void): void | Promise<void> {
+  let applyConfig: () => void | Promise<void> = null as any;
   const config = new DialogConfiguration(frameworkConfig, (apply: () => void) => { applyConfig = apply; });
   if (typeof callback === 'function') {
     callback(config);
   } else {
     config.useDefaults();
   }
-  applyConfig();
+  return applyConfig();
 }
 
-export * from './ux-dialog';
-export * from './ux-dialog-header';
-export * from './ux-dialog-body';
-export * from './ux-dialog-footer';
-export * from './attach-focus';
 export * from './interfaces';
 export * from './dialog-settings';
 export * from './dialog-configuration';
