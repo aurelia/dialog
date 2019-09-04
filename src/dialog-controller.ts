@@ -1,49 +1,29 @@
-import { Controller, View } from 'aurelia-templating';
+import { Controller } from 'aurelia-templating';
 import { Renderer } from './renderer';
-import {
-  DialogCancelableOperationResult, DialogOpenResult,
-  DialogCloseResult, DialogCancelResult
-} from './dialog-result';
+import { DialogCancelableOperationResult, DialogCloseResult, DialogCancelResult } from './dialog-result';
 import { DialogSettings } from './dialog-settings';
 import { invokeLifecycle } from './lifecycle';
 import { createDialogCloseError, DialogCloseError } from './dialog-close-error';
 import { createDialogCancelError } from './dialog-cancel-error';
-
-function isController(controller: any): controller is Controller {
-  return !!(controller && controller.viewModel);
-}
 
 /**
  * A controller object for a Dialog instance.
  */
 export class DialogController {
   private resolve: (data?: any) => void;
-  private reject: <T extends Error>(reason: T) => void;
-
-  /**
-   * The settings used by this controller.
-   */
-  public settings: DialogSettings;
-
-  /**
-   * @internal
-   */
-  public renderer: Renderer;
-
-  /**
-   * @internal
-   */
-  public controller?: Controller;
-
-  /**
-   * @internal
-   */
-  public view: View;
+  private reject: (reason: any) => void;
 
   /**
    * @internal
    */
   public closePromise: Promise<any> | undefined;
+
+  /**
+   * The settings used by this controller.
+   */
+  public settings: DialogSettings;
+  public renderer: Renderer;
+  public controller: Controller;
 
   /**
    * @internal
@@ -53,62 +33,22 @@ export class DialogController {
   /**
    * Creates an instance of DialogController.
    */
-  constructor(renderer: Renderer, settings: DialogSettings) {
-    this.renderer = renderer;
+  constructor(
+    renderer: Renderer,
+    settings: DialogSettings,
+    resolve: (data?: any) => void,
+    reject: (reason: any) => void) {
+    this.resolve = resolve;
+    this.reject = reject;
     this.settings = settings;
+    this.renderer = renderer;
   }
-
-  /**
-   * @internal
-   */
-  public initialize(controllerOrView: Controller | View): void {
-    if (isController(controllerOrView)) {
-      this.controller = controllerOrView;
-      this.view = this.controller.view;
-      return;
-    }
-    this.view = controllerOrView;
-  }
-
-  /**
-   * @internal
-   */
-  public deactivate(result: DialogCloseResult | DialogCloseError): Promise<void> {
-    if (this.controller) {
-      return invokeLifecycle(this.controller.viewModel, 'deactivate', result);
-    }
-    return Promise.resolve();
-  }
-
-  /**
-   * @internal
-   */
-  public show(): Promise<DialogOpenResult> {
-    return this.renderer.showDialog(this)
-      .then<DialogOpenResult>(() => {
-        return {
-          controller: this,
-          wasCancelled: false,
-          closeResult: new Promise((resolve, reject) => {
-            this.resolve = resolve;
-            this.reject = reject;
-          })
-        };
-      });
-  }
-
-  // /**
-  //  * @internal
-  //  */
-  // public hide(): Promise<void> {
-  //   return this.renderer.hideDialog(this);
-  // }
 
   /**
    * @internal
    */
   public releaseResources(result: DialogCloseResult | DialogCloseError): Promise<void> {
-    return this.deactivate(result)
+    return invokeLifecycle(this.controller.viewModel || {}, 'deactivate', result)
       .then(() => this.renderer.hideDialog(this))
       .then(() => {
         this.controller.unbind();
@@ -164,8 +104,7 @@ export class DialogController {
 
     const dialogResult: DialogCloseResult = { wasCancelled: !ok, output };
 
-    // tslint:disable-next-line:max-line-length
-    return this.closePromise = invokeLifecycle((this.controller && this.controller.viewModel) || {}, 'canDeactivate', dialogResult)
+    return this.closePromise = invokeLifecycle(this.controller.viewModel || {}, 'canDeactivate', dialogResult)
       .catch(reason => {
         this.closePromise = undefined;
         return Promise.reject(reason);
