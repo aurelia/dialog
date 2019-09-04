@@ -2,6 +2,8 @@ import { Container } from 'aurelia-dependency-injection';
 import { CompositionEngine, Controller, ViewSlot, CompositionContext } from 'aurelia-templating';
 import { DialogOpenResult, DialogCloseResult, DialogCancelResult } from './dialog-result';
 import { DialogSettings, DefaultDialogSettings } from './dialog-settings';
+import { createDialogCancelError } from './dialog-cancel-error';
+import { invokeLifecycle } from './lifecycle';
 import { DialogController } from './dialog-controller';
 
 export type DialogCancellableOpenResult = DialogOpenResult | DialogCancelResult;
@@ -27,11 +29,12 @@ function asDialogOpenPromise<T extends DialogCancellableOpenResult>(promise: Pro
  * A service allowing for the creation of dialogs.
  */
 export class DialogService {
-  private dialogCompositionEngine: DialogCompositionEngine;
+  private container: Container;
+  private compositionEngine: CompositionEngine;
   private defaultSettings: DialogSettings;
 
   /**
-   * The current open dialogs controllers
+   * The current dialog controllers
    */
   public controllers: DialogController[] = [];
 
@@ -45,9 +48,10 @@ export class DialogService {
    * @internal
    */
   // tslint:disable-next-line:member-ordering
-  public static inject = [Container, DefaultDialogSettings];
-  constructor(container: Container, defaultSettings: DialogSettings) {
-    this.dialogCompositionEngine = container.get(DialogCompositionEngine);
+  public static inject = [Container, CompositionEngine, DefaultDialogSettings];
+  constructor(container: Container, compositionEngine: CompositionEngine, defaultSettings: DialogSettings) {
+    this.container = container;
+    this.compositionEngine = compositionEngine;
     this.defaultSettings = defaultSettings;
   }
 
@@ -143,27 +147,39 @@ export class DialogService {
   public open(settings: DialogSettings = {}): DialogOpenPromise<DialogCancellableOpenResult> {
     // tslint:enable:max-line-length
     settings = this.createSettings(settings);
-    const openResult = this.dialogCompositionEngine.compose(settings).then(result => {
-      this.controllers.push(result.controller);
-      this.hasActiveDialog = this.hasOpenDialog = !!this.controllers.length;
-      result.closeResult.then(() => {
-        removeController(this, result.controller);
-      }, () => {
-        removeController(this, result.controller);
-      });
-      return result;
+    const childContainer = settings.childContainer || this.container.createChild();
+    let resolveCloseResult: any;
+    let rejectCloseResult: any;
+    const closeResult: Promise<DialogCloseResult> = new Promise((resolve, reject) => {
+      resolveCloseResult = resolve;
+      rejectCloseResult = reject;
+    });
+    const dialogController =
+      childContainer.invoke(DialogController, [settings, resolveCloseResult, rejectCloseResult]);
+    childContainer.registerInstance(DialogController, dialogController);
+    closeResult.then(() => {
+      removeController(this, dialogController);
+    }, () => {
+      removeController(this, dialogController);
+    });
+    const compositionContext = this.createCompositionContext(
+      childContainer,
+      dialogController.renderer.getDialogContainer(),
+      dialogController.settings
+    );
+    const openResult = this.ensureViewModel(compositionContext).then<boolean>(compositionContext => {
+      if (!compositionContext.viewModel) { return true; }
+      return invokeLifecycle(compositionContext.viewModel, 'canActivate', dialogController.settings.model);
+    }).then<DialogCancellableOpenResult>(canActivate => {
+      if (!canActivate) {
+        return this._cancelOperation(dialogController.settings.rejectOnCancel as boolean);
+      }
+      // if activation granted, compose and show
+      return this.composeAndShowDialog(compositionContext, dialogController)
+        .then(() => ({ controller: dialogController, closeResult, wasCancelled: false } as DialogOpenResult));
     });
 
-    if (settings.rejectOnCancel) {
-      return asDialogOpenPromise(openResult);
-    }
-
-    return asDialogOpenPromise(openResult.catch(reason => {
-      if (typeof reason.wasCancelled === 'boolean') {
-        return { wasCancelled: true } as DialogCancelResult;
-      }
-      throw reason;
-    }));
+    return asDialogOpenPromise(openResult);
   }
 
   /**

@@ -388,28 +388,28 @@ describe('ux-dialog-renderer.spec.ts', () => {
   });
 
   describe('"backdropDismiss" handlers', () => {
-      it('do not stop events propagation', async done => {
-        const renderer = createRenderer();
-        const event = new MouseEvent('click');
-        spyOn(event, 'stopPropagation').and.callThrough();
-        spyOn(event, 'stopImmediatePropagation').and.callThrough();
-        await show(done, renderer);
-        renderer.dialogContainer.dispatchEvent(event);
-        expect(event.stopPropagation).not.toHaveBeenCalled();
-        expect(event.stopImmediatePropagation).not.toHaveBeenCalled();
-        done();
-      });
-
-      it('do not cancel events', async done => {
-        const renderer = createRenderer();
-        const event = new MouseEvent('click');
-        spyOn(event, 'preventDefault').and.callThrough();
-        await show(done, renderer);
-        renderer.dialogContainer.dispatchEvent(event);
-        expect(event.preventDefault).not.toHaveBeenCalled();
-        done();
-      });
+    it('do not stop events propagation', async done => {
+      const renderer = createRenderer();
+      const event = new MouseEvent('click');
+      spyOn(event, 'stopPropagation').and.callThrough();
+      spyOn(event, 'stopImmediatePropagation').and.callThrough();
+      await show(done, renderer);
+      renderer.dialogContainer.dispatchEvent(event);
+      expect(event.stopPropagation).not.toHaveBeenCalled();
+      expect(event.stopImmediatePropagation).not.toHaveBeenCalled();
+      done();
     });
+
+    it('do not cancel events', async done => {
+      const renderer = createRenderer();
+      const event = new MouseEvent('click');
+      spyOn(event, 'preventDefault').and.callThrough();
+      await show(done, renderer);
+      renderer.dialogContainer.dispatchEvent(event);
+      expect(event.preventDefault).not.toHaveBeenCalled();
+      done();
+    });
+  });
 });
 
 describe('"hasTransition"', () => {
