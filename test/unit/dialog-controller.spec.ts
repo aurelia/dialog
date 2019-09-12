@@ -7,15 +7,18 @@ import { DialogController } from '../../src/dialog-controller';
 import { DialogCancelError } from '../../src/dialog-cancel-error';
 
 describe('DialogController', () => {
+  let resolveCallback: jasmine.Spy;
+  let rejectCallback: jasmine.Spy;
   let dialogController: DialogController;
+
   const createDialogController = (settings = new DefaultDialogSettings()): DialogController => {
     const renderer = jasmine.createSpyObj('rendererSpy', ['showDialog', 'hideDialog']) as Renderer;
-    (renderer.showDialog as jasmine.Spy).and.returnValue(Promise.resolve());
-    (renderer.hideDialog as jasmine.Spy).and.returnValue(Promise.resolve());
-    const dialogController = new DialogController(renderer, settings);
+    resolveCallback = jasmine.createSpy('resolveSpy');
+    rejectCallback = jasmine.createSpy('rejectSpy');
+    const dialogController = new DialogController(renderer, settings, resolveCallback, rejectCallback);
     dialogController.controller = jasmine.createSpyObj('controllerSpy', ['unbind']);
-    dialogController.controller!.viewModel = jasmine.createSpyObj('viewModelSpy', ['canDeactivate', 'deactivate']);
-    return dialogController;
+    dialogController.controller.viewModel = jasmine.createSpyObj('viewModelSpy', ['canDeactivate', 'deactivate']);
+    return dialogController as DialogController;
   };
 
   async function _success<T>(action: () => Promise<T>, done: DoneFn): Promise<T> {
@@ -50,7 +53,7 @@ describe('DialogController', () => {
     });
 
     it('call ".deactivate" on the view model', () => {
-      expect((dialogController.controller!.viewModel as any).deactivate).toHaveBeenCalledWith(expectedDeactivateArg);
+      expect((dialogController.controller.viewModel as any).deactivate).toHaveBeenCalledWith(expectedDeactivateArg);
     });
 
     it('call ".hideDialog" on the renderer', () => {
@@ -58,7 +61,7 @@ describe('DialogController', () => {
     });
 
     it('call ".unbind" on the controller', () => {
-      expect(dialogController.controller!.unbind).toHaveBeenCalled();
+      expect(dialogController.controller.unbind).toHaveBeenCalled();
     });
   });
 
@@ -77,50 +80,6 @@ describe('DialogController', () => {
         return;
       }
       fail('Expected to throw.');
-    });
-  });
-
-  describe('".initialize" should', () => {
-    beforeEach(() => {
-      dialogController.controller = undefined;
-      dialogController.view = undefined as any;
-    });
-    it('set ".controller" and ".view" when invoked with "Controller"', () => {
-      const controller: Controller = { viewModel: {}, view: {} } as any;
-      dialogController.initialize(controller);
-      expect(dialogController.controller).toBe(controller);
-      expect(dialogController.view).toBe(controller.view);
-    });
-
-    it('set ".view" when invoked with "View"', () => {
-      const view: View = {} as any;
-      dialogController.initialize(view);
-      expect(dialogController.controller).not.toBeDefined();
-      expect(dialogController.view).toBe(view);
-    });
-  });
-
-  describe('".show" should', () => {
-    it('call ".showDialog" on the "DialogRenderer"', async done => {
-      await _success(() => dialogController.show(), done);
-      expect(dialogController.renderer.showDialog).toHaveBeenCalledWith(dialogController);
-      done();
-    });
-
-    it('propagate errors correctly', async done => {
-      const expectedError = new Error('"DialogCOntroller.prototype.show" error propagation test error.');
-      (dialogController.renderer.showDialog as jasmine.Spy).and.callFake(() => { throw expectedError; });
-      const actualError = await _failure(() => dialogController.show(), done);
-      expect(actualError).toBe(expectedError);
-      done();
-    });
-
-    it('return a "Promise" that resolves to a "OpenDialogResult"', async done => {
-      const result = await _success(() => dialogController.show(), done);
-      expect(result.controller).toBe(dialogController);
-      expect(result.wasCancelled).toBe(false);
-      expect(result.closeResult instanceof Promise).toBe(true);
-      done();
     });
   });
 
@@ -171,13 +130,8 @@ describe('DialogController', () => {
   describe('".error" should', () => {
     let reason: Error;
 
-    beforeEach(async done => {
+    beforeEach(() => {
       reason = new Error('Test reason');
-      const openResult = await _success(() => dialogController.show(), done);
-      openResult.closeResult.catch(e => { /* prevent uncaught promise rejections */ });
-      spyOn(dialogController as any, 'resolve').and.callThrough();
-      spyOn(dialogController as any, 'reject').and.callThrough();
-      done();
     });
 
     it('should call ".releaseResources" with "DialogCloseError"', async done => {
@@ -197,14 +151,14 @@ describe('DialogController', () => {
       });
 
       it('call the reject callback', () => {
-        expect((dialogController as any).reject).toHaveBeenCalledWith(jasmine.objectContaining({
+        expect(rejectCallback).toHaveBeenCalledWith(jasmine.objectContaining({
           wasCancelled: false,
           output: reason
         }));
       });
 
       it('not call the resolve callback', () => {
-        expect((dialogController as any).resolve).not.toHaveBeenCalled();
+        expect(resolveCallback).not.toHaveBeenCalled();
       });
     });
 
@@ -218,35 +172,27 @@ describe('DialogController', () => {
       });
 
       it('not call the reject callback', () => {
-        expect((dialogController as any).reject).not.toHaveBeenCalled();
+        expect(rejectCallback).not.toHaveBeenCalled();
       });
 
       it('not call the resolve callback', () => {
-        expect((dialogController as any).resolve).not.toHaveBeenCalled();
+        expect(resolveCallback).not.toHaveBeenCalled();
       });
     });
   });
 
   describe('".close" should', () => {
-    beforeEach(async done => {
-      await _success(() => dialogController.show(), done);
-      spyOn(dialogController as any, 'resolve').and.callThrough();
-      spyOn(dialogController as any, 'reject').and.callThrough();
-      done();
-    });
-
     it('call the "resolve" callback on "ok"', async done => {
       const expected = 'success output';
       await _success(() => dialogController.close(true, expected), done);
-      expect((dialogController as any).resolve)
-        .toHaveBeenCalledWith(jasmine.objectContaining({ wasCancelled: false, output: expected }));
+      expect(resolveCallback).toHaveBeenCalledWith(jasmine.objectContaining({ wasCancelled: false, output: expected }));
       done();
     });
 
     it('call ".canDeactivate" with the close result', async done => {
       const output = 'expected output';
       await _success(() => dialogController.close(true, output), done);
-      const vm = dialogController.controller!.viewModel as DialogComponentCanDeactivate;
+      const vm = dialogController.controller.viewModel as DialogComponentCanDeactivate;
       const expectedResult = (vm.canDeactivate as jasmine.Spy).calls.argsFor(0)[0] as DialogCloseResult;
       expect(expectedResult).toBeDefined();
       expect(expectedResult.output).toBe(output);
@@ -257,8 +203,7 @@ describe('DialogController', () => {
       const expected = 'cancel output';
       dialogController.settings.rejectOnCancel = false;
       await _success(() => dialogController.close(false, expected), done);
-      expect((dialogController as any).resolve)
-        .toHaveBeenCalledWith(jasmine.objectContaining({ wasCancelled: true, output: expected }));
+      expect(resolveCallback).toHaveBeenCalledWith(jasmine.objectContaining({ wasCancelled: true, output: expected }));
       done();
     });
 
@@ -266,11 +211,9 @@ describe('DialogController', () => {
       const output = 'cancel rejection reason';
       let rejectionReason: DialogCancelError | null = null;
       dialogController.settings.rejectOnCancel = true;
-      ((dialogController as any).reject as jasmine.Spy)
-        .and.stub()
-        .and.callFake((reason: DialogCancelError) => rejectionReason = reason);
+      rejectCallback.and.callFake((reason: DialogCancelError) => rejectionReason = reason);
       await _success(() => dialogController.close(false, output), done);
-      expect((dialogController as any).reject).toHaveBeenCalledWith(jasmine.any(Error));
+      expect(rejectCallback).toHaveBeenCalledWith(jasmine.any(Error));
       expect(rejectionReason as any).toEqual(jasmine.objectContaining({ wasCancelled: true, output }));
       done();
     });
@@ -280,7 +223,7 @@ describe('DialogController', () => {
         .and
         .returnValue(Promise.reject(new Error('Failed to release resources.')));
       await _failure(() => dialogController.close(true), done);
-      expect((dialogController as any).resolve).not.toHaveBeenCalled();
+      expect(resolveCallback).not.toHaveBeenCalled();
       done();
     });
 
@@ -289,27 +232,27 @@ describe('DialogController', () => {
         .and
         .returnValue(Promise.reject(new Error('Failed to release resources.')));
       await _failure(() => dialogController.close(true), done);
-      expect((dialogController as any).reject).not.toHaveBeenCalled();
+      expect(rejectCallback).not.toHaveBeenCalled();
       done();
     });
 
     it('not call the "resolve" callback when "invokeLifecycle" of ".canDeactivate" resolves to "false"', async done => {
-      ((dialogController.controller!.viewModel as any).canDeactivate as jasmine.Spy).and.returnValue(false);
+      ((dialogController.controller.viewModel as any).canDeactivate as jasmine.Spy).and.returnValue(false);
       await _success(() => dialogController.close(true), done);
-      expect((dialogController as any).resolve).not.toHaveBeenCalled();
+      expect(resolveCallback).not.toHaveBeenCalled();
       done();
     });
 
     it('not call the "reject" callback when "invokeLifecycle" of ".canDeactivate" resolves to "false"', async done => {
-      ((dialogController.controller!.viewModel as any).canDeactivate as jasmine.Spy).and.returnValue(false);
+      ((dialogController.controller.viewModel as any).canDeactivate as jasmine.Spy).and.returnValue(false);
       await _success(() => dialogController.close(true), done);
-      expect((dialogController as any).reject).not.toHaveBeenCalled();
+      expect(rejectCallback).not.toHaveBeenCalled();
       done();
     });
 
     // tslint:disable-next-line:max-line-length
     it('be rejected with "DialogCancelError" when "invokeLifecycle" of ".canDeactivate" resolves to "false" and ".rejectOnCancel" is "true".', async done => {
-      ((dialogController.controller!.viewModel as any).canDeactivate as jasmine.Spy).and.returnValue(false);
+      ((dialogController.controller.viewModel as any).canDeactivate as jasmine.Spy).and.returnValue(false);
       dialogController.settings.rejectOnCancel = true;
       const error = await _failure(() => dialogController.close(true), done) as DialogCancelError;
       expect(error.wasCancelled).toBe(true);
@@ -318,7 +261,7 @@ describe('DialogController', () => {
 
     // tslint:disable-next-line:max-line-length
     it('resolve to "DialogCancelResult" when "invokeLifecycle" of ".canDeactivate" resolves to "false" and ".rejectOnCancel" is "false".', async done => {
-      ((dialogController.controller!.viewModel as any).canDeactivate as jasmine.Spy).and.returnValue(false);
+      ((dialogController.controller.viewModel as any).canDeactivate as jasmine.Spy).and.returnValue(false);
       dialogController.settings.rejectOnCancel = false;
       const result = await _success(() => dialogController.close(true), done);
       expect(result.wasCancelled).toBe(true);
@@ -327,33 +270,33 @@ describe('DialogController', () => {
 
     // tslint:disable-next-line:max-line-length
     it('not block consecutive calls if for previous "invokeLifecycle" of ".canDeactivate" resolves to "false"', async done => {
-      ((dialogController.controller!.viewModel as any).canDeactivate as jasmine.Spy).and.returnValue(false);
+      ((dialogController.controller.viewModel as any).canDeactivate as jasmine.Spy).and.returnValue(false);
       await _success(() => dialogController.close(true), done);
-      ((dialogController.controller!.viewModel as any).canDeactivate as jasmine.Spy).and.stub();
-      expect((dialogController.controller!.viewModel as any).canDeactivate).toHaveBeenCalledTimes(1);
+      ((dialogController.controller.viewModel as any).canDeactivate as jasmine.Spy).and.stub();
+      expect((dialogController.controller.viewModel as any).canDeactivate).toHaveBeenCalledTimes(1);
       expect(dialogController.closePromise).not.toBeDefined();
       await _success(() => dialogController.close(true), done);
-      expect((dialogController.controller!.viewModel as any).canDeactivate).toHaveBeenCalledTimes(2);
+      expect((dialogController.controller.viewModel as any).canDeactivate).toHaveBeenCalledTimes(2);
       done();
     });
 
     it('block consecutive calls if a previous one has succeeded', async done => {
       await _success(() => dialogController.close(true), done);
-      expect((dialogController.controller!.viewModel as any).canDeactivate).toHaveBeenCalledTimes(1);
+      expect((dialogController.controller.viewModel as any).canDeactivate).toHaveBeenCalledTimes(1);
       expect(dialogController.closePromise).toBeDefined();
       await _success(() => dialogController.close(true), done);
-      expect((dialogController.controller!.viewModel as any).canDeactivate).toHaveBeenCalledTimes(1);
+      expect((dialogController.controller.viewModel as any).canDeactivate).toHaveBeenCalledTimes(1);
       done();
     });
 
     it('not block consecutive calls if previous fails', async done => {
-      ((dialogController.controller!.viewModel as any).deactivate as jasmine.Spy).and.throwError('Deactivate failed.');
+      ((dialogController.controller.viewModel as any).deactivate as jasmine.Spy).and.throwError('Deactivate failed.');
       await _failure(() => dialogController.close(true), done);
-      ((dialogController.controller!.viewModel as any).deactivate as jasmine.Spy).and.stub();
-      expect((dialogController.controller!.viewModel as any).canDeactivate).toHaveBeenCalledTimes(1);
+      ((dialogController.controller.viewModel as any).deactivate as jasmine.Spy).and.stub();
+      expect((dialogController.controller.viewModel as any).canDeactivate).toHaveBeenCalledTimes(1);
       expect(dialogController.closePromise).not.toBeDefined();
       await _success(() => dialogController.close(true), done);
-      expect((dialogController.controller!.viewModel as any).canDeactivate).toHaveBeenCalledTimes(2);
+      expect((dialogController.controller.viewModel as any).canDeactivate).toHaveBeenCalledTimes(2);
       done();
     });
   });
