@@ -103,6 +103,9 @@ define(['exports', 'aurelia-pal', 'aurelia-dependency-injection'], function (exp
           return own;
       };
       DialogRenderer.prototype.attach = function (dialogController) {
+          if (dialogController.settings.restoreFocus) {
+              this.lastActiveElement = aureliaPal.DOM.activeElement;
+          }
           var spacingWrapper = aureliaPal.DOM.createElement('div');
           spacingWrapper.appendChild(this.anchor);
           var dialogContainer = this.dialogContainer = aureliaPal.DOM.createElement(containerTagName);
@@ -133,6 +136,9 @@ define(['exports', 'aurelia-pal', 'aurelia-dependency-injection'], function (exp
           dialogController.controller.detached();
           if (!DialogRenderer.dialogControllers.length) {
               host.classList.remove('ux-dialog-open');
+          }
+          if (dialogController.settings.restoreFocus) {
+              dialogController.settings.restoreFocus(this.lastActiveElement);
           }
       };
       DialogRenderer.prototype.setAsActive = function () {

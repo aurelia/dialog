@@ -114,4 +114,4 @@ define(['exports'], function (exports) { 'use strict';
   exports.invokeLifecycle = invokeLifecycle;
 
 });
-//# sourceMappingURL=chunk.js.map
+//# sourceMappingURL=dialog-controller.js.map

@@ -70,6 +70,9 @@ let NativeDialogRenderer = NativeDialogRenderer_1 = class NativeDialogRenderer {
         return own;
     }
     attach(dialogController) {
+        if (dialogController.settings.restoreFocus) {
+            this.lastActiveElement = DOM.activeElement;
+        }
         const spacingWrapper = DOM.createElement('div');
         spacingWrapper.appendChild(this.anchor);
         this.dialogContainer = DOM.createElement(containerTagName);
@@ -95,6 +98,9 @@ let NativeDialogRenderer = NativeDialogRenderer_1 = class NativeDialogRenderer {
         dialogController.controller.detached();
         if (!NativeDialogRenderer_1.dialogControllers.length) {
             this.host.classList.remove('ux-dialog-open');
+        }
+        if (dialogController.settings.restoreFocus) {
+            dialogController.settings.restoreFocus(this.lastActiveElement);
         }
     }
     setAsActive() {

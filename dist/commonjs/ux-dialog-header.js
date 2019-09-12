@@ -1,6 +1,6 @@
 'use strict';
 
-var __chunk_1 = require('./chunk.js');
+var dialogController = require('./dialog-controller.js');
 
 var UxDialogHeader = (function () {
     function UxDialogHeader(controller) {
@@ -11,7 +11,7 @@ var UxDialogHeader = (function () {
             this.showCloseButton = !this.controller.settings.lock;
         }
     };
-    UxDialogHeader.inject = [__chunk_1.DialogController];
+    UxDialogHeader.inject = [dialogController.DialogController];
     UxDialogHeader.$view = "<template>\n  <button\n    type=\"button\"\n    class=\"dialog-close\"\n    aria-label=\"Close\"\n    if.bind=\"showCloseButton\"\n    click.trigger=\"controller.cancel()\">\n    <span aria-hidden=\"true\">&times;</span>\n  </button>\n\n  <div class=\"dialog-header-content\">\n    <slot></slot>\n  </div>\n</template>";
     UxDialogHeader.$resource = {
         name: 'ux-dialog-header',

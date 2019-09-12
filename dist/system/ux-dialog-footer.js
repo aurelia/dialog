@@ -1,9 +1,9 @@
-System.register(['./chunk.js'], function (exports, module) {
+System.register(['./dialog-controller.js'], function (exports) {
   'use strict';
   var DialogController;
   return {
     setters: [function (module) {
-      DialogController = module.d;
+      DialogController = module.D;
     }],
     execute: function () {
 

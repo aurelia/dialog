@@ -1,4 +1,4 @@
-import { d as DialogController } from './chunk.js';
+import { D as DialogController } from './dialog-controller.js';
 
 var UxDialogFooter = (function () {
     function UxDialogFooter(controller) {

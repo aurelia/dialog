@@ -1,4 +1,4 @@
-define(['exports', './chunk'], function (exports, __chunk_1) { 'use strict';
+define(['exports', './dialog-controller'], function (exports, dialogController) { 'use strict';
 
   var UxDialogFooter = (function () {
       function UxDialogFooter(controller) {
@@ -22,7 +22,7 @@ define(['exports', './chunk'], function (exports, __chunk_1) { 'use strict';
               this.buttons = ['Cancel', 'Ok'];
           }
       };
-      UxDialogFooter.inject = [__chunk_1.DialogController];
+      UxDialogFooter.inject = [dialogController.DialogController];
       UxDialogFooter.$view = "<template>\n  <slot></slot>\n  <template if.bind=\"buttons.length > 0\">\n    <button type=\"button\"\n      class=\"btn btn-default\"\n      repeat.for=\"button of buttons\"\n      click.trigger=\"close(button)\">\n      ${button}\n    </button>\n  </template>\n</template>";
       UxDialogFooter.$resource = {
           name: 'ux-dialog-footer',

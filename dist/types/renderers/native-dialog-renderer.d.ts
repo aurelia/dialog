@@ -9,6 +9,7 @@ export declare class NativeDialogRenderer implements Renderer {
     private closeDialogClick;
     private dialogCancel;
     dialogContainer: HTMLDialogElement;
+    lastActiveElement: HTMLElement;
     host: Element;
     anchor: Element;
     private getOwnElements;

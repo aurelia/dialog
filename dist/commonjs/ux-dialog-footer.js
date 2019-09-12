@@ -1,6 +1,6 @@
 'use strict';
 
-var __chunk_1 = require('./chunk.js');
+var dialogController = require('./dialog-controller.js');
 
 var UxDialogFooter = (function () {
     function UxDialogFooter(controller) {
@@ -24,7 +24,7 @@ var UxDialogFooter = (function () {
             this.buttons = ['Cancel', 'Ok'];
         }
     };
-    UxDialogFooter.inject = [__chunk_1.DialogController];
+    UxDialogFooter.inject = [dialogController.DialogController];
     UxDialogFooter.$view = "<template>\n  <slot></slot>\n  <template if.bind=\"buttons.length > 0\">\n    <button type=\"button\"\n      class=\"btn btn-default\"\n      repeat.for=\"button of buttons\"\n      click.trigger=\"close(button)\">\n      ${button}\n    </button>\n  </template>\n</template>";
     UxDialogFooter.$resource = {
         name: 'ux-dialog-footer',

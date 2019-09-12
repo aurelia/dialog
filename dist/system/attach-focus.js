@@ -1,4 +1,4 @@
-System.register(['aurelia-pal'], function (exports, module) {
+System.register(['aurelia-pal'], function (exports) {
   'use strict';
   var DOM;
   return {
