@@ -436,7 +436,7 @@ describe('DialogService', () => {
         setRejectOnCancelForOpenDialogs(false);
         const expectedController = dialogService.controllers[2] as DialogController;
         const expectedError = new Error('expected error');
-        (expectedController.controller!.viewModel as any).deactivate = () => { throw expectedError; };
+        (expectedController.controller.viewModel as any).deactivate = () => { throw expectedError; };
         const actualError = await _failure(() => dialogService.closeAll(), done);
         expect(actualError).toBe(expectedError);
         done();
@@ -447,7 +447,7 @@ describe('DialogService', () => {
         setRejectOnCancelForOpenDialogs(true);
         const expectedController = dialogService.controllers[2] as DialogController;
         const expectedError = new Error('expected error');
-        (expectedController.controller!.viewModel as any).deactivate = () => { throw expectedError; };
+        (expectedController.controller.viewModel as any).deactivate = () => { throw expectedError; };
         const actualError = await _failure(() => dialogService.closeAll(), done);
         expect(actualError).toBe(expectedError);
         done();
@@ -457,7 +457,7 @@ describe('DialogService', () => {
     it('returns the controllers whose close operation was cancelled', async done => {
       await _success(() => openDialogs(3), done);
       const expectedController = dialogService.controllers[1];
-      (expectedController.controller!.viewModel as any).canDeactivate = () => false;
+      (expectedController.controller.viewModel as any).canDeactivate = () => false;
       const failedToClose = await _success(() => dialogService.closeAll(), done);
       expect(failedToClose.length).toBe(1);
       expect(failedToClose).toContain(expectedController);

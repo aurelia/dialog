@@ -22,6 +22,3 @@ export * from './dialog-cancel-error';
 export * from './dialog-result';
 export * from './dialog-service';
 export * from './dialog-controller';
-export * from './dialog-renderer-default';
-export * from './dialog-renderer-native';
-export * from './infrastructure-dialog-controller';
