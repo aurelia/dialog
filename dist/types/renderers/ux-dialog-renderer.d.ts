@@ -11,6 +11,7 @@ export declare class DialogRenderer implements Renderer {
     private closeDialogClick;
     dialogContainer: HTMLElement;
     dialogOverlay: HTMLElement;
+    lastActiveElement: HTMLElement;
     host: Element;
     anchor: Element;
     private getOwnElements;

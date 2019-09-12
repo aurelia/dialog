@@ -1,4 +1,4 @@
-define(['require', 'exports', './chunk', 'aurelia-pal', 'aurelia-dependency-injection', 'aurelia-templating'], function (require, exports, __chunk_1, aureliaPal, aureliaDependencyInjection, aureliaTemplating) { 'use strict';
+define(['require', 'exports', './dialog-controller', 'aurelia-pal', 'aurelia-dependency-injection', 'aurelia-templating'], function (require, exports, dialogController, aureliaPal, aureliaDependencyInjection, aureliaTemplating) { 'use strict';
 
   var DefaultDialogSettings = (function () {
       function DefaultDialogSettings() {
@@ -49,7 +49,7 @@ define(['require', 'exports', './chunk', 'aurelia-pal', 'aurelia-dependency-inje
               .then(function (_a) {
               var rendererImpl = _a[0], $cssText = _a[1];
               var fwConfig = _this.fwConfig;
-              fwConfig.transient(__chunk_1.Renderer, rendererImpl);
+              fwConfig.transient(dialogController.Renderer, rendererImpl);
               if ($cssText) {
                   aureliaPal.DOM.injectStyles($cssText);
               }
@@ -132,25 +132,25 @@ define(['require', 'exports', './chunk', 'aurelia-pal', 'aurelia-dependency-inje
           if (!rejectOnCancel) {
               return { wasCancelled: true };
           }
-          throw __chunk_1.createDialogCancelError();
+          throw dialogController.createDialogCancelError();
       };
-      DialogService.prototype.composeAndShowDialog = function (compositionContext, dialogController) {
+      DialogService.prototype.composeAndShowDialog = function (compositionContext, dialogController$1) {
           var _this = this;
           if (!compositionContext.viewModel) {
-              compositionContext.bindingContext = { controller: dialogController };
+              compositionContext.bindingContext = { controller: dialogController$1 };
           }
           return this.compositionEngine
               .compose(compositionContext)
               .then(function (controller) {
-              dialogController.controller = controller;
-              return dialogController.renderer
-                  .showDialog(dialogController)
+              dialogController$1.controller = controller;
+              return dialogController$1.renderer
+                  .showDialog(dialogController$1)
                   .then(function () {
-                  _this.controllers.push(dialogController);
+                  _this.controllers.push(dialogController$1);
                   _this.hasActiveDialog = _this.hasOpenDialog = !!_this.controllers.length;
               }, function (reason) {
                   if (controller.viewModel) {
-                      __chunk_1.invokeLifecycle(controller.viewModel, 'deactivate');
+                      dialogController.invokeLifecycle(controller.viewModel, 'deactivate');
                   }
                   return Promise.reject(reason);
               });
@@ -183,25 +183,25 @@ define(['require', 'exports', './chunk', 'aurelia-pal', 'aurelia-dependency-inje
               resolveCloseResult = resolve;
               rejectCloseResult = reject;
           });
-          var dialogController = childContainer.invoke(__chunk_1.DialogController, [settings, resolveCloseResult, rejectCloseResult]);
-          childContainer.registerInstance(__chunk_1.DialogController, dialogController);
+          var dialogController$1 = childContainer.invoke(dialogController.DialogController, [settings, resolveCloseResult, rejectCloseResult]);
+          childContainer.registerInstance(dialogController.DialogController, dialogController$1);
           closeResult.then(function () {
-              removeController(_this, dialogController);
+              removeController(_this, dialogController$1);
           }, function () {
-              removeController(_this, dialogController);
+              removeController(_this, dialogController$1);
           });
-          var compositionContext = this.createCompositionContext(childContainer, dialogController.renderer.getDialogContainer(), dialogController.settings);
+          var compositionContext = this.createCompositionContext(childContainer, dialogController$1.renderer.getDialogContainer(), dialogController$1.settings);
           var openResult = this.ensureViewModel(compositionContext).then(function (compositionContext) {
               if (!compositionContext.viewModel) {
                   return true;
               }
-              return __chunk_1.invokeLifecycle(compositionContext.viewModel, 'canActivate', dialogController.settings.model);
+              return dialogController.invokeLifecycle(compositionContext.viewModel, 'canActivate', dialogController$1.settings.model);
           }).then(function (canActivate) {
               if (!canActivate) {
-                  return _this._cancelOperation(dialogController.settings.rejectOnCancel);
+                  return _this._cancelOperation(dialogController$1.settings.rejectOnCancel);
               }
-              return _this.composeAndShowDialog(compositionContext, dialogController)
-                  .then(function () { return ({ controller: dialogController, closeResult: closeResult, wasCancelled: false }); });
+              return _this.composeAndShowDialog(compositionContext, dialogController$1)
+                  .then(function () { return ({ controller: dialogController$1, closeResult: closeResult, wasCancelled: false }); });
           });
           return asDialogOpenPromise(openResult);
       };
@@ -246,9 +246,9 @@ define(['require', 'exports', './chunk', 'aurelia-pal', 'aurelia-dependency-inje
       return applyConfig();
   }
 
-  exports.DialogController = __chunk_1.DialogController;
-  exports.Renderer = __chunk_1.Renderer;
-  exports.createDialogCancelError = __chunk_1.createDialogCancelError;
+  exports.DialogController = dialogController.DialogController;
+  exports.Renderer = dialogController.Renderer;
+  exports.createDialogCancelError = dialogController.createDialogCancelError;
   exports.DefaultDialogSettings = DefaultDialogSettings;
   exports.DialogConfiguration = DialogConfiguration;
   exports.DialogService = DialogService;

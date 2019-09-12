@@ -1,3 +1,5 @@
+'use strict';
+
 var Renderer = (function () {
     function Renderer() {
     }
@@ -106,5 +108,8 @@ var DialogController = (function () {
     return DialogController;
 }());
 
-export { Renderer as a, createDialogCancelError as b, invokeLifecycle as c, DialogController as d };
-//# sourceMappingURL=chunk.js.map
+exports.DialogController = DialogController;
+exports.Renderer = Renderer;
+exports.createDialogCancelError = createDialogCancelError;
+exports.invokeLifecycle = invokeLifecycle;
+//# sourceMappingURL=dialog-controller.js.map

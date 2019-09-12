@@ -99,5 +99,5 @@ class DialogController {
 }
 DialogController.inject = [Renderer];
 
-export { Renderer as a, createDialogCancelError as b, invokeLifecycle as c, DialogController as d };
-//# sourceMappingURL=chunk.js.map
+export { DialogController as D, Renderer as R, createDialogCancelError as c, invokeLifecycle as i };
+//# sourceMappingURL=dialog-controller.js.map

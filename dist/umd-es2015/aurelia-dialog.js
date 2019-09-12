@@ -443,6 +443,9 @@
           return own;
       }
       attach(dialogController) {
+          if (dialogController.settings.restoreFocus) {
+              this.lastActiveElement = aureliaPal.DOM.activeElement;
+          }
           const spacingWrapper = aureliaPal.DOM.createElement('div');
           spacingWrapper.appendChild(this.anchor);
           const dialogContainer = this.dialogContainer = aureliaPal.DOM.createElement(containerTagName);
@@ -473,6 +476,9 @@
           dialogController.controller.detached();
           if (!DialogRenderer.dialogControllers.length) {
               host.classList.remove('ux-dialog-open');
+          }
+          if (dialogController.settings.restoreFocus) {
+              dialogController.settings.restoreFocus(this.lastActiveElement);
           }
       }
       setAsActive() {
@@ -633,6 +639,9 @@
           return own;
       }
       attach(dialogController) {
+          if (dialogController.settings.restoreFocus) {
+              this.lastActiveElement = aureliaPal.DOM.activeElement;
+          }
           const spacingWrapper = aureliaPal.DOM.createElement('div');
           spacingWrapper.appendChild(this.anchor);
           this.dialogContainer = aureliaPal.DOM.createElement(containerTagName$1);
@@ -658,6 +667,9 @@
           dialogController.controller.detached();
           if (!NativeDialogRenderer_1.dialogControllers.length) {
               this.host.classList.remove('ux-dialog-open');
+          }
+          if (dialogController.settings.restoreFocus) {
+              dialogController.settings.restoreFocus(this.lastActiveElement);
           }
       }
       setAsActive() {

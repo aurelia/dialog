@@ -1,4 +1,4 @@
-System.register(['aurelia-pal', 'aurelia-dependency-injection', './ux-dialog-renderer.js'], function (exports, module) {
+System.register(['aurelia-pal', 'aurelia-dependency-injection', './ux-dialog-renderer.js'], function (exports) {
     'use strict';
     var DOM, transient, transitionEvent, hasTransition;
     return {
@@ -82,6 +82,9 @@ System.register(['aurelia-pal', 'aurelia-dependency-injection', './ux-dialog-ren
                     return own;
                 };
                 NativeDialogRenderer.prototype.attach = function (dialogController) {
+                    if (dialogController.settings.restoreFocus) {
+                        this.lastActiveElement = DOM.activeElement;
+                    }
                     var spacingWrapper = DOM.createElement('div');
                     spacingWrapper.appendChild(this.anchor);
                     this.dialogContainer = DOM.createElement(containerTagName);
@@ -107,6 +110,9 @@ System.register(['aurelia-pal', 'aurelia-dependency-injection', './ux-dialog-ren
                     dialogController.controller.detached();
                     if (!NativeDialogRenderer_1.dialogControllers.length) {
                         this.host.classList.remove('ux-dialog-open');
+                    }
+                    if (dialogController.settings.restoreFocus) {
+                        dialogController.settings.restoreFocus(this.lastActiveElement);
                     }
                 };
                 NativeDialogRenderer.prototype.setAsActive = function () {

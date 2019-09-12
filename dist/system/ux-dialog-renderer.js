@@ -1,4 +1,4 @@
-System.register(['aurelia-pal', 'aurelia-dependency-injection'], function (exports, module) {
+System.register(['aurelia-pal', 'aurelia-dependency-injection'], function (exports) {
   'use strict';
   var DOM, transient;
   return {
@@ -112,6 +112,9 @@ System.register(['aurelia-pal', 'aurelia-dependency-injection'], function (expor
               return own;
           };
           DialogRenderer.prototype.attach = function (dialogController) {
+              if (dialogController.settings.restoreFocus) {
+                  this.lastActiveElement = DOM.activeElement;
+              }
               var spacingWrapper = DOM.createElement('div');
               spacingWrapper.appendChild(this.anchor);
               var dialogContainer = this.dialogContainer = DOM.createElement(containerTagName);
@@ -142,6 +145,9 @@ System.register(['aurelia-pal', 'aurelia-dependency-injection'], function (expor
               dialogController.controller.detached();
               if (!DialogRenderer.dialogControllers.length) {
                   host.classList.remove('ux-dialog-open');
+              }
+              if (dialogController.settings.restoreFocus) {
+                  dialogController.settings.restoreFocus(this.lastActiveElement);
               }
           };
           DialogRenderer.prototype.setAsActive = function () {

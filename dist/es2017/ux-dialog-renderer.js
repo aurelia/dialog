@@ -102,6 +102,9 @@ class DialogRenderer {
         return own;
     }
     attach(dialogController) {
+        if (dialogController.settings.restoreFocus) {
+            this.lastActiveElement = DOM.activeElement;
+        }
         const spacingWrapper = DOM.createElement('div');
         spacingWrapper.appendChild(this.anchor);
         const dialogContainer = this.dialogContainer = DOM.createElement(containerTagName);
@@ -132,6 +135,9 @@ class DialogRenderer {
         dialogController.controller.detached();
         if (!DialogRenderer.dialogControllers.length) {
             host.classList.remove('ux-dialog-open');
+        }
+        if (dialogController.settings.restoreFocus) {
+            dialogController.settings.restoreFocus(this.lastActiveElement);
         }
     }
     setAsActive() {

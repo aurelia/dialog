@@ -1,3 +1,44 @@
+<a name="2.0.0-rc.7"></a>
+# [2.0.0-rc.7](https://github.com/aurelia/dialog/compare/2.0.0-rc.6...2.0.0-rc.7) (2019-09-12)
+
+
+### Bug Fixes
+
+* **renderers:** don't store a reference to last active element if it ([12a892d](https://github.com/aurelia/dialog/commit/12a892d))
+
+
+### Features
+
+* **keyboard:** allow to configure keyevent type ([1cfdd58](https://github.com/aurelia/dialog/commit/1cfdd58))
+* **renderers:** add restoreFocus setting ([c5f4ad4](https://github.com/aurelia/dialog/commit/c5f4ad4))
+
+
+
+<a name="1.1.0"></a>
+# [1.1.0](https://github.com/aurelia/dialog/compare/1.0.0...1.1.0) (2018-08-18)
+
+
+### Bug Fixes
+
+* **attach-focus:** restore behavior prior to [#346](https://github.com/aurelia/dialog/issues/346) ([#349](https://github.com/aurelia/dialog/issues/349)) ([915e735](https://github.com/aurelia/dialog/commit/915e735))
+* **css:** update styles to use ux- prefix instead of ai- ([130c13b](https://github.com/aurelia/dialog/commit/130c13b)), closes [#306](https://github.com/aurelia/dialog/issues/306)
+* **DI:** use static method for Element ([e970a1b](https://github.com/aurelia/dialog/commit/e970a1b))
+* **dialog-composition-engine:** align with fixed templating typings ([ab7e534](https://github.com/aurelia/dialog/commit/ab7e534))
+* **dialog-service:** remove internal members from public interface ([a10c1ab](https://github.com/aurelia/dialog/commit/a10c1ab))
+
+
+### Features
+
+* **dialog-renderer:** add Animator support close [#188](https://github.com/aurelia/dialog/issues/188) ([2dd5f28](https://github.com/aurelia/dialog/commit/2dd5f28))
+* **dialog-renderer:** add native dialog renderer close [#338](https://github.com/aurelia/dialog/issues/338) ([f7d4c7a](https://github.com/aurelia/dialog/commit/f7d4c7a))
+
+
+### BREAKING CHANGES
+
+* **dialog-renderer:** remove the current transition based animation support from DialogRenderer
+
+
+
 <a name="2.0.0-rc.6"></a>
 # [2.0.0-rc.6](https://github.com/aurelia/dialog/compare/2.0.0-rc.5...2.0.0-rc.6) (2019-05-31)
 

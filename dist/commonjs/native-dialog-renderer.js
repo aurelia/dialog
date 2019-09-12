@@ -74,6 +74,9 @@ var NativeDialogRenderer = (function () {
         return own;
     };
     NativeDialogRenderer.prototype.attach = function (dialogController) {
+        if (dialogController.settings.restoreFocus) {
+            this.lastActiveElement = aureliaPal.DOM.activeElement;
+        }
         var spacingWrapper = aureliaPal.DOM.createElement('div');
         spacingWrapper.appendChild(this.anchor);
         this.dialogContainer = aureliaPal.DOM.createElement(containerTagName);
@@ -99,6 +102,9 @@ var NativeDialogRenderer = (function () {
         dialogController.controller.detached();
         if (!NativeDialogRenderer_1.dialogControllers.length) {
             this.host.classList.remove('ux-dialog-open');
+        }
+        if (dialogController.settings.restoreFocus) {
+            dialogController.settings.restoreFocus(this.lastActiveElement);
         }
     };
     NativeDialogRenderer.prototype.setAsActive = function () {

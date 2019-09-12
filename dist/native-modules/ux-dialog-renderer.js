@@ -104,6 +104,9 @@ var DialogRenderer = (function () {
         return own;
     };
     DialogRenderer.prototype.attach = function (dialogController) {
+        if (dialogController.settings.restoreFocus) {
+            this.lastActiveElement = DOM.activeElement;
+        }
         var spacingWrapper = DOM.createElement('div');
         spacingWrapper.appendChild(this.anchor);
         var dialogContainer = this.dialogContainer = DOM.createElement(containerTagName);
@@ -134,6 +137,9 @@ var DialogRenderer = (function () {
         dialogController.controller.detached();
         if (!DialogRenderer.dialogControllers.length) {
             host.classList.remove('ux-dialog-open');
+        }
+        if (dialogController.settings.restoreFocus) {
+            dialogController.settings.restoreFocus(this.lastActiveElement);
         }
     };
     DialogRenderer.prototype.setAsActive = function () {
