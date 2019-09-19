@@ -14,6 +14,7 @@ var DefaultDialogSettings = (function () {
         this.centerHorizontalOnly = false;
         this.rejectOnCancel = false;
         this.ignoreTransitions = false;
+        this.restoreFocus = function (lastActiveElement) { return lastActiveElement.focus(); };
     }
     return DefaultDialogSettings;
 }());
@@ -256,6 +257,7 @@ function configure(frameworkConfig, callback) {
 exports.DialogController = dialogController.DialogController;
 exports.Renderer = dialogController.Renderer;
 exports.createDialogCancelError = dialogController.createDialogCancelError;
+exports.createDialogCloseError = dialogController.createDialogCloseError;
 exports.DefaultDialogSettings = DefaultDialogSettings;
 exports.DialogConfiguration = DialogConfiguration;
 exports.DialogService = DialogService;

@@ -23,6 +23,7 @@
           this.centerHorizontalOnly = false;
           this.rejectOnCancel = false;
           this.ignoreTransitions = false;
+          this.restoreFocus = (lastActiveElement) => lastActiveElement.focus();
       }
   }
 
@@ -106,6 +107,13 @@
       return error;
   }
 
+  function createDialogCloseError(output) {
+      const error = new Error();
+      error.wasCancelled = false;
+      error.output = output;
+      return error;
+  }
+
   function invokeLifecycle(instance, name, model) {
       if (typeof instance[name] === 'function') {
           return new Promise(resolve => {
@@ -118,13 +126,6 @@
           });
       }
       return Promise.resolve(true);
-  }
-
-  function createDialogCloseError(output) {
-      const error = new Error();
-      error.wasCancelled = false;
-      error.output = output;
-      return error;
   }
 
   class DialogController {
@@ -895,6 +896,7 @@
   exports.Renderer = Renderer;
   exports.configure = configure;
   exports.createDialogCancelError = createDialogCancelError;
+  exports.createDialogCloseError = createDialogCloseError;
 
 }));
 //# sourceMappingURL=aurelia-dialog.js.map

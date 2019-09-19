@@ -11,6 +11,7 @@ System.register(['./dialog-controller.js', 'aurelia-pal', 'aurelia-dependency-in
       _setter.DialogController = module.D;
       _setter.Renderer = module.R;
       _setter.createDialogCancelError = module.c;
+      _setter.createDialogCloseError = module.a;
       exports(_setter);
     }, function (module) {
       DOM = module.DOM;
@@ -31,6 +32,7 @@ System.register(['./dialog-controller.js', 'aurelia-pal', 'aurelia-dependency-in
               this.centerHorizontalOnly = false;
               this.rejectOnCancel = false;
               this.ignoreTransitions = false;
+              this.restoreFocus = function (lastActiveElement) { return lastActiveElement.focus(); };
           }
           return DefaultDialogSettings;
       }()));

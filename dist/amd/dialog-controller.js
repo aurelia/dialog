@@ -22,6 +22,13 @@ define(['exports'], function (exports) { 'use strict';
       return error;
   }
 
+  function createDialogCloseError(output) {
+      var error = new Error();
+      error.wasCancelled = false;
+      error.output = output;
+      return error;
+  }
+
   function invokeLifecycle(instance, name, model) {
       if (typeof instance[name] === 'function') {
           return new Promise(function (resolve) {
@@ -34,13 +41,6 @@ define(['exports'], function (exports) { 'use strict';
           });
       }
       return Promise.resolve(true);
-  }
-
-  function createDialogCloseError(output) {
-      var error = new Error();
-      error.wasCancelled = false;
-      error.output = output;
-      return error;
   }
 
   var DialogController = (function () {
@@ -111,6 +111,7 @@ define(['exports'], function (exports) { 'use strict';
   exports.DialogController = DialogController;
   exports.Renderer = Renderer;
   exports.createDialogCancelError = createDialogCancelError;
+  exports.createDialogCloseError = createDialogCloseError;
   exports.invokeLifecycle = invokeLifecycle;
 
 });

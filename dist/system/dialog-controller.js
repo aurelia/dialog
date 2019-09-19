@@ -4,6 +4,7 @@ System.register([], function (exports) {
     execute: function () {
 
       exports({
+        a: createDialogCloseError,
         c: createDialogCancelError,
         i: invokeLifecycle
       });
@@ -30,6 +31,13 @@ System.register([], function (exports) {
           return error;
       }
 
+      function createDialogCloseError(output) {
+          var error = new Error();
+          error.wasCancelled = false;
+          error.output = output;
+          return error;
+      }
+
       function invokeLifecycle(instance, name, model) {
           if (typeof instance[name] === 'function') {
               return new Promise(function (resolve) {
@@ -42,13 +50,6 @@ System.register([], function (exports) {
               });
           }
           return Promise.resolve(true);
-      }
-
-      function createDialogCloseError(output) {
-          var error = new Error();
-          error.wasCancelled = false;
-          error.output = output;
-          return error;
       }
 
       var DialogController = exports('D', (function () {

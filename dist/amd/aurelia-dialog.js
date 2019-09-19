@@ -7,6 +7,7 @@ define(['require', 'exports', './dialog-controller', 'aurelia-pal', 'aurelia-dep
           this.centerHorizontalOnly = false;
           this.rejectOnCancel = false;
           this.ignoreTransitions = false;
+          this.restoreFocus = function (lastActiveElement) { return lastActiveElement.focus(); };
       }
       return DefaultDialogSettings;
   }());
@@ -249,6 +250,7 @@ define(['require', 'exports', './dialog-controller', 'aurelia-pal', 'aurelia-dep
   exports.DialogController = dialogController.DialogController;
   exports.Renderer = dialogController.Renderer;
   exports.createDialogCancelError = dialogController.createDialogCancelError;
+  exports.createDialogCloseError = dialogController.createDialogCloseError;
   exports.DefaultDialogSettings = DefaultDialogSettings;
   exports.DialogConfiguration = DialogConfiguration;
   exports.DialogService = DialogService;
