@@ -1,5 +1,5 @@
 import { R as Renderer, c as createDialogCancelError, i as invokeLifecycle, D as DialogController } from './dialog-controller.js';
-export { D as DialogController, R as Renderer, c as createDialogCancelError } from './dialog-controller.js';
+export { D as DialogController, R as Renderer, c as createDialogCancelError, a as createDialogCloseError } from './dialog-controller.js';
 import { DOM } from 'aurelia-pal';
 import { Container } from 'aurelia-dependency-injection';
 import { ViewSlot, CompositionEngine } from 'aurelia-templating';
@@ -11,6 +11,7 @@ class DefaultDialogSettings {
         this.centerHorizontalOnly = false;
         this.rejectOnCancel = false;
         this.ignoreTransitions = false;
+        this.restoreFocus = (lastActiveElement) => lastActiveElement.focus();
     }
 }
 

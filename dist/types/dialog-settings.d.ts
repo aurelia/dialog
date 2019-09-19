@@ -78,4 +78,11 @@ export interface DialogSettings {
      * When invoked the function is passed the dialog container and the dialog overlay elements.
      */
     position?: (dialogContainer: Element, dialogOverlay?: Element) => void;
+    /**
+     * This function is called when a dialog closes to restore focus to the last
+     * element that was focused when the dialog opened. It can be overridden in
+     * general settings, or on a case by case basis by providing an override when
+     * a particular dialog is opened.
+     */
+    restoreFocus?: (lastActiveElement: HTMLElement) => void;
 }

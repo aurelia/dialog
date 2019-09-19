@@ -1,3 +1,13 @@
+<a name="2.0.0-rc.8"></a>
+# [2.0.0-rc.8](https://github.com/aurelia/dialog/compare/2.0.0-rc.7...2.0.0-rc.8) (2019-09-19)
+
+
+### Bug Fixes
+
+* **settings:** add missing types ([0a518f1](https://github.com/aurelia/dialog/commit/0a518f1)), closes [#382](https://github.com/aurelia/dialog/issues/382)
+
+
+
 <a name="2.0.0-rc.7"></a>
 # [2.0.0-rc.7](https://github.com/aurelia/dialog/compare/2.0.0-rc.6...2.0.0-rc.7) (2019-09-12)
 

@@ -26,6 +26,7 @@
           this.centerHorizontalOnly = false;
           this.rejectOnCancel = false;
           this.ignoreTransitions = false;
+          this.restoreFocus = function (lastActiveElement) { return lastActiveElement.focus(); };
       }
       return DefaultDialogSettings;
   }());
@@ -114,6 +115,13 @@
       return error;
   }
 
+  function createDialogCloseError(output) {
+      var error = new Error();
+      error.wasCancelled = false;
+      error.output = output;
+      return error;
+  }
+
   function invokeLifecycle(instance, name, model) {
       if (typeof instance[name] === 'function') {
           return new Promise(function (resolve) {
@@ -126,13 +134,6 @@
           });
       }
       return Promise.resolve(true);
-  }
-
-  function createDialogCloseError(output) {
-      var error = new Error();
-      error.wasCancelled = false;
-      error.output = output;
-      return error;
   }
 
   var DialogController = (function () {
@@ -910,6 +911,7 @@
   exports.Renderer = Renderer;
   exports.configure = configure;
   exports.createDialogCancelError = createDialogCancelError;
+  exports.createDialogCloseError = createDialogCloseError;
 
 }));
 //# sourceMappingURL=aurelia-dialog.js.map

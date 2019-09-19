@@ -20,6 +20,13 @@ function createDialogCancelError(output) {
     return error;
 }
 
+function createDialogCloseError(output) {
+    var error = new Error();
+    error.wasCancelled = false;
+    error.output = output;
+    return error;
+}
+
 function invokeLifecycle(instance, name, model) {
     if (typeof instance[name] === 'function') {
         return new Promise(function (resolve) {
@@ -32,13 +39,6 @@ function invokeLifecycle(instance, name, model) {
         });
     }
     return Promise.resolve(true);
-}
-
-function createDialogCloseError(output) {
-    var error = new Error();
-    error.wasCancelled = false;
-    error.output = output;
-    return error;
 }
 
 var DialogController = (function () {
@@ -106,5 +106,5 @@ var DialogController = (function () {
     return DialogController;
 }());
 
-export { DialogController as D, Renderer as R, createDialogCancelError as c, invokeLifecycle as i };
+export { DialogController as D, Renderer as R, createDialogCloseError as a, createDialogCancelError as c, invokeLifecycle as i };
 //# sourceMappingURL=dialog-controller.js.map
