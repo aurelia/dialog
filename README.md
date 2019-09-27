@@ -40,6 +40,12 @@ npm run test
 npm run test:watch
 ```
 
+## Debugging
+
+```shell
+npm run test:debugger
+```
+
 ## Publishing
 
 1. Bump the version
