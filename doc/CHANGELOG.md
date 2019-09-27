@@ -1,3 +1,8 @@
+<a name="2.0.0-rc.9"></a>
+# [2.0.0-rc.9](https://github.com/aurelia/dialog/compare/2.0.0-rc.8...2.0.0-rc.9) (2019-09-27)
+
+
+
 <a name="2.0.0-rc.8"></a>
 # [2.0.0-rc.8](https://github.com/aurelia/dialog/compare/2.0.0-rc.7...2.0.0-rc.8) (2019-09-19)
 

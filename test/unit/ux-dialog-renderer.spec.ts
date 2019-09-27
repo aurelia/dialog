@@ -145,7 +145,7 @@ describe('ux-dialog-renderer.spec.ts', () => {
         const settings: DialogSettings = { overlayDismiss: false };
         const renderer = createRenderer(settings);
         await show(done, renderer);
-        renderer.dialogContainer.dispatchEvent(new MouseEvent('click'));
+        renderer.dialogContainer.dispatchEvent(new MouseEvent('mousedown'));
         expect(renderer.__controller.cancel).not.toHaveBeenCalled();
         done();
       });
@@ -154,7 +154,7 @@ describe('ux-dialog-renderer.spec.ts', () => {
         const settings: DialogSettings = { overlayDismiss: true };
         const renderer = createRenderer(settings);
         await show(done, renderer);
-        renderer.dialogContainer.dispatchEvent(new MouseEvent('click'));
+        renderer.dialogContainer.dispatchEvent(new MouseEvent('mousedown'));
         expect(renderer.__controller.cancel).toHaveBeenCalled();
         done();
       });

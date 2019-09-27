@@ -159,12 +159,12 @@ var DialogRenderer = (function () {
                 dialogController.cancel();
             }
         };
-        this.dialogContainer.addEventListener('click', this.closeDialogClick);
-        this.anchor.addEventListener('click', this.stopPropagation);
+        this.dialogContainer.addEventListener('mousedown', this.closeDialogClick);
+        this.anchor.addEventListener('mousedown', this.stopPropagation);
     };
     DialogRenderer.prototype.clearClickHandling = function () {
-        this.dialogContainer.removeEventListener('click', this.closeDialogClick);
-        this.anchor.removeEventListener('click', this.stopPropagation);
+        this.dialogContainer.removeEventListener('mousedown', this.closeDialogClick);
+        this.anchor.removeEventListener('mousedown', this.stopPropagation);
     };
     DialogRenderer.prototype.centerDialog = function () {
         var child = this.dialogContainer.children[0];

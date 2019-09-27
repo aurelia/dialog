@@ -497,12 +497,12 @@
                   dialogController.cancel();
               }
           };
-          this.dialogContainer.addEventListener('click', this.closeDialogClick);
-          this.anchor.addEventListener('click', this.stopPropagation);
+          this.dialogContainer.addEventListener('mousedown', this.closeDialogClick);
+          this.anchor.addEventListener('mousedown', this.stopPropagation);
       }
       clearClickHandling() {
-          this.dialogContainer.removeEventListener('click', this.closeDialogClick);
-          this.anchor.removeEventListener('click', this.stopPropagation);
+          this.dialogContainer.removeEventListener('mousedown', this.closeDialogClick);
+          this.anchor.removeEventListener('mousedown', this.stopPropagation);
       }
       centerDialog() {
           const child = this.dialogContainer.children[0];
@@ -697,14 +697,14 @@
                   e.preventDefault();
               }
           };
-          this.dialogContainer.addEventListener('click', this.closeDialogClick);
+          this.dialogContainer.addEventListener('mousedown', this.closeDialogClick);
           this.dialogContainer.addEventListener('cancel', this.dialogCancel);
-          this.anchor.addEventListener('click', this.stopPropagation);
+          this.anchor.addEventListener('mousedown', this.stopPropagation);
       }
       clearEventHandling() {
-          this.dialogContainer.removeEventListener('click', this.closeDialogClick);
+          this.dialogContainer.removeEventListener('mousedown', this.closeDialogClick);
           this.dialogContainer.removeEventListener('cancel', this.dialogCancel);
-          this.anchor.removeEventListener('click', this.stopPropagation);
+          this.anchor.removeEventListener('mousedown', this.stopPropagation);
       }
       awaitTransition(setActiveInactive, ignore) {
           return new Promise(resolve => {

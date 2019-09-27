@@ -155,12 +155,12 @@ class DialogRenderer {
                 dialogController.cancel();
             }
         };
-        this.dialogContainer.addEventListener('click', this.closeDialogClick);
-        this.anchor.addEventListener('click', this.stopPropagation);
+        this.dialogContainer.addEventListener('mousedown', this.closeDialogClick);
+        this.anchor.addEventListener('mousedown', this.stopPropagation);
     }
     clearClickHandling() {
-        this.dialogContainer.removeEventListener('click', this.closeDialogClick);
-        this.anchor.removeEventListener('click', this.stopPropagation);
+        this.dialogContainer.removeEventListener('mousedown', this.closeDialogClick);
+        this.anchor.removeEventListener('mousedown', this.stopPropagation);
     }
     centerDialog() {
         const child = this.dialogContainer.children[0];

@@ -128,15 +128,15 @@ export class NativeDialogRenderer implements Renderer {
         e.preventDefault();
       }
     };
-    this.dialogContainer.addEventListener('click', this.closeDialogClick);
+    this.dialogContainer.addEventListener('mousedown', this.closeDialogClick);
     this.dialogContainer.addEventListener('cancel', this.dialogCancel);
-    this.anchor.addEventListener('click', this.stopPropagation);
+    this.anchor.addEventListener('mousedown', this.stopPropagation);
   }
 
   private clearEventHandling(): void {
-    this.dialogContainer.removeEventListener('click', this.closeDialogClick);
+    this.dialogContainer.removeEventListener('mousedown', this.closeDialogClick);
     this.dialogContainer.removeEventListener('cancel', this.dialogCancel);
-    this.anchor.removeEventListener('click', this.stopPropagation);
+    this.anchor.removeEventListener('mousedown', this.stopPropagation);
   }
 
   private awaitTransition(setActiveInactive: () => void, ignore: boolean): Promise<void> {

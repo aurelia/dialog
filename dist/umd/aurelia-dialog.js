@@ -515,12 +515,12 @@
                   dialogController.cancel();
               }
           };
-          this.dialogContainer.addEventListener('click', this.closeDialogClick);
-          this.anchor.addEventListener('click', this.stopPropagation);
+          this.dialogContainer.addEventListener('mousedown', this.closeDialogClick);
+          this.anchor.addEventListener('mousedown', this.stopPropagation);
       };
       DialogRenderer.prototype.clearClickHandling = function () {
-          this.dialogContainer.removeEventListener('click', this.closeDialogClick);
-          this.anchor.removeEventListener('click', this.stopPropagation);
+          this.dialogContainer.removeEventListener('mousedown', this.closeDialogClick);
+          this.anchor.removeEventListener('mousedown', this.stopPropagation);
       };
       DialogRenderer.prototype.centerDialog = function () {
           var child = this.dialogContainer.children[0];
@@ -721,14 +721,14 @@
                   e.preventDefault();
               }
           };
-          this.dialogContainer.addEventListener('click', this.closeDialogClick);
+          this.dialogContainer.addEventListener('mousedown', this.closeDialogClick);
           this.dialogContainer.addEventListener('cancel', this.dialogCancel);
-          this.anchor.addEventListener('click', this.stopPropagation);
+          this.anchor.addEventListener('mousedown', this.stopPropagation);
       };
       NativeDialogRenderer.prototype.clearEventHandling = function () {
-          this.dialogContainer.removeEventListener('click', this.closeDialogClick);
+          this.dialogContainer.removeEventListener('mousedown', this.closeDialogClick);
           this.dialogContainer.removeEventListener('cancel', this.dialogCancel);
-          this.anchor.removeEventListener('click', this.stopPropagation);
+          this.anchor.removeEventListener('mousedown', this.stopPropagation);
       };
       NativeDialogRenderer.prototype.awaitTransition = function (setActiveInactive, ignore) {
           var _this = this;
