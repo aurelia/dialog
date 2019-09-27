@@ -353,7 +353,7 @@ describe('native-dialog-renderer.spec.ts', () => {
   describe('"backdropDismiss" handlers', () => {
     it('do not stop events propagation', async done => {
       const renderer = createRenderer();
-      const event = new MouseEvent('click');
+      const event = new MouseEvent('mousedown');
       spyOn(event, 'stopPropagation').and.callThrough();
       spyOn(event, 'stopImmediatePropagation').and.callThrough();
       await show(done, renderer);
@@ -365,7 +365,7 @@ describe('native-dialog-renderer.spec.ts', () => {
 
     it('do not cancel events', async done => {
       const renderer = createRenderer();
-      const event = new MouseEvent('click');
+      const event = new MouseEvent('mousedown');
       spyOn(event, 'preventDefault').and.callThrough();
       await show(done, renderer);
       renderer.dialogContainer.dispatchEvent(event);
