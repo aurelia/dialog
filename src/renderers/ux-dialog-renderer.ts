@@ -183,13 +183,13 @@ export class DialogRenderer implements Renderer {
         dialogController.cancel();
       }
     };
-    this.dialogContainer.addEventListener('click', this.closeDialogClick);
-    this.anchor.addEventListener('click', this.stopPropagation);
+    this.dialogContainer.addEventListener('mousedown', this.closeDialogClick);
+    this.anchor.addEventListener('mousedown', this.stopPropagation);
   }
 
   private clearClickHandling(): void {
-    this.dialogContainer.removeEventListener('click', this.closeDialogClick);
-    this.anchor.removeEventListener('click', this.stopPropagation);
+    this.dialogContainer.removeEventListener('mousedown', this.closeDialogClick);
+    this.anchor.removeEventListener('mousedown', this.stopPropagation);
   }
 
   private centerDialog() {
