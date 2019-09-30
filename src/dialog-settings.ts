@@ -3,6 +3,7 @@ import { ViewStrategy } from 'aurelia-templating';
 
 export type ActionKey = 'Escape' | 'Enter';
 export type KeyEventType = 'keyup' | 'keydown';
+export type MouseEventType = 'click' | 'mouseup' | 'mousedown';
 
 /**
  * All available dialog settings.
@@ -60,6 +61,13 @@ export interface DialogSettings {
    * Default: keyup
    */
   keyEvent?: KeyEventType;
+
+  /**
+   * Determines which type of mouseevent should be used for closing the dialog
+   *
+   * Default: click
+   */
+  mouseEventType?: MouseEventType;
 
   /**
    * When set to "true" allows for the dismissal of the dialog by clicking outside of it.

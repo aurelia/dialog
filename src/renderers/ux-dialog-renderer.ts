@@ -1,6 +1,6 @@
 import { DOM } from 'aurelia-pal';
 import { transient } from 'aurelia-dependency-injection';
-import { ActionKey } from '../dialog-settings';
+import { ActionKey, MouseEventType } from '../dialog-settings';
 import { Renderer } from '../renderer';
 import { DialogController } from '../dialog-controller';
 
@@ -183,13 +183,15 @@ export class DialogRenderer implements Renderer {
         dialogController.cancel();
       }
     };
-    this.dialogContainer.addEventListener('mousedown', this.closeDialogClick);
-    this.anchor.addEventListener('mousedown', this.stopPropagation);
+    const mouseEventType: MouseEventType = dialogController.settings.mouseEventType || 'click';
+    this.dialogContainer.addEventListener(mouseEventType, this.closeDialogClick);
+    this.anchor.addEventListener(mouseEventType, this.stopPropagation);
   }
 
-  private clearClickHandling(): void {
-    this.dialogContainer.removeEventListener('mousedown', this.closeDialogClick);
-    this.anchor.removeEventListener('mousedown', this.stopPropagation);
+  private clearClickHandling(dialogController: DialogController): void {
+    const mouseEventType: MouseEventType = dialogController.settings.mouseEventType || 'click';
+    this.dialogContainer.removeEventListener(mouseEventType, this.closeDialogClick);
+    this.anchor.removeEventListener(mouseEventType, this.stopPropagation);
   }
 
   private centerDialog() {
@@ -249,7 +251,7 @@ export class DialogRenderer implements Renderer {
   }
 
   public hideDialog(dialogController: DialogController) {
-    this.clearClickHandling();
+    this.clearClickHandling(dialogController);
     DialogRenderer.untrackController(dialogController);
     return this.awaitTransition(() => this.setAsInactive(), dialogController.settings.ignoreTransitions as boolean)
       .then(() => { this.detach(dialogController); });

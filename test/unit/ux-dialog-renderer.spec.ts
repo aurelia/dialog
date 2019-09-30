@@ -145,7 +145,7 @@ describe('ux-dialog-renderer.spec.ts', () => {
         const settings: DialogSettings = { overlayDismiss: false };
         const renderer = createRenderer(settings);
         await show(done, renderer);
-        renderer.dialogContainer.dispatchEvent(new MouseEvent('mousedown'));
+        renderer.dialogContainer.dispatchEvent(new MouseEvent('click'));
         expect(renderer.__controller.cancel).not.toHaveBeenCalled();
         done();
       });
@@ -154,7 +154,7 @@ describe('ux-dialog-renderer.spec.ts', () => {
         const settings: DialogSettings = { overlayDismiss: true };
         const renderer = createRenderer(settings);
         await show(done, renderer);
-        renderer.dialogContainer.dispatchEvent(new MouseEvent('mousedown'));
+        renderer.dialogContainer.dispatchEvent(new MouseEvent('click'));
         expect(renderer.__controller.cancel).toHaveBeenCalled();
         done();
       });
@@ -387,10 +387,10 @@ describe('ux-dialog-renderer.spec.ts', () => {
     });
   });
 
-  describe('"backdropDismiss" handlers', () => {
+  describe('"backdropDismiss" handlers as default', () => {
     it('do not stop events propagation', async done => {
       const renderer = createRenderer();
-      const event = new MouseEvent('mousedown');
+      const event = new MouseEvent('click');
       spyOn(event, 'stopPropagation').and.callThrough();
       spyOn(event, 'stopImmediatePropagation').and.callThrough();
       await show(done, renderer);
@@ -402,6 +402,30 @@ describe('ux-dialog-renderer.spec.ts', () => {
 
     it('do not cancel events', async done => {
       const renderer = createRenderer();
+      const event = new MouseEvent('click');
+      spyOn(event, 'preventDefault').and.callThrough();
+      await show(done, renderer);
+      renderer.dialogContainer.dispatchEvent(event);
+      expect(event.preventDefault).not.toHaveBeenCalled();
+      done();
+    });
+  });
+
+  describe('"backdropDismiss" handlers with custom mouseEventType setting set', () => {
+    it('do not stop events propagation', async done => {
+      const renderer = createRenderer({mouseEventType: 'mousedown'});
+      const event = new MouseEvent('mousedown');
+      spyOn(event, 'stopPropagation').and.callThrough();
+      spyOn(event, 'stopImmediatePropagation').and.callThrough();
+      await show(done, renderer);
+      renderer.dialogContainer.dispatchEvent(event);
+      expect(event.stopPropagation).not.toHaveBeenCalled();
+      expect(event.stopImmediatePropagation).not.toHaveBeenCalled();
+      done();
+    });
+
+    it('do not cancel events', async done => {
+      const renderer = createRenderer({mouseEventType: 'mousedown'});
       const event = new MouseEvent('mousedown');
       spyOn(event, 'preventDefault').and.callThrough();
       await show(done, renderer);

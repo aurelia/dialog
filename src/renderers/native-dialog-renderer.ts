@@ -1,5 +1,6 @@
 import { DOM } from 'aurelia-pal';
 import { transient } from 'aurelia-dependency-injection';
+import { MouseEventType } from '../dialog-settings';
 import { Renderer } from '../renderer';
 import { DialogController } from '../dialog-controller';
 import { transitionEvent, hasTransition } from './ux-dialog-renderer';
@@ -128,15 +129,17 @@ export class NativeDialogRenderer implements Renderer {
         e.preventDefault();
       }
     };
-    this.dialogContainer.addEventListener('mousedown', this.closeDialogClick);
+    const mouseEventType: MouseEventType = dialogController.settings.mouseEventType || 'click';
+    this.dialogContainer.addEventListener(mouseEventType, this.closeDialogClick);
     this.dialogContainer.addEventListener('cancel', this.dialogCancel);
-    this.anchor.addEventListener('mousedown', this.stopPropagation);
+    this.anchor.addEventListener(mouseEventType, this.stopPropagation);
   }
 
-  private clearEventHandling(): void {
-    this.dialogContainer.removeEventListener('mousedown', this.closeDialogClick);
+  private clearEventHandling(dialogController: DialogController): void {
+    const mouseEventType: MouseEventType = dialogController.settings.mouseEventType || 'click';
+    this.dialogContainer.removeEventListener(mouseEventType, this.closeDialogClick);
     this.dialogContainer.removeEventListener('cancel', this.dialogCancel);
-    this.anchor.removeEventListener('mousedown', this.stopPropagation);
+    this.anchor.removeEventListener(mouseEventType, this.stopPropagation);
   }
 
   private awaitTransition(setActiveInactive: () => void, ignore: boolean): Promise<void> {
@@ -187,7 +190,7 @@ export class NativeDialogRenderer implements Renderer {
   }
 
   public hideDialog(dialogController: DialogController): Promise<void> {
-    this.clearEventHandling();
+    this.clearEventHandling(dialogController);
     NativeDialogRenderer.untrackController(dialogController);
     return this.awaitTransition(() => this.setAsInactive(), dialogController.settings.ignoreTransitions as boolean)
       .then(() => { this.detach(dialogController); });
