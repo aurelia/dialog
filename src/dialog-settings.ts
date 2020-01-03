@@ -1,4 +1,5 @@
 import { Container } from 'aurelia-dependency-injection';
+
 import { ViewStrategy } from 'aurelia-templating';
 
 export type ActionKey = 'Escape' | 'Enter';
@@ -67,7 +68,7 @@ export interface DialogSettings {
    *
    * Default: click
    */
-  mouseEventType?: MouseEventType;
+  mouseEvent?: MouseEventType;
 
   /**
    * When set to "true" allows for the dismissal of the dialog by clicking outside of it.

@@ -1,8 +1,9 @@
-import '../setup';
 import { DOM } from 'aurelia-pal';
+
+import '../setup';
 import { DialogController } from '../../src/dialog-controller';
-import { DialogRenderer, hasTransition, transitionEvent } from '../../src/renderers/ux-dialog-renderer';
 import { DefaultDialogSettings, DialogSettings } from '../../src/dialog-settings';
+import { DialogRenderer, hasTransition, transitionEvent } from '../../src/renderers/ux-dialog-renderer';
 
 type TestDialogRenderer = DialogRenderer & { [key: string]: any, __controller: DialogController };
 
@@ -411,9 +412,9 @@ describe('ux-dialog-renderer.spec.ts', () => {
     });
   });
 
-  describe('"backdropDismiss" handlers with custom mouseEventType setting set', () => {
+  describe('"backdropDismiss" handlers with custom mouseEvent setting set', () => {
     it('do not stop events propagation', async done => {
-      const renderer = createRenderer({mouseEventType: 'mousedown'});
+      const renderer = createRenderer({mouseEvent: 'mousedown'});
       const event = new MouseEvent('mousedown');
       spyOn(event, 'stopPropagation').and.callThrough();
       spyOn(event, 'stopImmediatePropagation').and.callThrough();
@@ -425,7 +426,7 @@ describe('ux-dialog-renderer.spec.ts', () => {
     });
 
     it('do not cancel events', async done => {
-      const renderer = createRenderer({mouseEventType: 'mousedown'});
+      const renderer = createRenderer({mouseEvent: 'mousedown'});
       const event = new MouseEvent('mousedown');
       spyOn(event, 'preventDefault').and.callThrough();
       await show(done, renderer);

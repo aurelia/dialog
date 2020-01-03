@@ -1,8 +1,11 @@
 import { DOM } from 'aurelia-pal';
+
 import { transient } from 'aurelia-dependency-injection';
+
+import { DialogController } from '../dialog-controller';
 import { MouseEventType } from '../dialog-settings';
 import { Renderer } from '../renderer';
-import { DialogController } from '../dialog-controller';
+
 import { transitionEvent, hasTransition } from './ux-dialog-renderer';
 
 const containerTagName = 'dialog';
@@ -129,17 +132,17 @@ export class NativeDialogRenderer implements Renderer {
         e.preventDefault();
       }
     };
-    const mouseEventType: MouseEventType = dialogController.settings.mouseEventType || 'click';
-    this.dialogContainer.addEventListener(mouseEventType, this.closeDialogClick);
+    const mouseEvent: MouseEventType = dialogController.settings.mouseEvent || 'click';
+    this.dialogContainer.addEventListener(mouseEvent, this.closeDialogClick);
     this.dialogContainer.addEventListener('cancel', this.dialogCancel);
-    this.anchor.addEventListener(mouseEventType, this.stopPropagation);
+    this.anchor.addEventListener(mouseEvent, this.stopPropagation);
   }
 
   private clearEventHandling(dialogController: DialogController): void {
-    const mouseEventType: MouseEventType = dialogController.settings.mouseEventType || 'click';
-    this.dialogContainer.removeEventListener(mouseEventType, this.closeDialogClick);
+    const mouseEvent: MouseEventType = dialogController.settings.mouseEvent || 'click';
+    this.dialogContainer.removeEventListener(mouseEvent, this.closeDialogClick);
     this.dialogContainer.removeEventListener('cancel', this.dialogCancel);
-    this.anchor.removeEventListener(mouseEventType, this.stopPropagation);
+    this.anchor.removeEventListener(mouseEvent, this.stopPropagation);
   }
 
   private awaitTransition(setActiveInactive: () => void, ignore: boolean): Promise<void> {
