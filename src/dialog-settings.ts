@@ -56,7 +56,7 @@ export interface DialogSettings {
   keyboard?: boolean | ActionKey | ActionKey[];
 
   /**
-   * Determines which type of keyevent should be used to listen for
+   * Determines which type of key event should be used to listen for
    * ENTER and ESC keys
    *
    * Default: keyup
@@ -64,7 +64,7 @@ export interface DialogSettings {
   keyEvent?: KeyEventType;
 
   /**
-   * Determines which type of mouseevent should be used for closing the dialog
+   * Determines which type of mouse event should be used for closing the dialog
    *
    * Default: click
    */
