@@ -1,8 +1,9 @@
-import '../setup';
 import { DOM } from 'aurelia-pal';
+
+import '../setup';
 import { DialogController } from '../../src/dialog-controller';
-import { DialogRenderer, hasTransition, transitionEvent } from '../../src/renderers/ux-dialog-renderer';
 import { DefaultDialogSettings, DialogSettings } from '../../src/dialog-settings';
+import { DialogRenderer, hasTransition, transitionEvent } from '../../src/renderers/ux-dialog-renderer';
 
 type TestDialogRenderer = DialogRenderer & { [key: string]: any, __controller: DialogController };
 
@@ -387,7 +388,7 @@ describe('ux-dialog-renderer.spec.ts', () => {
     });
   });
 
-  describe('"backdropDismiss" handlers', () => {
+  describe('"backdropDismiss" handlers as default', () => {
     it('do not stop events propagation', async done => {
       const renderer = createRenderer();
       const event = new MouseEvent('click');
@@ -403,6 +404,30 @@ describe('ux-dialog-renderer.spec.ts', () => {
     it('do not cancel events', async done => {
       const renderer = createRenderer();
       const event = new MouseEvent('click');
+      spyOn(event, 'preventDefault').and.callThrough();
+      await show(done, renderer);
+      renderer.dialogContainer.dispatchEvent(event);
+      expect(event.preventDefault).not.toHaveBeenCalled();
+      done();
+    });
+  });
+
+  describe('"backdropDismiss" handlers with custom mouseEvent setting set', () => {
+    it('do not stop events propagation', async done => {
+      const renderer = createRenderer({mouseEvent: 'mousedown'});
+      const event = new MouseEvent('mousedown');
+      spyOn(event, 'stopPropagation').and.callThrough();
+      spyOn(event, 'stopImmediatePropagation').and.callThrough();
+      await show(done, renderer);
+      renderer.dialogContainer.dispatchEvent(event);
+      expect(event.stopPropagation).not.toHaveBeenCalled();
+      expect(event.stopImmediatePropagation).not.toHaveBeenCalled();
+      done();
+    });
+
+    it('do not cancel events', async done => {
+      const renderer = createRenderer({mouseEvent: 'mousedown'});
+      const event = new MouseEvent('mousedown');
       spyOn(event, 'preventDefault').and.callThrough();
       await show(done, renderer);
       renderer.dialogContainer.dispatchEvent(event);

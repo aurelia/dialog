@@ -37,7 +37,13 @@ npm run test
 ## Developing
 
 ```shell
-npm run test-watch
+npm run test:watch
+```
+
+## Debugging
+
+```shell
+npm run test:debugging
 ```
 
 ## Publishing

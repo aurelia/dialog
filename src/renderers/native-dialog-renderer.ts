@@ -1,7 +1,11 @@
 import { DOM } from 'aurelia-pal';
+
 import { transient } from 'aurelia-dependency-injection';
-import { Renderer } from '../renderer';
+
 import { DialogController } from '../dialog-controller';
+import { MouseEventType } from '../dialog-settings';
+import { Renderer } from '../renderer';
+
 import { transitionEvent, hasTransition } from './ux-dialog-renderer';
 
 const containerTagName = 'dialog';
@@ -128,15 +132,17 @@ export class NativeDialogRenderer implements Renderer {
         e.preventDefault();
       }
     };
-    this.dialogContainer.addEventListener('click', this.closeDialogClick);
+    const mouseEvent: MouseEventType = dialogController.settings.mouseEvent || 'click';
+    this.dialogContainer.addEventListener(mouseEvent, this.closeDialogClick);
     this.dialogContainer.addEventListener('cancel', this.dialogCancel);
-    this.anchor.addEventListener('click', this.stopPropagation);
+    this.anchor.addEventListener(mouseEvent, this.stopPropagation);
   }
 
-  private clearEventHandling(): void {
-    this.dialogContainer.removeEventListener('click', this.closeDialogClick);
+  private clearEventHandling(dialogController: DialogController): void {
+    const mouseEvent: MouseEventType = dialogController.settings.mouseEvent || 'click';
+    this.dialogContainer.removeEventListener(mouseEvent, this.closeDialogClick);
     this.dialogContainer.removeEventListener('cancel', this.dialogCancel);
-    this.anchor.removeEventListener('click', this.stopPropagation);
+    this.anchor.removeEventListener(mouseEvent, this.stopPropagation);
   }
 
   private awaitTransition(setActiveInactive: () => void, ignore: boolean): Promise<void> {
@@ -187,7 +193,7 @@ export class NativeDialogRenderer implements Renderer {
   }
 
   public hideDialog(dialogController: DialogController): Promise<void> {
-    this.clearEventHandling();
+    this.clearEventHandling(dialogController);
     NativeDialogRenderer.untrackController(dialogController);
     return this.awaitTransition(() => this.setAsInactive(), dialogController.settings.ignoreTransitions as boolean)
       .then(() => { this.detach(dialogController); });
