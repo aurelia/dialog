@@ -10,6 +10,18 @@ describe('testing aurelia configure routine', () => {
     globalResources() { return; },
     transient() { return; }
   } as any;
+  let userDefaultsSpy: jasmine.Spy;
+  let applySpy: jasmine.Spy;
+
+  beforeEach(() => {
+    userDefaultsSpy = spyOn(DialogConfiguration.prototype, 'useDefaults').and.callThrough();
+    applySpy = spyOn(DialogConfiguration.prototype as any, '_apply');
+  });
+
+  afterEach(() => {
+    userDefaultsSpy.calls.reset();
+    applySpy.calls.reset();
+  });
 
   it('should export configure function', () => {
     expect(typeof configure).toBe('function');
@@ -28,20 +40,17 @@ describe('testing aurelia configure routine', () => {
   });
 
   it('should apply the defaults when no setup callback is supplied', () => {
-    spyOn(DialogConfiguration.prototype, 'useDefaults').and.callThrough();
     configure(frameworkConfig as any);
-    expect(DialogConfiguration.prototype.useDefaults).toHaveBeenCalled();
+    expect(userDefaultsSpy).toHaveBeenCalled();
   });
 
   it('should apply the configurations when setup callback is provided', () => {
-    spyOn(DialogConfiguration.prototype as any, '_apply');
     configure(frameworkConfig, () => { return; });
-    expect((DialogConfiguration.prototype as any)._apply).toHaveBeenCalled();
+    expect(applySpy).toHaveBeenCalled();
   });
 
   it('should apply the configurations when no setup callback is provided', () => {
-    spyOn(DialogConfiguration.prototype as any, '_apply');
     configure(frameworkConfig);
-    expect((DialogConfiguration.prototype as any)._apply).toHaveBeenCalled();
+    expect(applySpy).toHaveBeenCalled();
   });
 });

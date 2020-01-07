@@ -1,8 +1,10 @@
 import { DOM } from 'aurelia-pal';
+
 import { transient } from 'aurelia-dependency-injection';
-import { ActionKey } from '../dialog-settings';
-import { Renderer } from '../renderer';
+
 import { DialogController } from '../dialog-controller';
+import { ActionKey, MouseEventType } from '../dialog-settings';
+import { Renderer } from '../renderer';
 
 const containerTagName = 'ux-dialog-container';
 const overlayTagName = 'ux-dialog-overlay';
@@ -134,7 +136,7 @@ export class DialogRenderer implements Renderer {
     const dialogOverlay = this.dialogOverlay = DOM.createElement(overlayTagName) as HTMLElement;
     const zIndex = typeof dialogController.settings.startingZIndex === 'number'
       ? dialogController.settings.startingZIndex + ''
-      : null;
+      : 'auto'; // default/initial zIndex value is auto
 
     dialogOverlay.style.zIndex = zIndex;
     dialogContainer.style.zIndex = zIndex;
@@ -176,20 +178,22 @@ export class DialogRenderer implements Renderer {
     this.dialogContainer.classList.remove('active');
   }
 
-  private setupClickHandling(dialogController: DialogController): void {
+  private setupEventHandling(dialogController: DialogController): void {
     this.stopPropagation = e => { e._aureliaDialogHostClicked = true; };
     this.closeDialogClick = e => {
       if (dialogController.settings.overlayDismiss && !e._aureliaDialogHostClicked) {
         dialogController.cancel();
       }
     };
-    this.dialogContainer.addEventListener('click', this.closeDialogClick);
-    this.anchor.addEventListener('click', this.stopPropagation);
+    const mouseEvent: MouseEventType = dialogController.settings.mouseEvent || 'click';
+    this.dialogContainer.addEventListener(mouseEvent, this.closeDialogClick);
+    this.anchor.addEventListener(mouseEvent, this.stopPropagation);
   }
 
-  private clearClickHandling(): void {
-    this.dialogContainer.removeEventListener('click', this.closeDialogClick);
-    this.anchor.removeEventListener('click', this.stopPropagation);
+  private clearEventHandling(dialogController: DialogController): void {
+    const mouseEvent: MouseEventType = dialogController.settings.mouseEvent || 'click';
+    this.dialogContainer.removeEventListener(mouseEvent, this.closeDialogClick);
+    this.anchor.removeEventListener(mouseEvent, this.stopPropagation);
   }
 
   private centerDialog() {
@@ -244,12 +248,12 @@ export class DialogRenderer implements Renderer {
     }
 
     DialogRenderer.trackController(dialogController);
-    this.setupClickHandling(dialogController);
+    this.setupEventHandling(dialogController);
     return this.awaitTransition(() => this.setAsActive(), dialogController.settings.ignoreTransitions as boolean);
   }
 
   public hideDialog(dialogController: DialogController) {
-    this.clearClickHandling();
+    this.clearEventHandling(dialogController);
     DialogRenderer.untrackController(dialogController);
     return this.awaitTransition(() => this.setAsInactive(), dialogController.settings.ignoreTransitions as boolean)
       .then(() => { this.detach(dialogController); });
