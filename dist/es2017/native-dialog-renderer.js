@@ -127,14 +127,16 @@ let NativeDialogRenderer = NativeDialogRenderer_1 = class NativeDialogRenderer {
                 e.preventDefault();
             }
         };
-        this.dialogContainer.addEventListener('click', this.closeDialogClick);
+        const mouseEvent = dialogController.settings.mouseEvent || 'click';
+        this.dialogContainer.addEventListener(mouseEvent, this.closeDialogClick);
         this.dialogContainer.addEventListener('cancel', this.dialogCancel);
-        this.anchor.addEventListener('click', this.stopPropagation);
+        this.anchor.addEventListener(mouseEvent, this.stopPropagation);
     }
-    clearEventHandling() {
-        this.dialogContainer.removeEventListener('click', this.closeDialogClick);
+    clearEventHandling(dialogController) {
+        const mouseEvent = dialogController.settings.mouseEvent || 'click';
+        this.dialogContainer.removeEventListener(mouseEvent, this.closeDialogClick);
         this.dialogContainer.removeEventListener('cancel', this.dialogCancel);
-        this.anchor.removeEventListener('click', this.stopPropagation);
+        this.anchor.removeEventListener(mouseEvent, this.stopPropagation);
     }
     awaitTransition(setActiveInactive, ignore) {
         return new Promise(resolve => {
@@ -179,7 +181,7 @@ let NativeDialogRenderer = NativeDialogRenderer_1 = class NativeDialogRenderer {
         return this.awaitTransition(() => this.setAsActive(), dialogController.settings.ignoreTransitions);
     }
     hideDialog(dialogController) {
-        this.clearEventHandling();
+        this.clearEventHandling(dialogController);
         NativeDialogRenderer_1.untrackController(dialogController);
         return this.awaitTransition(() => this.setAsInactive(), dialogController.settings.ignoreTransitions)
             .then(() => { this.detach(dialogController); });

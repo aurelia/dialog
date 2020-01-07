@@ -1,17 +1,17 @@
-System.register(['./dialog-controller.js', 'aurelia-pal', 'aurelia-dependency-injection', 'aurelia-templating'], function (exports, module) {
+System.register(['./chunk.js', 'aurelia-pal', 'aurelia-dependency-injection', 'aurelia-templating'], function (exports, module) {
   'use strict';
   var Renderer, createDialogCancelError, invokeLifecycle, DialogController, DOM, Container, ViewSlot, CompositionEngine;
   return {
     setters: [function (module) {
-      Renderer = module.R;
-      createDialogCancelError = module.c;
-      invokeLifecycle = module.i;
-      DialogController = module.D;
+      Renderer = module.a;
+      createDialogCancelError = module.b;
+      invokeLifecycle = module.c;
+      DialogController = module.d;
       var _setter = {};
-      _setter.DialogController = module.D;
-      _setter.Renderer = module.R;
-      _setter.createDialogCancelError = module.c;
-      _setter.createDialogCloseError = module.a;
+      _setter.DialogController = module.d;
+      _setter.Renderer = module.a;
+      _setter.createDialogCancelError = module.b;
+      _setter.createDialogCloseError = module.e;
       exports(_setter);
     }, function (module) {
       DOM = module.DOM;

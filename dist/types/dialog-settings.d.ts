@@ -2,6 +2,7 @@ import { Container } from 'aurelia-dependency-injection';
 import { ViewStrategy } from 'aurelia-templating';
 export declare type ActionKey = 'Escape' | 'Enter';
 export declare type KeyEventType = 'keyup' | 'keydown';
+export declare type MouseEventType = 'click' | 'mouseup' | 'mousedown';
 /**
  * All available dialog settings.
  */
@@ -46,12 +47,18 @@ export interface DialogSettings {
      */
     keyboard?: boolean | ActionKey | ActionKey[];
     /**
-     * Determines which type of keyevent should be used to listen for
+     * Determines which type of key event should be used to listen for
      * ENTER and ESC keys
      *
      * Default: keyup
      */
     keyEvent?: KeyEventType;
+    /**
+     * Determines which type of mouse event should be used for closing the dialog
+     *
+     * Default: click
+     */
+    mouseEvent?: MouseEventType;
     /**
      * When set to "true" allows for the dismissal of the dialog by clicking outside of it.
      */

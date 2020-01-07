@@ -113,7 +113,7 @@ define(['exports', 'aurelia-pal', 'aurelia-dependency-injection'], function (exp
           var dialogOverlay = this.dialogOverlay = aureliaPal.DOM.createElement(overlayTagName);
           var zIndex = typeof dialogController.settings.startingZIndex === 'number'
               ? dialogController.settings.startingZIndex + ''
-              : null;
+              : 'auto';
           dialogOverlay.style.zIndex = zIndex;
           dialogContainer.style.zIndex = zIndex;
           var host = this.host;
@@ -149,19 +149,21 @@ define(['exports', 'aurelia-pal', 'aurelia-dependency-injection'], function (exp
           this.dialogOverlay.classList.remove('active');
           this.dialogContainer.classList.remove('active');
       };
-      DialogRenderer.prototype.setupClickHandling = function (dialogController) {
+      DialogRenderer.prototype.setupEventHandling = function (dialogController) {
           this.stopPropagation = function (e) { e._aureliaDialogHostClicked = true; };
           this.closeDialogClick = function (e) {
               if (dialogController.settings.overlayDismiss && !e._aureliaDialogHostClicked) {
                   dialogController.cancel();
               }
           };
-          this.dialogContainer.addEventListener('click', this.closeDialogClick);
-          this.anchor.addEventListener('click', this.stopPropagation);
+          var mouseEvent = dialogController.settings.mouseEvent || 'click';
+          this.dialogContainer.addEventListener(mouseEvent, this.closeDialogClick);
+          this.anchor.addEventListener(mouseEvent, this.stopPropagation);
       };
-      DialogRenderer.prototype.clearClickHandling = function () {
-          this.dialogContainer.removeEventListener('click', this.closeDialogClick);
-          this.anchor.removeEventListener('click', this.stopPropagation);
+      DialogRenderer.prototype.clearEventHandling = function (dialogController) {
+          var mouseEvent = dialogController.settings.mouseEvent || 'click';
+          this.dialogContainer.removeEventListener(mouseEvent, this.closeDialogClick);
+          this.anchor.removeEventListener(mouseEvent, this.stopPropagation);
       };
       DialogRenderer.prototype.centerDialog = function () {
           var child = this.dialogContainer.children[0];
@@ -213,12 +215,12 @@ define(['exports', 'aurelia-pal', 'aurelia-dependency-injection'], function (exp
               this.centerDialog();
           }
           DialogRenderer.trackController(dialogController);
-          this.setupClickHandling(dialogController);
+          this.setupEventHandling(dialogController);
           return this.awaitTransition(function () { return _this.setAsActive(); }, dialogController.settings.ignoreTransitions);
       };
       DialogRenderer.prototype.hideDialog = function (dialogController) {
           var _this = this;
-          this.clearClickHandling();
+          this.clearEventHandling(dialogController);
           DialogRenderer.untrackController(dialogController);
           return this.awaitTransition(function () { return _this.setAsInactive(); }, dialogController.settings.ignoreTransitions)
               .then(function () { _this.detach(dialogController); });

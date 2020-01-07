@@ -112,7 +112,7 @@ class DialogRenderer {
         const dialogOverlay = this.dialogOverlay = DOM.createElement(overlayTagName);
         const zIndex = typeof dialogController.settings.startingZIndex === 'number'
             ? dialogController.settings.startingZIndex + ''
-            : null;
+            : 'auto';
         dialogOverlay.style.zIndex = zIndex;
         dialogContainer.style.zIndex = zIndex;
         const host = this.host;
@@ -148,19 +148,21 @@ class DialogRenderer {
         this.dialogOverlay.classList.remove('active');
         this.dialogContainer.classList.remove('active');
     }
-    setupClickHandling(dialogController) {
+    setupEventHandling(dialogController) {
         this.stopPropagation = e => { e._aureliaDialogHostClicked = true; };
         this.closeDialogClick = e => {
             if (dialogController.settings.overlayDismiss && !e._aureliaDialogHostClicked) {
                 dialogController.cancel();
             }
         };
-        this.dialogContainer.addEventListener('click', this.closeDialogClick);
-        this.anchor.addEventListener('click', this.stopPropagation);
+        const mouseEvent = dialogController.settings.mouseEvent || 'click';
+        this.dialogContainer.addEventListener(mouseEvent, this.closeDialogClick);
+        this.anchor.addEventListener(mouseEvent, this.stopPropagation);
     }
-    clearClickHandling() {
-        this.dialogContainer.removeEventListener('click', this.closeDialogClick);
-        this.anchor.removeEventListener('click', this.stopPropagation);
+    clearEventHandling(dialogController) {
+        const mouseEvent = dialogController.settings.mouseEvent || 'click';
+        this.dialogContainer.removeEventListener(mouseEvent, this.closeDialogClick);
+        this.anchor.removeEventListener(mouseEvent, this.stopPropagation);
     }
     centerDialog() {
         const child = this.dialogContainer.children[0];
@@ -210,11 +212,11 @@ class DialogRenderer {
             this.centerDialog();
         }
         DialogRenderer.trackController(dialogController);
-        this.setupClickHandling(dialogController);
+        this.setupEventHandling(dialogController);
         return this.awaitTransition(() => this.setAsActive(), dialogController.settings.ignoreTransitions);
     }
     hideDialog(dialogController) {
-        this.clearClickHandling();
+        this.clearEventHandling(dialogController);
         DialogRenderer.untrackController(dialogController);
         return this.awaitTransition(() => this.setAsInactive(), dialogController.settings.ignoreTransitions)
             .then(() => { this.detach(dialogController); });

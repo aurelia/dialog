@@ -1,15 +1,15 @@
-System.register([], function (exports) {
+System.register([], function (exports, module) {
   'use strict';
   return {
     execute: function () {
 
       exports({
-        a: createDialogCloseError,
-        c: createDialogCancelError,
-        i: invokeLifecycle
+        b: createDialogCancelError,
+        c: invokeLifecycle,
+        e: createDialogCloseError
       });
 
-      var Renderer = exports('R', (function () {
+      var Renderer = exports('a', (function () {
           function Renderer() {
           }
           Renderer.prototype.getDialogContainer = function () {
@@ -52,7 +52,7 @@ System.register([], function (exports) {
           return Promise.resolve(true);
       }
 
-      var DialogController = exports('D', (function () {
+      var DialogController = exports('d', (function () {
           function DialogController(renderer, settings, resolve, reject) {
               this.resolve = resolve;
               this.reject = reject;
@@ -120,4 +120,4 @@ System.register([], function (exports) {
     }
   };
 });
-//# sourceMappingURL=dialog-controller.js.map
+//# sourceMappingURL=chunk.js.map

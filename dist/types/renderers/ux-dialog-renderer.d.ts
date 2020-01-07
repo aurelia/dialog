@@ -1,5 +1,5 @@
-import { Renderer } from '../renderer';
 import { DialogController } from '../dialog-controller';
+import { Renderer } from '../renderer';
 export declare const transitionEvent: () => string;
 export declare const hasTransition: (element: Element) => boolean;
 export declare class DialogRenderer implements Renderer {
@@ -19,8 +19,8 @@ export declare class DialogRenderer implements Renderer {
     private detach;
     private setAsActive;
     private setAsInactive;
-    private setupClickHandling;
-    private clearClickHandling;
+    private setupEventHandling;
+    private clearEventHandling;
     private centerDialog;
     private awaitTransition;
     getDialogContainer(): Element;

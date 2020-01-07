@@ -1,5 +1,5 @@
-import { R as Renderer, c as createDialogCancelError, i as invokeLifecycle, D as DialogController } from './dialog-controller.js';
-export { D as DialogController, R as Renderer, c as createDialogCancelError, a as createDialogCloseError } from './dialog-controller.js';
+import { a as Renderer, b as createDialogCancelError, c as invokeLifecycle, d as DialogController } from './chunk.js';
+export { d as DialogController, a as Renderer, b as createDialogCancelError, e as createDialogCloseError } from './chunk.js';
 import { DOM } from 'aurelia-pal';
 import { Container } from 'aurelia-dependency-injection';
 import { ViewSlot, CompositionEngine } from 'aurelia-templating';

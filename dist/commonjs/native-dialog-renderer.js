@@ -131,14 +131,16 @@ var NativeDialogRenderer = (function () {
                 e.preventDefault();
             }
         };
-        this.dialogContainer.addEventListener('click', this.closeDialogClick);
+        var mouseEvent = dialogController.settings.mouseEvent || 'click';
+        this.dialogContainer.addEventListener(mouseEvent, this.closeDialogClick);
         this.dialogContainer.addEventListener('cancel', this.dialogCancel);
-        this.anchor.addEventListener('click', this.stopPropagation);
+        this.anchor.addEventListener(mouseEvent, this.stopPropagation);
     };
-    NativeDialogRenderer.prototype.clearEventHandling = function () {
-        this.dialogContainer.removeEventListener('click', this.closeDialogClick);
+    NativeDialogRenderer.prototype.clearEventHandling = function (dialogController) {
+        var mouseEvent = dialogController.settings.mouseEvent || 'click';
+        this.dialogContainer.removeEventListener(mouseEvent, this.closeDialogClick);
         this.dialogContainer.removeEventListener('cancel', this.dialogCancel);
-        this.anchor.removeEventListener('click', this.stopPropagation);
+        this.anchor.removeEventListener(mouseEvent, this.stopPropagation);
     };
     NativeDialogRenderer.prototype.awaitTransition = function (setActiveInactive, ignore) {
         var _this = this;
@@ -186,7 +188,7 @@ var NativeDialogRenderer = (function () {
     };
     NativeDialogRenderer.prototype.hideDialog = function (dialogController) {
         var _this = this;
-        this.clearEventHandling();
+        this.clearEventHandling(dialogController);
         NativeDialogRenderer_1.untrackController(dialogController);
         return this.awaitTransition(function () { return _this.setAsInactive(); }, dialogController.settings.ignoreTransitions)
             .then(function () { _this.detach(dialogController); });

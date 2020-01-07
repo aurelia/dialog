@@ -1,4 +1,4 @@
-define(['require', 'exports', './dialog-controller', 'aurelia-pal', 'aurelia-dependency-injection', 'aurelia-templating'], function (require, exports, dialogController, aureliaPal, aureliaDependencyInjection, aureliaTemplating) { 'use strict';
+define(['require', 'exports', './chunk', 'aurelia-pal', 'aurelia-dependency-injection', 'aurelia-templating'], function (require, exports, __chunk_1, aureliaPal, aureliaDependencyInjection, aureliaTemplating) { 'use strict';
 
   var DefaultDialogSettings = (function () {
       function DefaultDialogSettings() {
@@ -50,7 +50,7 @@ define(['require', 'exports', './dialog-controller', 'aurelia-pal', 'aurelia-dep
               .then(function (_a) {
               var rendererImpl = _a[0], $cssText = _a[1];
               var fwConfig = _this.fwConfig;
-              fwConfig.transient(dialogController.Renderer, rendererImpl);
+              fwConfig.transient(__chunk_1.Renderer, rendererImpl);
               if ($cssText) {
                   aureliaPal.DOM.injectStyles($cssText);
               }
@@ -133,25 +133,25 @@ define(['require', 'exports', './dialog-controller', 'aurelia-pal', 'aurelia-dep
           if (!rejectOnCancel) {
               return { wasCancelled: true };
           }
-          throw dialogController.createDialogCancelError();
+          throw __chunk_1.createDialogCancelError();
       };
-      DialogService.prototype.composeAndShowDialog = function (compositionContext, dialogController$1) {
+      DialogService.prototype.composeAndShowDialog = function (compositionContext, dialogController) {
           var _this = this;
           if (!compositionContext.viewModel) {
-              compositionContext.bindingContext = { controller: dialogController$1 };
+              compositionContext.bindingContext = { controller: dialogController };
           }
           return this.compositionEngine
               .compose(compositionContext)
               .then(function (controller) {
-              dialogController$1.controller = controller;
-              return dialogController$1.renderer
-                  .showDialog(dialogController$1)
+              dialogController.controller = controller;
+              return dialogController.renderer
+                  .showDialog(dialogController)
                   .then(function () {
-                  _this.controllers.push(dialogController$1);
+                  _this.controllers.push(dialogController);
                   _this.hasActiveDialog = _this.hasOpenDialog = !!_this.controllers.length;
               }, function (reason) {
                   if (controller.viewModel) {
-                      dialogController.invokeLifecycle(controller.viewModel, 'deactivate');
+                      __chunk_1.invokeLifecycle(controller.viewModel, 'deactivate');
                   }
                   return Promise.reject(reason);
               });
@@ -184,25 +184,25 @@ define(['require', 'exports', './dialog-controller', 'aurelia-pal', 'aurelia-dep
               resolveCloseResult = resolve;
               rejectCloseResult = reject;
           });
-          var dialogController$1 = childContainer.invoke(dialogController.DialogController, [settings, resolveCloseResult, rejectCloseResult]);
-          childContainer.registerInstance(dialogController.DialogController, dialogController$1);
+          var dialogController = childContainer.invoke(__chunk_1.DialogController, [settings, resolveCloseResult, rejectCloseResult]);
+          childContainer.registerInstance(__chunk_1.DialogController, dialogController);
           closeResult.then(function () {
-              removeController(_this, dialogController$1);
+              removeController(_this, dialogController);
           }, function () {
-              removeController(_this, dialogController$1);
+              removeController(_this, dialogController);
           });
-          var compositionContext = this.createCompositionContext(childContainer, dialogController$1.renderer.getDialogContainer(), dialogController$1.settings);
+          var compositionContext = this.createCompositionContext(childContainer, dialogController.renderer.getDialogContainer(), dialogController.settings);
           var openResult = this.ensureViewModel(compositionContext).then(function (compositionContext) {
               if (!compositionContext.viewModel) {
                   return true;
               }
-              return dialogController.invokeLifecycle(compositionContext.viewModel, 'canActivate', dialogController$1.settings.model);
+              return __chunk_1.invokeLifecycle(compositionContext.viewModel, 'canActivate', dialogController.settings.model);
           }).then(function (canActivate) {
               if (!canActivate) {
-                  return _this._cancelOperation(dialogController$1.settings.rejectOnCancel);
+                  return _this._cancelOperation(dialogController.settings.rejectOnCancel);
               }
-              return _this.composeAndShowDialog(compositionContext, dialogController$1)
-                  .then(function () { return ({ controller: dialogController$1, closeResult: closeResult, wasCancelled: false }); });
+              return _this.composeAndShowDialog(compositionContext, dialogController)
+                  .then(function () { return ({ controller: dialogController, closeResult: closeResult, wasCancelled: false }); });
           });
           return asDialogOpenPromise(openResult);
       };
@@ -247,10 +247,10 @@ define(['require', 'exports', './dialog-controller', 'aurelia-pal', 'aurelia-dep
       return applyConfig();
   }
 
-  exports.DialogController = dialogController.DialogController;
-  exports.Renderer = dialogController.Renderer;
-  exports.createDialogCancelError = dialogController.createDialogCancelError;
-  exports.createDialogCloseError = dialogController.createDialogCloseError;
+  exports.DialogController = __chunk_1.DialogController;
+  exports.Renderer = __chunk_1.Renderer;
+  exports.createDialogCancelError = __chunk_1.createDialogCancelError;
+  exports.createDialogCloseError = __chunk_1.createDialogCloseError;
   exports.DefaultDialogSettings = DefaultDialogSettings;
   exports.DialogConfiguration = DialogConfiguration;
   exports.DialogService = DialogService;

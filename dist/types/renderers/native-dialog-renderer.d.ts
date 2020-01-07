@@ -1,5 +1,5 @@
-import { Renderer } from '../renderer';
 import { DialogController } from '../dialog-controller';
+import { Renderer } from '../renderer';
 export declare class NativeDialogRenderer implements Renderer {
     static dialogControllers: DialogController[];
     static keyboardEventHandler(e: KeyboardEvent): void;
