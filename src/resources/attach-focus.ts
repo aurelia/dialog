@@ -23,6 +23,7 @@ export class AttachFocus implements ComponentAttached {
 
   constructor(private element: HTMLElement) {
     this.value = true;
+    this.element = element;
   }
 
   public attached(): void {
